@@ -33,5 +33,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "tests", "migrations"]
+  "exclude": ["node_modules", "tests", "migrations", "migration-archive"]
 }
