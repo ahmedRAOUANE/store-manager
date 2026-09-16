@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SidebarAvatar } from "./app-sidebar";
 import { cn } from "@/utils/jsx-classes";
+import { linkSync } from "fs";
 
 export interface UserMenuProps {
     name: string;
@@ -12,6 +13,8 @@ export interface UserMenuProps {
     /** Link targets — the shell wires these; no auth logic here. */
     profileHref?: string;
     signOutHref?: string;
+
+    links?: {link: string, label: string}[]
 }
 
 export function UserMenu({
@@ -20,6 +23,7 @@ export function UserMenu({
     imageUrl,
     profileHref,
     signOutHref,
+    links,
 }: UserMenuProps) {
     const [open, setOpen] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
@@ -98,6 +102,19 @@ export function UserMenu({
                                 Sign out
                             </Link>
                         )}
+                        {
+                            (links&&links.length>0) && links.map((l, idx) => (
+                                <Link
+                                    key={idx}
+                                    href={l.link}
+                                    role="menuitem"
+                                    onClick={() => setOpen(false)}
+                                    className="block rounded-md px-2.5 py-1.5 text-body-md text-on-surface-variant transition-colors hover:bg-slate-100 hover:text-on-surface"
+                                >
+                                    {l.label}
+                                </Link>
+                            ))
+                        }
                     </div>
                 </div>
             )}
