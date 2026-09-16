@@ -11,7 +11,7 @@ export default async function DashboardPage() {
     const user = await getCurrentUser();
 
     if (user instanceof AppError) {
-        redirect("api/auth/login");
+        redirect("/api/auth/login");
     }
 
     // determine the user's appropriate destination

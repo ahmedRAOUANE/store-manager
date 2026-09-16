@@ -54,3 +54,5 @@ dist/
 
 # local / OS
 Thumbs.db
+.vercel
+.env*

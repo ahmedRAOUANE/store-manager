@@ -11,19 +11,19 @@ export default class M extends Migration<Start, End> {
 
   override get operations() {
     return [
-      this.dropConstraint({
-        schema: 'public',
-        table: 'purchase',
-        constraint: 'purchase_createdById_fkey',
-        kind: 'foreignKey',
-      }),
-      this.dropIndex({
-        schema: 'public',
-        table: 'purchase',
-        index: 'purchase_createdById_idx_8bf640ed',
-      }),
-      this.dropColumn({ schema: 'public', table: 'purchase', column: 'createdById' }),
-      this.dropTable({ schema: 'public', table: 'user' }),
+      // this.dropConstraint({
+      //   schema: 'public',
+      //   table: 'purchase',
+      //   constraint: 'purchase_createdById_fkey',
+      //   kind: 'foreignKey',
+      // }),
+      // this.dropIndex({
+      //   schema: 'public',
+      //   table: 'purchase',
+      //   index: 'purchase_createdById_idx_8bf640ed',
+      // }),
+      // this.dropColumn({ schema: 'public', table: 'purchase', column: 'createdById' }),
+      // this.dropTable({ schema: 'public', table: 'user' }),
     ];
   }
 }
