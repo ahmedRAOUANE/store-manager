@@ -1,0 +1,69 @@
+INSTRUCTIONS:
+- This file is used to track the progress of tasks in a project.
+- the highlighted sections are to be filled out with the current status of tasks.
+- this is a list of all section names: DONE/FIXED | DONE | FIXED | TODO | ONGOING | DESCRIPTION | INSTRUCTIONS
+- under each section, list the tasks with a brief description.
+- use Feature for new functionalities, Test for testing tasks, Issue for bugs or problems.
+
+DONE:
+- Feature: brief description
+
+ONGOING:
+- working on the purchase server action...
+
+DONE/FIXED:
+- 
+
+TODO:
+- we currently now working on the dashboards
+- after the store creation is implemented make sure to redirect the user to activate page with search params that desides witch message will be shown
+- in store/[storeId]/manager/members a manager can promot/inpromot his own account 
+    - this is a security issue, a user should not be able to change his own role
+
+WARNING:
+- the migration `20260911T0924_add_sales_and_sale_item` failed because the original store.currency DEFAULT value was 'USD'
+    so when changed to DZ, prisma filed the update 
+    the solution was to change the default value manually by running 
+    ```sql
+        ALTER TABLE "public"."store"
+        ALTER COLUMN "currency" SET DEFAULT 'DZ';
+    ```
+    directly into the database
+
+    the failure reason is unknown
+    all the stages
+        - contract emit
+        - migration plan
+    succeded
+    the only failure was in 
+        - db migrate
+    appearanlty the part that is responsible for changing the default is the one who caused the failure
+    yet the reason remains unknown
+        - db verify - didn't report anything
+        - the generated `migrations/app/20260911T0924_add_sales_and_sale_item/migration.ts` looks fine
+        - the error was mismatch - althou it should be mismatch, that's why we are changing it
+    
+    !this documentation is for future updates in case the this error apeared again
+
+## for next versions
+
+Feature:
+    - Inventory Adjustments: 
+        stores might need to handle
+            - damaged products
+            - lost products
+            - expired products
+            - stock-count corrections
+            - manually discovered shortages
+            - initial stock entry
+        so this featire is didicated to solve this problem
+
+
+app/admin/[adminId]
+    dashboard/
+        page.tsx
+    stores/
+        page.tsx
+    users/
+        page.tsx
+    layout.tsx

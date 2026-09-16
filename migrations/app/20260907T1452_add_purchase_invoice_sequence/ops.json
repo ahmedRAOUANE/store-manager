@@ -1,0 +1,108 @@
+[
+  {
+    "id": "custom.purchase_invoice_number_sequence",
+    "label": "Create purchase invoice sequence and generator function",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create purchase_invoice_seq sequence and generate_invoice_number function",
+        "sql": "\n              CREATE SEQUENCE IF NOT EXISTS purchase_invoice_seq START WITH 1 INCREMENT BY 1;\n\n              CREATE OR REPLACE FUNCTION generate_invoice_number()\n              RETURNS text AS $$\n              BEGIN\n                  RETURN 'INV-' || LPAD(nextval('purchase_invoice_seq')::text, 6, '0');\n              END;\n              $$ LANGUAGE plpgsql;\n            "
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "alterNullability.setNotNull.purchase.invoiceNumber",
+    "label": "Set NOT NULL on \"purchase\".\"invoiceNumber\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "invoiceNumber",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"invoiceNumber\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "invoiceNumber"
+        ]
+      },
+      {
+        "description": "ensure no NULL values in \"invoiceNumber\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"purchase\" WHERE \"invoiceNumber\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"invoiceNumber\"",
+        "sql": "ALTER TABLE \"public\".\"purchase\" ALTER COLUMN \"invoiceNumber\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"invoiceNumber\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "invoiceNumber",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "setDefault.purchase.invoiceNumber",
+    "label": "Set default on \"purchase\".\"invoiceNumber\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "invoiceNumber",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"invoiceNumber\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "invoiceNumber"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"invoiceNumber\"",
+        "sql": "ALTER TABLE \"public\".\"purchase\" ALTER COLUMN \"invoiceNumber\" SET DEFAULT (generate_invoice_number())"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"invoiceNumber\" has a default",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"column_default\" IS NOT NULL)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "invoiceNumber"
+        ]
+      }
+    ]
+  }
+]

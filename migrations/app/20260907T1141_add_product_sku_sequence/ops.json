@@ -1,0 +1,60 @@
+[
+  {
+    "id": "custom.product_sku_sequence",
+    "label": "Create product SKU sequence and generator function",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create product_sku_seq sequence and generate_prd_sku function",
+        "sql": "\n              CREATE SEQUENCE IF NOT EXISTS product_sku_seq START WITH 1 INCREMENT BY 1;\n\n              CREATE OR REPLACE FUNCTION generate_prd_sku()\n              RETURNS text AS $$\n              BEGIN\n                  RETURN 'PRD-' || LPAD(nextval('product_sku_seq')::text, 6, '0');\n              END;\n              $$ LANGUAGE plpgsql;\n            "
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "setDefault.product.sku",
+    "label": "Set default on \"product\".\"sku\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "sku",
+        "table": "product"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"sku\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "product",
+          "sku"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"sku\"",
+        "sql": "ALTER TABLE \"public\".\"product\" ALTER COLUMN \"sku\" SET DEFAULT (generate_prd_sku())"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"sku\" has a default",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"column_default\" IS NOT NULL)) AS \"result\"",
+        "params": [
+          "public",
+          "product",
+          "sku"
+        ]
+      }
+    ]
+  }
+]

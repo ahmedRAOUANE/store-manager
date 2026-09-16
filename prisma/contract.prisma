@@ -1,0 +1,333 @@
+// use prisma-next
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum GlobalRole {
+  @@type("pg/text@1")
+  ADMIN
+  USER
+}
+
+enum StoreStatus {
+  @@type("pg/text@1")
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum StoreRole {
+  @@type("pg/text@1")
+  OWNER
+  MANAGER
+  STAFF
+}
+
+enum MembershipStatus {
+  @@type("pg/text@1")
+  PENDING
+  ACTIVE
+  REJECTED
+  INVALIDATED
+}
+
+// ============================================================
+// USER
+// ============================================================
+
+model User {
+  id Uuid @id @default(uuid())
+
+  kindeId String @unique
+
+  email     String?
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+
+  globalRole GlobalRole @default(USER)
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  memberships StoreMembership[]
+  purchases Purchase[]
+  sales      Sale[]
+
+  @@index([email])
+}
+
+// ============================================================
+// STORE
+// ============================================================
+
+model Store {
+  id          Uuid  @id @default(uuid())
+  name        String
+  description String?
+  phone       String?
+  email       String?
+  address     String?
+  currency    String  @default("DZ")
+  timezone    String  @default("UTC")
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  status StoreStatus @default(PENDING)
+
+  products  Product[]
+  suppliers Supplier[]
+  purchases Purchase[]
+  memberships StoreMembership[]
+  sales Sale[]
+
+  @@index([status])
+}
+
+// ============================================================
+// STORE MEMBERSHIP
+// ============================================================
+
+model StoreMembership {
+  id Uuid @id @default(uuid())
+
+  userId  Uuid
+  storeId Uuid
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id])
+
+  role   StoreRole
+  status MembershipStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  @@unique([userId, storeId])
+  @@index([userId])
+  @@index([storeId])
+  @@index([storeId, status])
+}
+
+// ============================================================
+// PRODUCT
+// ============================================================
+
+model Product {
+  id      Uuid @id @default(uuid())
+  storeId Uuid
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  name        String
+  sku         String @default(dbgenerated("generate_prd_sku()"))
+  barcode     String?
+  description String?
+
+  unit String @default("piece")
+
+  // Current inventory
+  stockQuantity Float @default(0)
+
+  // Alert when stock reaches this level
+  minimumStock Float @default(0)
+
+  // Current average purchase cost
+  averageCost Float @default(0)
+
+  // Default selling price
+  sellingPrice Float @default(0)
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  purchaseItems PurchaseItem[]
+  saleItems     SaleItem[]
+
+  @@unique([storeId, sku])
+  @@unique([storeId, barcode])
+  @@index([storeId])
+  @@index([storeId, name])
+}
+
+// ============================================================
+// SUPPLIER
+// ============================================================
+
+model Supplier {
+  id      Uuid @id @default(uuid())
+  storeId Uuid
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  name      String
+  phone     String?
+  email     String?
+  address   String?
+  taxNumber String?
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  purchases Purchase[]
+
+  @@index([storeId])
+  @@index([storeId, name])
+}
+
+// ============================================================
+// PURCHASE
+// ============================================================
+
+model Purchase {
+  id      Uuid @id @default(uuid())
+  storeId Uuid
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  supplierId Uuid?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  createdById Uuid?
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  invoiceNumber String @default(dbgenerated("generate_invoice_number()"))
+  purchaseDate  DateTime @default(now())
+
+  // Purchase totals
+  subtotal       Float @default(0)
+  discountAmount Float @default(0)
+  taxAmount      Float @default(0)
+  shippingCost   Float @default(0)
+  otherCost      Float @default(0)
+  totalAmount    Float @default(0)
+
+  amountPaid Float @default(0)
+  amountDue  Float @default(0)
+
+  notes String?
+
+  createdAt DateTime @default(now()) // temporal.createdAtString()
+  updatedAt temporal.updatedAt()     // temporal.updatedAtString()
+
+  items PurchaseItem[]
+
+  @@unique([storeId, invoiceNumber])
+  @@index([storeId])
+  @@index([supplierId])
+  @@index([createdById])
+  @@index([purchaseDate])
+  @@index([storeId, purchaseDate])
+}
+
+// ============================================================
+// PURCHASE ITEM
+// ============================================================
+
+model PurchaseItem {
+  id    Uuid @id @default(uuid())
+
+  purchaseId Uuid
+  purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  productId Uuid
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Float
+
+  // Price paid for one unit
+  unitCost Float
+
+  discountAmount Float @default(0)
+  taxAmount      Float @default(0)
+
+  // Final cost for this line
+  totalAmount Float
+
+  lineSubtotal Float
+
+  // Optional information for products with batches
+  batchNumber String?
+  expiryDate  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  @@index([purchaseId])
+  @@index([productId])
+}
+
+// ============================================================
+// SALE
+// ============================================================
+
+model Sale {
+  id      Uuid @id @default(uuid())
+  storeId Uuid
+  store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  createdById Uuid
+  createdBy   User @relation(fields: [createdById], references: [id])
+
+  invoiceNumber String @default(dbgenerated("generate_invoice_number()"))
+  saleDate      DateTime @default(now())
+
+  // Sale totals
+  subtotal       Float @default(0)
+  discountAmount Float @default(0)
+  taxAmount      Float @default(0)
+  totalAmount    Float @default(0)
+
+  amountPaid Float @default(0)
+  amountDue  Float @default(0)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  items SaleItem[]
+
+  @@unique([storeId, invoiceNumber])
+  @@index([storeId])
+  @@index([createdById])
+  @@index([saleDate])
+  @@index([storeId, saleDate])
+}
+
+// ============================================================
+// SALE ITEM
+// ============================================================
+
+model SaleItem {
+  id    Uuid @id @default(uuid())
+
+  saleId Uuid
+  sale   Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  productId Uuid
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Float
+
+  // Actual selling price for one unit at the time of sale
+  unitPrice Float
+
+  discountAmount Float @default(0)
+  taxAmount      Float @default(0)
+
+  lineSubtotal Float
+  totalAmount  Float
+
+  // Cost of goods sold at the time of sale
+  unitCost Float
+  totalCost Float
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  @@index([saleId])
+  @@index([productId])
+}

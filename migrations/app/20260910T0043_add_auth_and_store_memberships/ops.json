@@ -1,0 +1,771 @@
+[
+  {
+    "id": "table.storeMembership",
+    "label": "Create table \"storeMembership\"",
+    "summary": "Creates table \"storeMembership\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "storeMembership"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"storeMembership\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"storeMembership\"",
+        "sql": "CREATE TABLE \"public\".\"storeMembership\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"role\" text NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"storeId\" uuid NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"storeMembership_role_check_6fc3012b\" CHECK (\"role\" IN ('OWNER', 'MANAGER', 'STAFF')),\n  CONSTRAINT \"storeMembership_status_check_767350ca\" CHECK (\"status\" IN ('PENDING', 'ACTIVE', 'REJECTED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"storeMembership\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.user",
+    "label": "Create table \"user\"",
+    "summary": "Creates table \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"user\"",
+        "sql": "CREATE TABLE \"public\".\"user\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" text,\n  \"firstName\" text,\n  \"globalRole\" text DEFAULT 'USER' NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"imageUrl\" text,\n  \"kindeId\" text NOT NULL,\n  \"lastName\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"user_globalRole_check_ac6ca7bf\" CHECK (\"globalRole\" IN ('ADMIN', 'USER'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.purchase.createdById",
+    "label": "Add column \"createdById\" to \"purchase\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "createdById",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"createdById\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "createdById"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"createdById\"",
+        "sql": "ALTER TABLE \"public\".\"purchase\" ADD COLUMN \"createdById\" uuid"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"createdById\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "createdById"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.store.status",
+    "label": "Add column \"status\" to \"store\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "status",
+        "table": "store"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"status\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "store",
+          "status"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"status\"",
+        "sql": "ALTER TABLE \"public\".\"store\" ADD COLUMN \"status\" text DEFAULT 'PENDING' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"status\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "store",
+          "status"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.purchaseItem.lineSubtotal",
+    "label": "Add column \"lineSubtotal\" to \"purchaseItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lineSubtotal",
+        "table": "purchaseItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lineSubtotal\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchaseItem",
+          "lineSubtotal"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lineSubtotal\"",
+        "sql": "ALTER TABLE \"public\".\"purchaseItem\" ADD COLUMN \"lineSubtotal\" float8"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lineSubtotal\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchaseItem",
+          "lineSubtotal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data_migration.backfill-purchaseItem-lineSubtotal",
+    "label": "Data transform: backfill-purchaseItem-lineSubtotal",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [
+      {
+        "description": "Check backfill-purchaseItem-lineSubtotal has work to do",
+        "sql": "SELECT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"purchaseItem\" WHERE \"lineSubtotal\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "Run backfill-purchaseItem-lineSubtotal",
+        "sql": "UPDATE \"public\".\"purchaseItem\" SET \"lineSubtotal\" = \"quantity\" * \"unitCost\", \"updatedAt\" = $1 WHERE \"lineSubtotal\" IS NULL",
+        "params": [
+          "2026-09-10T01:49:59.832Z"
+        ]
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "Verify backfill-purchaseItem-lineSubtotal resolved all violations",
+        "sql": "SELECT NOT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"purchaseItem\" WHERE \"lineSubtotal\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.setNotNull.purchaseItem.lineSubtotal",
+    "label": "Set NOT NULL on \"purchaseItem\".\"lineSubtotal\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lineSubtotal",
+        "table": "purchaseItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lineSubtotal\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchaseItem",
+          "lineSubtotal"
+        ]
+      },
+      {
+        "description": "ensure no NULL values in \"lineSubtotal\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"purchaseItem\" WHERE \"lineSubtotal\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"lineSubtotal\"",
+        "sql": "ALTER TABLE \"public\".\"purchaseItem\" ALTER COLUMN \"lineSubtotal\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lineSubtotal\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "purchaseItem",
+          "lineSubtotal",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.store.store_status_check_7c5ddd00",
+    "label": "Add check constraint \"store_status_check_7c5ddd00\" on \"store\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "store_status_check_7c5ddd00",
+        "table": "store"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"store_status_check_7c5ddd00\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "store_status_check_7c5ddd00",
+          "public",
+          "\"public\".\"store\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"store_status_check_7c5ddd00\"",
+        "sql": "ALTER TABLE \"public\".\"store\" ADD CONSTRAINT \"store_status_check_7c5ddd00\" CHECK (\"status\" IN ('PENDING', 'ACTIVE', 'SUSPENDED'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"store_status_check_7c5ddd00\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "store_status_check_7c5ddd00",
+          "public",
+          "\"public\".\"store\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.storeMembership.storeMembership_userId_storeId_key",
+    "label": "Add unique constraint on \"storeMembership\" (userId, storeId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "storeMembership_userId_storeId_key",
+        "table": "storeMembership"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"storeMembership_userId_storeId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "storeMembership_userId_storeId_key",
+          "public",
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"storeMembership_userId_storeId_key\"",
+        "sql": "ALTER TABLE \"public\".\"storeMembership\" ADD CONSTRAINT \"storeMembership_userId_storeId_key\" UNIQUE (\"userId\", \"storeId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"storeMembership_userId_storeId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "storeMembership_userId_storeId_key",
+          "public",
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_kindeId_key",
+    "label": "Add unique constraint on \"user\" (kindeId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_kindeId_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_kindeId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_kindeId_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_kindeId_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_kindeId_key\" UNIQUE (\"kindeId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_kindeId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_kindeId_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.purchase.purchase_createdById_idx_8bf640ed",
+    "label": "Create index \"purchase_createdById_idx_8bf640ed\" on \"purchase\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "purchase_createdById_idx_8bf640ed",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"purchase_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"purchase_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"purchase_createdById_idx_8bf640ed\" ON \"public\".\"purchase\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"purchase_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.store.store_status_idx_e98638ab",
+    "label": "Create index \"store_status_idx_e98638ab\" on \"store\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "store_status_idx_e98638ab",
+        "table": "store"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"store_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"store_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"store_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"store_status_idx_e98638ab\" ON \"public\".\"store\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"store_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"store_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.storeMembership.storeMembership_storeId_idx_c545737d",
+    "label": "Create index \"storeMembership_storeId_idx_c545737d\" on \"storeMembership\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "storeMembership_storeId_idx_c545737d",
+        "table": "storeMembership"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"storeMembership_storeId_idx_c545737d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership_storeId_idx_c545737d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"storeMembership_storeId_idx_c545737d\"",
+        "sql": "CREATE INDEX \"storeMembership_storeId_idx_c545737d\" ON \"public\".\"storeMembership\" (\"storeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"storeMembership_storeId_idx_c545737d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership_storeId_idx_c545737d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.storeMembership.storeMembership_storeId_status_idx_81db0ee8",
+    "label": "Create index \"storeMembership_storeId_status_idx_81db0ee8\" on \"storeMembership\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "storeMembership_storeId_status_idx_81db0ee8",
+        "table": "storeMembership"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"storeMembership_storeId_status_idx_81db0ee8\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership_storeId_status_idx_81db0ee8\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"storeMembership_storeId_status_idx_81db0ee8\"",
+        "sql": "CREATE INDEX \"storeMembership_storeId_status_idx_81db0ee8\" ON \"public\".\"storeMembership\" (\"storeId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"storeMembership_storeId_status_idx_81db0ee8\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership_storeId_status_idx_81db0ee8\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.storeMembership.storeMembership_userId_idx_a489d58a",
+    "label": "Create index \"storeMembership_userId_idx_a489d58a\" on \"storeMembership\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "storeMembership_userId_idx_a489d58a",
+        "table": "storeMembership"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"storeMembership_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"storeMembership_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"storeMembership_userId_idx_a489d58a\" ON \"public\".\"storeMembership\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"storeMembership_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"storeMembership_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.user.user_email_idx_46df9cad",
+    "label": "Create index \"user_email_idx_46df9cad\" on \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "user_email_idx_46df9cad",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"user_email_idx_46df9cad\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_email_idx_46df9cad\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"user_email_idx_46df9cad\"",
+        "sql": "CREATE INDEX \"user_email_idx_46df9cad\" ON \"public\".\"user\" (\"email\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"user_email_idx_46df9cad\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_email_idx_46df9cad\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.storeMembership.storeMembership_userId_fkey",
+    "label": "Add foreign key \"storeMembership_userId_fkey\" on \"storeMembership\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "storeMembership_userId_fkey",
+        "table": "storeMembership"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"storeMembership_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "storeMembership_userId_fkey",
+          "public",
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"storeMembership_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"storeMembership\"\nADD CONSTRAINT \"storeMembership_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"storeMembership_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "storeMembership_userId_fkey",
+          "public",
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.storeMembership.storeMembership_storeId_fkey",
+    "label": "Add foreign key \"storeMembership_storeId_fkey\" on \"storeMembership\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "storeMembership_storeId_fkey",
+        "table": "storeMembership"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"storeMembership_storeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "storeMembership_storeId_fkey",
+          "public",
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"storeMembership_storeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"storeMembership\"\nADD CONSTRAINT \"storeMembership_storeId_fkey\"\nFOREIGN KEY (\"storeId\")\nREFERENCES \"public\".\"store\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"storeMembership_storeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "storeMembership_storeId_fkey",
+          "public",
+          "\"public\".\"storeMembership\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.purchase.purchase_createdById_fkey",
+    "label": "Add foreign key \"purchase_createdById_fkey\" on \"purchase\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "purchase_createdById_fkey",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"purchase_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_createdById_fkey",
+          "public",
+          "\"public\".\"purchase\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"purchase_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"purchase\"\nADD CONSTRAINT \"purchase_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"purchase_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_createdById_fkey",
+          "public",
+          "\"public\".\"purchase\""
+        ]
+      }
+    ]
+  }
+]

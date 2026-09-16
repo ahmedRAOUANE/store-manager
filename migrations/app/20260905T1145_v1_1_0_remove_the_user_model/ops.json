@@ -1,0 +1,162 @@
+[
+  {
+    "id": "dropConstraint.purchase.purchase_createdById_fkey",
+    "label": "Drop constraint \"purchase_createdById_fkey\" on \"purchase\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "purchase_createdById_fkey",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"purchase_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_createdById_fkey",
+          "public",
+          "\"public\".\"purchase\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"purchase_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"purchase\" DROP CONSTRAINT \"purchase_createdById_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"purchase_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "purchase_createdById_fkey",
+          "public",
+          "\"public\".\"purchase\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropIndex.purchase.purchase_createdById_idx_8bf640ed",
+    "label": "Drop index \"purchase_createdById_idx_8bf640ed\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "purchase_createdById_idx_8bf640ed",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"purchase_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"purchase_createdById_idx_8bf640ed\"",
+        "sql": "DROP INDEX \"public\".\"purchase_createdById_idx_8bf640ed\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"purchase_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"purchase_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.purchase.createdById",
+    "label": "Drop column \"createdById\" from \"purchase\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "createdById",
+        "table": "purchase"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"createdById\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "createdById"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"createdById\"",
+        "sql": "ALTER TABLE \"public\".\"purchase\" DROP COLUMN \"createdById\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"createdById\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "purchase",
+          "createdById"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropTable.user",
+    "label": "Drop table \"user\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop table \"user\"",
+        "sql": "DROP TABLE \"public\".\"user\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  }
+]
