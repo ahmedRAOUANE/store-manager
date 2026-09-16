@@ -147,7 +147,7 @@ export function AppSidebar({ className, ...content }: AppSidebarProps) {
         <aside
             aria-label="Sidebar"
             className={cn(
-                "hidden h-full border-r border-outline-variant bg-surface-lowest lg:block",
+                "hidden h-full border-r border-outline-variant bg-surface-lowest md:block",
                 className,
             )}
         >

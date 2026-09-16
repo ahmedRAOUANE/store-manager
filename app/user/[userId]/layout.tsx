@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { buildUserNavItems } from "@/components/layout/nav-items";
 import { TopBar } from "@/components/layout/top-bar";
 import { UserMenu } from "@/components/layout/user-menu";
@@ -28,7 +29,7 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
 
     return (
         <div className="h-screen grid grid-cols-1 md:grid-cols-4 grid-rows-10">
-            <div className="col-span-1 row-span-10">
+            <div className="hidden md:block md:col-span-1 md:row-span-10">
                 <AppSidebar title={user.firstName || ""} items={sidebarItems} />
             </div>
 
@@ -36,7 +37,7 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
                 <TopBar
                     leading={
                         <div className="flex items-center gap-3">
-                            {/* Mobile sidebar trigger can go here later */}
+                            <MobileNav title={user.firstName || ""} items={sidebarItems} />
                             <h1 className="truncate text-sm font-semibold text-on-surface">
                                 Dashboard
                             </h1>
@@ -64,11 +65,13 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
                             </button>
 
                             {/* User menu */}
-                            <UserMenu 
+                            <UserMenu
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
+                                links={[
+                                    { label: "View Profile", link: `user/${userId}/profile` }
+                                ]}
                             />
-                            {/* <UserMenu /> */}
                         </>
                     }
                 />

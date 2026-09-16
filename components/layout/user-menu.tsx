@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SidebarAvatar } from "./app-sidebar";
 import { cn } from "@/utils/jsx-classes";
-import { linkSync } from "fs";
 
 export interface UserMenuProps {
     name: string;

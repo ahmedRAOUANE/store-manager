@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { buildStoreNavItems } from "@/components/layout/nav-items";
 import { TopBar } from "@/components/layout/top-bar";
 import { UserMenu } from "@/components/layout/user-menu";
@@ -33,15 +34,15 @@ export default async function ManagerLayout({ children, params }: LayoutProps<"/
 
     return (
         <div className="h-screen grid grid-cols-1 md:grid-cols-4 grid-rows-10">
-            <div className="col-span-1 row-span-10">
-                <AppSidebar title="store"  items={sidebarItems} />
+            <div className="hidden md:block md:col-span-1 md:row-span-10">
+                <AppSidebar title={store.name || ""} items={sidebarItems} />
             </div>
 
             <div className="col-span-1 md:col-span-3">
                 <TopBar
                     leading={
                         <div className="flex items-center gap-3">
-                            {/* Mobile sidebar trigger can go here later */}
+                            <MobileNav title={store.name || ""} items={sidebarItems} />
                             <h1 className="truncate text-sm font-semibold text-on-surface">
                                 Dashboard
                             </h1>
@@ -76,7 +77,6 @@ export default async function ManagerLayout({ children, params }: LayoutProps<"/
                                     { label: "View Profile", link: `user/${user.id}/profile` }
                                 ]}
                             />
-                            {/* <UserMenu /> */}
                         </>
                     }
                 />

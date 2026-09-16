@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { buildStoreNavItems } from "@/components/layout/nav-items";
 import { TopBar } from "@/components/layout/top-bar";
 import { UserMenu } from "@/components/layout/user-menu";
@@ -25,16 +26,16 @@ export default async function OwnerLayout({ children, params }: LayoutProps<"/st
     const sidebarItems = buildStoreNavItems(storeId, "OWNER");
 
     return (
-        <div className="h-screen grid grid-cols-1 md:grid-cols-4 grid-rows-10 min-h-full">
-            <div className="col-span-1 row-span-10">
-                <AppSidebar title="store" items={sidebarItems} />
+        <div className="h-screen grid grid-cols-1 md:grid-cols-4 grid-rows-10">
+            <div className="hidden md:block md:col-span-1 md:row-span-10">
+                <AppSidebar title={store.name || ""} items={sidebarItems} />
             </div>
 
             <div className="col-span-1 md:col-span-3">
                 <TopBar
                     leading={
                         <div className="flex items-center gap-3">
-                            {/* Mobile sidebar trigger can go here later */}
+                            <MobileNav title={store.name || ""} items={sidebarItems} />
                             <h1 className="truncate text-sm font-semibold text-on-surface">
                                 Dashboard
                             </h1>
@@ -69,13 +70,12 @@ export default async function OwnerLayout({ children, params }: LayoutProps<"/st
                                     { label: "View Profile", link: `user/${user.id}/profile` }
                                 ]}
                             />
-                            {/* <UserMenu /> */}
                         </>
                     }
                 />
             </div>
 
-            <main className="col-span-1 md:col-span-3 row-span-9 p-6 overflow-auto">
+            <main className="col-span-1 md:col-span-3 row-span-9 p-6 overflow-y-auto">
                 {children}
             </main>
         </div>
