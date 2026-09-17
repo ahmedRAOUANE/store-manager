@@ -70,5 +70,19 @@ export const getDiscoveryStores = withAuth(
 )
 
 export const getAllMemberships = withAuth(
-    async (user) => await getAllMembershipsService(user.id)
+    async (user) => {
+        const memberships = await getAllMembershipsService(user.id);
+        if (memberships instanceof AppError) {
+            return {
+                ok: false,
+                message: "failed to get memberships"
+            }
+        }
+
+        return {
+            ok: true,
+            memberships,
+            message: ""
+        }
+    }
 );

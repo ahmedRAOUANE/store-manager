@@ -70,7 +70,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/ad
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
                                 links={[
-                                    { label: "View Profile", link: `user/${adminId}/profile`}
+                                    { label: "View Profile", link: `/user/${adminId}/profile`}
                                 ]}
                             />
                         </>

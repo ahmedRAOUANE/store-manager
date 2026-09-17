@@ -17,6 +17,7 @@ export const getAllMembershipsService = async (userId: string) => {
             .where({
                 userId
             })
+            .include('store', (s) => s.select('name'))
             .all();
     } catch (error) {
         console.log("services/storeMembership.services.ts > getActiveMembershipService > ", error)

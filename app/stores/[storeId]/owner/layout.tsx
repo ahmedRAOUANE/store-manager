@@ -67,7 +67,7 @@ export default async function OwnerLayout({ children, params }: LayoutProps<"/st
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
                                 links={[
-                                    { label: "View Profile", link: `user/${user.id}/profile` }
+                                    { label: "View Profile", link: `/user/${user.id}/profile` }
                                 ]}
                             />
                         </>

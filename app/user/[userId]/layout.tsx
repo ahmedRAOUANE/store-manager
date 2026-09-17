@@ -1,3 +1,4 @@
+import { getAllMemberships } from "@/actions/user.actions";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { buildUserNavItems } from "@/components/layout/nav-items";
@@ -25,7 +26,16 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
         redirect("/dashboard");
     }
 
+    const membershipsResult = await getAllMemberships()
+
     const sidebarItems = buildUserNavItems(userId);
+    const adminDashboard = user.globalRole === "ADMIN" ? { label: "View admin dashboard", link: `/admin/${userId}/dashboard` } : null;
+    const membershipLinks: { link: string; label: string }[] = membershipsResult.ok && membershipsResult.memberships
+        ? membershipsResult.memberships.map(m => ({
+            link: `/stores/${m.storeId}/${m.role}/dashboard`,
+            label: `${m.store.name}`
+        }))
+        : [];
 
     return (
         <div className="h-screen grid grid-cols-1 md:grid-cols-4 grid-rows-10">
@@ -68,9 +78,7 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
                             <UserMenu
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
-                                links={[
-                                    { label: "View Profile", link: `user/${userId}/profile` }
-                                ]}
+                                links={adminDashboard ? [adminDashboard, ...membershipLinks] : membershipLinks}
                             />
                         </>
                     }

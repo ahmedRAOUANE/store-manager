@@ -74,7 +74,7 @@ export default async function ManagerLayout({ children, params }: LayoutProps<"/
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
                                 links={[
-                                    { label: "View Profile", link: `user/${user.id}/profile` }
+                                    { label: "View Profile", link: `/user/${user.id}/profile` }
                                 ]}
                             />
                         </>
