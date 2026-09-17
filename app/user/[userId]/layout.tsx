@@ -76,6 +76,7 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
 
                             {/* User menu */}
                             <UserMenu
+                                signOutHref="/api/auth/logout"
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
                                 links={adminDashboard ? [adminDashboard, ...membershipLinks] : membershipLinks}

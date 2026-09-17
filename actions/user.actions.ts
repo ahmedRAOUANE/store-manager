@@ -49,7 +49,8 @@ export const getDiscoveryStores = withAuth(
         if (stores instanceof AppError) {
             return {
                 ok: false,
-                message: "something went wrong"
+                message: "something went wrong",
+                data: []
             }
         } else {
             return {
@@ -61,8 +62,8 @@ export const getDiscoveryStores = withAuth(
                     // phone: store.phone,
                     // email: store.email,
                     address: store.address,
-                    membershipStatus: store.memberships ? store.memberships[0].status : null,
-                    role: store.memberships ? store.memberships[0].role : null
+                    membershipStatus: store.memberships?.[0]?.status ?? null,
+                    role: store.memberships?.[0]?.role ?? null
                 }))
             }
         }

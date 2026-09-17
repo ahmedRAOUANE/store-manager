@@ -60,7 +60,7 @@ export default function StoreCard({
                 </div>
             )}
 
-            {store.membershipStatus === "ACTIVE" && (
+            {(store.membershipStatus === "ACTIVE" && store.role) && (
                 <Link href={`/stores/${store.id}/${store.role.toLowerCase()}/dashboard/`} className="block mt-5 rounded-lg border px-4 py-2 text-center text-sm">
                     dashboard
                 </Link>

@@ -1,5 +1,5 @@
 import { getDiscoveryStores } from "@/actions/user.actions";
-import StoreList, { UserStore } from "@/components/stores/store-list";
+import StoreList from "@/components/stores/store-list";
 import { ErrorState } from "@/components/UI/state";
 import Link from "next/link";
 
@@ -27,7 +27,7 @@ export default async function StoresPage({ params }: PageProps<"/user/[userId]/s
                 <Link href={`/user/${userId}/stores/request`}>request a new store</Link>
             </div>
 
-            <StoreList stores={result.data as UserStore[]} />
+            <StoreList stores={result.data} />
         </div>
     );
 }

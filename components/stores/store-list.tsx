@@ -17,7 +17,7 @@ export type UserStore = {
     | "REJECTED"
     | "INVALIDATED"
     | null;
-    role: "OWNER" | "MANAGER" | "STAFF";
+    role: "OWNER" | "MANAGER" | "STAFF" | null;
 };
 
 type StoreListProps = {
