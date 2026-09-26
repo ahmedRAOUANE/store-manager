@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { UuidSchema } from "./general.schema";
+import { isLocale } from "@/i18n/config";
 
 /*
 model User {
@@ -29,9 +30,15 @@ export const GlobalRole = z.enum({
     ADMIN: "ADMIN"
 })
 
+export const LocaleSchema = z.string().refine(isLocale, {
+    message: "unsupported locale",
+});
+
 export const GetUserSchema = z.object({
     id: UuidSchema,
     kindeId: z.string(),
+
+    locale: LocaleSchema.default("en"),
 
     email: z.email(),
     firstName: z.string().nullable(),
@@ -58,4 +65,12 @@ export const UpdateUserSchema = CreateUserSchema.extend({
     kindeId: z.string().readonly(),
 })
 
-export type UpdateUserInput = z.infer<typeof UpdateUserSchema>
+export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
+
+export const UpdateUserLocaleSchema = z.object({
+    locale: LocaleSchema,
+});
+
+export type UpdateUserLocaleInput = z.infer<
+    typeof UpdateUserLocaleSchema
+>;

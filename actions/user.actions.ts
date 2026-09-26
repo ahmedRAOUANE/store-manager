@@ -3,7 +3,7 @@
 import { AppError } from "@/errors/base.error";
 import { createStoreService, getDiscoveryStoresService } from "@/services/store.services";
 import { getAllMembershipsService, requestMembershipService } from "@/services/storeMembership.services";
-import { getUserService } from "@/services/user.services";
+import { getUserService, updateUserLocaleService } from "@/services/user.services";
 import { withAuth } from "@/utils/auth";
 import { CreateStoreInput } from "@/zod/store.schema";
 import { revalidatePath } from "next/cache";
@@ -86,4 +86,25 @@ export const getAllMemberships = withAuth(
             message: ""
         }
     }
+);
+
+export const updateUserLocale = withAuth(
+    async (user, locale: "en" | "ar") => {
+        const result = await updateUserLocaleService(user.id, {
+            locale,
+        });
+
+        if (result instanceof AppError) {
+            return {
+                ok: false,
+                message: "failed to update language",
+            };
+        }
+
+        revalidatePath(`/user/${user.id}/profile`);
+
+        return {
+            ok: true,
+        };
+    },
 );

@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { getLocale } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+
+import { localeDirection } from "@/i18n/config";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,7 +21,6 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
-  /* Enable Inter's OpenType alternates for tabular figures and legibility. */
   axes: [],
 });
 
@@ -25,13 +29,23 @@ export const metadata: Metadata = {
   description: "Simple store management for small and medium businesses.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({
+  children,
+}: LayoutProps<"/">) {
+  const locale = await getLocale();
+  const dir = localeDirection[locale as keyof typeof localeDirection];
+
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={dir}
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <NextIntlClientProvider>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }

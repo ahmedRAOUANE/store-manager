@@ -1,0 +1,236 @@
+{
+    "common": {
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "close": "إغلاق",
+        "delete": "حذف",
+        "edit": "تعديل",
+        "create": "إنشاء",
+        "search": "بحث",
+        "loading": "جارٍ التحميل",
+        "confirm": "تأكيد",
+        "back": "رجوع",
+        "next": "التالي",
+        "previous": "السابق",
+        "submit": "إرسال",
+        "update": "تحديث",
+        "reset": "إعادة تعيين",
+        "clear": "مسح",
+        "apply": "تطبيق",
+        "yes": "نعم",
+        "no": "لا",
+        "view": "عرض",
+        "details": "التفاصيل",
+        "actions": "الإجراءات",
+        "name": "الاسم",
+        "description": "الوصف",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "address": "العنوان",
+        "date": "التاريخ",
+        "status": "الحالة",
+        "total": "الإجمالي",
+        "quantity": "الكمية",
+        "price": "السعر"
+    },
+    "navigation": {
+        "dashboard": "لوحة التحكم",
+        "products": "المنتجات",
+        "sales": "المبيعات",
+        "purchases": "المشتريات",
+        "suppliers": "الموردون",
+        "members": "الأعضاء",
+        "settings": "الإعدادات",
+        "profile": "الملف الشخصي",
+        "stores": "المتاجر"
+    },
+    "userMenu": {
+        "account": "الحساب",
+        "profile": "الملف الشخصي",
+        "signOut": "تسجيل الخروج",
+        "openMenu": "فتح قائمة المستخدم",
+        "menuLabel": "قائمة المستخدم"
+    },
+    "language": {
+        "label": "اللغة",
+        "english": "الإنجليزية",
+        "arabic": "العربية"
+    },
+    "status": {
+        "pending": "قيد الانتظار",
+        "active": "نشط",
+        "suspended": "موقوف",
+        "draft": "مسودة",
+        "outOfStock": "نفد المخزون",
+        "completed": "مكتمل",
+        "cancelled": "ملغى",
+        "approved": "مقبول",
+        "rejected": "مرفوض",
+        "inactive": "غير نشط"
+    },
+    "actions": {
+        "open": "فتح",
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "add": "إضافة",
+        "remove": "إزالة",
+        "refresh": "تحديث",
+        "filter": "تصفية",
+        "sort": "ترتيب",
+        "expand": "توسيع",
+        "collapse": "طي"
+    },
+    "forms": {
+        "required": "هذا الحقل مطلوب",
+        "invalid": "يرجى إدخال قيمة صحيحة",
+        "select": "اختر خيارًا",
+        "noOptions": "لا توجد خيارات متاحة",
+        "noResults": "لم يتم العثور على نتائج",
+        "searchPlaceholder": "بحث..."
+    },
+    "errors": {
+        "generic": "حدث خطأ ما",
+        "failedToLoad": "فشل تحميل البيانات",
+        "failedToSave": "فشل حفظ التغييرات",
+        "failedToDelete": "فشل الحذف",
+        "unauthorized": "ليس لديك صلاحية لتنفيذ هذا الإجراء",
+        "notFound": "لم يتم العثور على العنصر المطلوب"
+    },
+    "emptyStates": {
+        "noData": "لا توجد بيانات متاحة",
+        "noResults": "لم يتم العثور على نتائج",
+        "noProducts": "لم يتم العثور على منتجات",
+        "noSales": "لم يتم العثور على مبيعات",
+        "noPurchases": "لم يتم العثور على مشتريات",
+        "noSuppliers": "لم يتم العثور على موردين",
+        "noMembers": "لم يتم العثور على أعضاء",
+        "noStores": "لم يتم العثور على متاجر"
+    },
+    "confirmation": {
+        "deleteTitle": "حذف",
+        "deleteMessage": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟",
+        "unsavedChangesTitle": "تغييرات غير محفوظة",
+        "unsavedChangesMessage": "لديك تغييرات غير محفوظة. هل أنت متأكد من أنك تريد المغادرة؟"
+    },
+    "dashboard": {
+        "title": "لوحة التحكم",
+        "welcome": "مرحبًا",
+        "overview": "نظرة عامة",
+        "recentActivity": "النشاط الأخير",
+        "statistics": "الإحصائيات"
+    },
+    "stores": {
+        "title": "المتاجر",
+        "create": "إنشاء متجر",
+        "edit": "تعديل المتجر",
+        "details": "تفاصيل المتجر",
+        "name": "اسم المتجر",
+        "description": "وصف المتجر",
+        "address": "عنوان المتجر",
+        "currency": "العملة",
+        "timezone": "المنطقة الزمنية"
+    },
+    "products": {
+        "title": "المنتجات",
+        "create": "إنشاء منتج",
+        "edit": "تعديل المنتج",
+        "details": "تفاصيل المنتج",
+        "name": "اسم المنتج",
+        "sku": "رمز SKU",
+        "barcode": "الباركود",
+        "price": "سعر البيع",
+        "cost": "التكلفة",
+        "stock": "المخزون",
+        "stockQuantity": "كمية المخزون",
+        "minimumStock": "الحد الأدنى للمخزون",
+        "category": "الفئة"
+    },
+    "sales": {
+        "title": "المبيعات",
+        "create": "إنشاء عملية بيع",
+        "details": "تفاصيل عملية البيع",
+        "invoice": "الفاتورة",
+        "customer": "العميل",
+        "items": "العناصر",
+        "subtotal": "المجموع الفرعي",
+        "discount": "الخصم",
+        "tax": "الضريبة",
+        "total": "الإجمالي",
+        "amountPaid": "المبلغ المدفوع",
+        "amountDue": "المبلغ المستحق"
+    },
+    "purchases": {
+        "title": "المشتريات",
+        "create": "إنشاء عملية شراء",
+        "details": "تفاصيل عملية الشراء",
+        "invoice": "الفاتورة",
+        "supplier": "المورد",
+        "items": "العناصر",
+        "subtotal": "المجموع الفرعي",
+        "discount": "الخصم",
+        "tax": "الضريبة",
+        "shipping": "الشحن",
+        "total": "الإجمالي",
+        "amountPaid": "المبلغ المدفوع",
+        "amountDue": "المبلغ المستحق"
+    },
+    "suppliers": {
+        "title": "الموردون",
+        "create": "إنشاء مورد",
+        "edit": "تعديل المورد",
+        "details": "تفاصيل المورد",
+        "name": "اسم المورد",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "address": "العنوان"
+    },
+    "members": {
+        "title": "الأعضاء",
+        "add": "إضافة عضو",
+        "details": "تفاصيل العضو",
+        "role": "الدور",
+        "status": "حالة العضوية"
+    },
+    "profile": {
+        "title": "الملف الشخصي",
+        "personalInformation": "المعلومات الشخصية",
+        "account": "الحساب",
+        "preferences": "التفضيلات",
+        "notifications": "الإشعارات",
+        "notificationsDescription": "تلقي تحديثات حول متاجرك وحسابك.",
+        "emailNotifications": "إشعارات البريد الإلكتروني",
+        "emailNotificationsDescription": "تلقي تحديثات مهمة حول حسابك ومتاجرك عبر البريد الإلكتروني.",
+        "language": "اللغة",
+        "languageDescription": "اختر اللغة المستخدمة في التطبيق.",
+        "comingSoon": "قريبًا"
+    },
+    "settings": {
+        "title": "الإعدادات",
+        "general": "عام",
+        "account": "الحساب",
+        "preferences": "التفضيلات"
+    },
+    "admin": {
+        "title": "الإدارة",
+        "users": "المستخدمون",
+        "stores": "المتاجر",
+        "members": "الأعضاء",
+        "overview": "نظرة عامة"
+    },
+    "table": {
+        "noData": "لا توجد بيانات متاحة",
+        "noResults": "لم يتم العثور على نتائج",
+        "rowsPerPage": "الصفوف في الصفحة",
+        "previousPage": "الصفحة السابقة",
+        "nextPage": "الصفحة التالية"
+    },
+    "accessibility": {
+        "openMenu": "فتح القائمة",
+        "closeMenu": "إغلاق القائمة",
+        "openSidebar": "فتح الشريط الجانبي",
+        "closeSidebar": "إغلاق الشريط الجانبي",
+        "expand": "توسيع",
+        "collapse": "طي"
+    }
+}

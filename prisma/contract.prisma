@@ -41,6 +41,8 @@ model User {
 
   kindeId String @unique
 
+  locale String @default("en")
+
   email     String?
   firstName String?
   lastName  String?

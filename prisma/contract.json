@@ -1628,6 +1628,13 @@
                   "kind": "scalar"
                 }
               },
+              "locale": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -1708,6 +1715,9 @@
                 },
                 "lastName": {
                   "column": "lastName"
+                },
+                "locale": {
+                  "column": "locale"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -3019,6 +3029,15 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "locale": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "en"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-temporal@1",
                   "nativeType": "timestamptz",
@@ -3089,7 +3108,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "55035a0476e348d870418c8d93ebbe55a69fe0d70911c81bf2b10b9338b4d23c"
+    "storageHash": "3e8430f20b705a90ac4ddb6011ea11dd03221512887f21e23be5b6bd026ece45"
   },
   "execution": {
     "executionHash": "e123ff5fce7ea428801cde18721f66296f16b2e15cba27d142a00a242a774c70",

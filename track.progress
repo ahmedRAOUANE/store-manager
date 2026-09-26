@@ -59,11 +59,8 @@ Feature:
         so this featire is didicated to solve this problem
 
 
-app/admin/[adminId]
-    dashboard/
-        page.tsx
-    stores/
-        page.tsx
-    users/
-        page.tsx
-    layout.tsx
+next steps: we are currently here
+- start the db in docker
+- emit the contract
+- view the status
+- 

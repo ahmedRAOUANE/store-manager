@@ -36,6 +36,7 @@ export default defineConfig({
             { name: "membershipRequest"},
             { name: "membershipRequests"},
             { name: "admin"},
+            { name: "locale"},
 
         ]
     }

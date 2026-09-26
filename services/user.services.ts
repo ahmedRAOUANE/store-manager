@@ -7,6 +7,8 @@ import {
     CreateUserSchema,
     GetUserSchema,
     UpdateUserInput,
+    UpdateUserLocaleInput,
+    UpdateUserLocaleSchema,
     UpdateUserSchema,
 } from "@/zod/user.schema";
 import { addAdminService } from "./adminDashboard.services";
@@ -115,6 +117,42 @@ export const getUserService = async (userId: string) => {
         );
 
         throw new DatabaseError("unable to get user from the db", error as Record<string, unknown>);
+    }
+};
+
+export const updateUserLocaleService = async (
+    userId: string,
+    userData: UpdateUserLocaleInput,
+) => {
+    try {
+        const parsedLocale = UpdateUserLocaleSchema.safeParse(userData);
+
+        if (!parsedLocale.success) {
+            console.log(
+                "services/user.services.ts > updateUserLocaleService > ",
+                parsedLocale.error,
+            );
+
+            return new ValidationError(
+                "invalid locale",
+            );
+        }
+
+        return await models.User
+            .where({ id: userId })
+            .update({
+                locale: parsedLocale.data.locale,
+            });
+    } catch (error) {
+        console.log(
+            "services/user.services.ts > updateUserLocaleService > ",
+            error,
+        );
+
+        throw new DatabaseError(
+            "unable to update user locale in the db",
+            error as Record<string, unknown>,
+        );
     }
 };
 

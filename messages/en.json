@@ -1,0 +1,236 @@
+{
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "close": "Close",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "search": "Search",
+        "loading": "Loading",
+        "confirm": "Confirm",
+        "back": "Back",
+        "next": "Next",
+        "previous": "Previous",
+        "submit": "Submit",
+        "update": "Update",
+        "reset": "Reset",
+        "clear": "Clear",
+        "apply": "Apply",
+        "yes": "Yes",
+        "no": "No",
+        "view": "View",
+        "details": "Details",
+        "actions": "Actions",
+        "name": "Name",
+        "description": "Description",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "date": "Date",
+        "status": "Status",
+        "total": "Total",
+        "quantity": "Quantity",
+        "price": "Price"
+    },
+    "navigation": {
+        "dashboard": "Dashboard",
+        "products": "Products",
+        "sales": "Sales",
+        "purchases": "Purchases",
+        "suppliers": "Suppliers",
+        "members": "Members",
+        "settings": "Settings",
+        "profile": "Profile",
+        "stores": "Stores"
+    },
+    "userMenu": {
+        "account": "Account",
+        "profile": "Profile",
+        "signOut": "Sign out",
+        "openMenu": "Open user menu",
+        "menuLabel": "User menu"
+    },
+    "language": {
+        "label": "Language",
+        "english": "English",
+        "arabic": "Arabic"
+    },
+    "status": {
+        "pending": "Pending",
+        "active": "Active",
+        "suspended": "Suspended",
+        "draft": "Draft",
+        "outOfStock": "Out of stock",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "inactive": "Inactive"
+    },
+    "actions": {
+        "open": "Open",
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "add": "Add",
+        "remove": "Remove",
+        "refresh": "Refresh",
+        "filter": "Filter",
+        "sort": "Sort",
+        "expand": "Expand",
+        "collapse": "Collapse"
+    },
+    "forms": {
+        "required": "This field is required",
+        "invalid": "Please enter a valid value",
+        "select": "Select an option",
+        "noOptions": "No options available",
+        "noResults": "No results found",
+        "searchPlaceholder": "Search..."
+    },
+    "errors": {
+        "generic": "Something went wrong",
+        "failedToLoad": "Failed to load data",
+        "failedToSave": "Failed to save changes",
+        "failedToDelete": "Failed to delete",
+        "unauthorized": "You are not authorized to perform this action",
+        "notFound": "The requested resource was not found"
+    },
+    "emptyStates": {
+        "noData": "No data available",
+        "noResults": "No results found",
+        "noProducts": "No products found",
+        "noSales": "No sales found",
+        "noPurchases": "No purchases found",
+        "noSuppliers": "No suppliers found",
+        "noMembers": "No members found",
+        "noStores": "No stores found"
+    },
+    "confirmation": {
+        "deleteTitle": "Delete",
+        "deleteMessage": "Are you sure you want to delete this item?",
+        "unsavedChangesTitle": "Unsaved changes",
+        "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to leave?"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome",
+        "overview": "Overview",
+        "recentActivity": "Recent activity",
+        "statistics": "Statistics"
+    },
+    "stores": {
+        "title": "Stores",
+        "create": "Create store",
+        "edit": "Edit store",
+        "details": "Store details",
+        "name": "Store name",
+        "description": "Store description",
+        "address": "Store address",
+        "currency": "Currency",
+        "timezone": "Timezone"
+    },
+    "products": {
+        "title": "Products",
+        "create": "Create product",
+        "edit": "Edit product",
+        "details": "Product details",
+        "name": "Product name",
+        "sku": "SKU",
+        "barcode": "Barcode",
+        "price": "Selling price",
+        "cost": "Cost",
+        "stock": "Stock",
+        "stockQuantity": "Stock quantity",
+        "minimumStock": "Minimum stock",
+        "category": "Category"
+    },
+    "sales": {
+        "title": "Sales",
+        "create": "Create sale",
+        "details": "Sale details",
+        "invoice": "Invoice",
+        "customer": "Customer",
+        "items": "Items",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "tax": "Tax",
+        "total": "Total",
+        "amountPaid": "Amount paid",
+        "amountDue": "Amount due"
+    },
+    "purchases": {
+        "title": "Purchases",
+        "create": "Create purchase",
+        "details": "Purchase details",
+        "invoice": "Invoice",
+        "supplier": "Supplier",
+        "items": "Items",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "tax": "Tax",
+        "shipping": "Shipping",
+        "total": "Total",
+        "amountPaid": "Amount paid",
+        "amountDue": "Amount due"
+    },
+    "suppliers": {
+        "title": "Suppliers",
+        "create": "Create supplier",
+        "edit": "Edit supplier",
+        "details": "Supplier details",
+        "name": "Supplier name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address"
+    },
+    "members": {
+        "title": "Members",
+        "add": "Add member",
+        "details": "Member details",
+        "role": "Role",
+        "status": "Membership status"
+    },
+    "profile": {
+        "title": "Profile",
+        "personalInformation": "Personal information",
+        "account": "Account",
+        "preferences": "Preferences",
+        "notifications": "Notifications",
+        "notificationsDescription": "Receive updates about your stores and account.",
+        "emailNotifications": "Email notifications",
+        "emailNotificationsDescription": "Receive important account and store updates by email.",
+        "language": "Language",
+        "languageDescription": "Choose the language used throughout the application.",
+        "comingSoon": "Coming soon"
+    },
+    "settings": {
+        "title": "Settings",
+        "general": "General",
+        "account": "Account",
+        "preferences": "Preferences"
+    },
+    "admin": {
+        "title": "Administration",
+        "users": "Users",
+        "stores": "Stores",
+        "members": "Members",
+        "overview": "Overview"
+    },
+    "table": {
+        "noData": "No data available",
+        "noResults": "No results found",
+        "rowsPerPage": "Rows per page",
+        "previousPage": "Previous page",
+        "nextPage": "Next page"
+    },
+    "accessibility": {
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "openSidebar": "Open sidebar",
+        "closeSidebar": "Close sidebar",
+        "expand": "Expand",
+        "collapse": "Collapse"
+    }
+}

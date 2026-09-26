@@ -1,4 +1,5 @@
 import { ErrorState } from "@/components/UI/state";
+import { LanguageSelector } from "@/components/user/language-selectore";
 import { AppError } from "@/errors/base.error";
 import { getCurrentUser } from "@/utils/auth";
 import {
@@ -174,6 +175,8 @@ export default async function ProfilePage() {
                                 description="Receive important account and store updates by email."
                                 enabled
                             />
+
+                            <LanguageSelector />
                         </div>
                     </section>
 
