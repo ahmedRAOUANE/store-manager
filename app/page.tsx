@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
   ArrowRight,
   BarChart3,
@@ -15,74 +16,50 @@ import {
   Workflow,
 } from "lucide-react";
 
+import { LanguageSelector } from "@/components/user/language-selectore";
+
+/* ========================================================================== */
+/*  Module-level data — icons + stable keys (strings resolved via `t`)        */
+/* ========================================================================== */
+
 const features = [
-  {
-    icon: Receipt,
-    title: "Simpler calculations",
-    description:
-      "Let the system handle totals, payments, discounts, taxes, and outstanding amounts so you spend less time calculating.",
-  },
-  {
-    icon: Package,
-    title: "Organized inventory",
-    description:
-      "Keep your products, stock quantities, costs, and selling prices organized and easy to understand.",
-  },
-  {
-    icon: Coins,
-    title: "Clear financial tracking",
-    description:
-      "Track sales, purchases, payments, and amounts due without keeping everything in your head or scattered across notebooks.",
-  },
-  {
-    icon: Workflow,
-    title: "A smoother workflow",
-    description:
-      "Bring sales, purchases, suppliers, products, and store members into one organized workspace.",
-  },
-];
+  { key: "simplerCalculations", icon: Receipt },
+  { key: "organizedInventory", icon: Package },
+  { key: "financialTracking", icon: Coins },
+  { key: "smootherWorkflow", icon: Workflow },
+] as const;
 
 const workflow = [
-  {
-    number: "01",
-    icon: Store,
-    title: "Create or join a store",
-    description:
-      "Start your own store or join an existing one and work from the same organized workspace.",
-  },
-  {
-    number: "02",
-    icon: Users,
-    title: "Set up your team",
-    description:
-      "Invite members and assign roles so everyone knows what they can access and manage.",
-  },
-  {
-    number: "03",
-    icon: Package,
-    title: "Organize your products",
-    description:
-      "Keep your products and stock information structured and ready for everyday operations.",
-  },
-  {
-    number: "04",
-    icon: ShoppingCart,
-    title: "Manage sales and purchases",
-    description:
-      "Record transactions and let the system take care of the calculations and totals.",
-  },
-];
+  { number: "01", key: "createOrJoin", icon: Store },
+  { number: "02", key: "setupTeam", icon: Users },
+  { number: "03", key: "organizeProducts", icon: Package },
+  { number: "04", key: "manageSalesPurchases", icon: ShoppingCart },
+] as const;
 
-const managementItems = [
-  "Sales and payments",
-  "Products and stock",
-  "Purchases and suppliers",
-  "Store members",
-  "Roles and permissions",
-  "Multiple stores",
-];
+const managementItemKeys = [
+  "salesAndPayments",
+  "productsAndStock",
+  "purchasesAndSuppliers",
+  "storeMembers",
+  "rolesAndPermissions",
+  "multipleStores",
+] as const;
 
-export default function LandingPage() {
+const roleCards = [
+  { roleKey: "owner", descKey: "ownerDescription" },
+  { roleKey: "manager", descKey: "managerDescription" },
+  { roleKey: "staff", descKey: "staffDescription" },
+] as const;
+
+/* ========================================================================== */
+/*  Page                                                                      */
+/* ========================================================================== */
+
+export default async function LandingPage() {
+  const t = await getTranslations("landing");
+  const tNav = await getTranslations("navigation");
+  const tStatus = await getTranslations("status");
+
   return (
     <main className="min-h-screen bg-surface text-on-surface">
       {/* Navigation */}
@@ -103,37 +80,32 @@ export default function LandingPage() {
               href="#features"
               className="text-sm font-medium text-on-surface-variant transition hover:text-on-surface"
             >
-              Features
+              {t("nav.features")}
             </Link>
             <Link
               href="#workflow"
               className="text-sm font-medium text-on-surface-variant transition hover:text-on-surface"
             >
-              How it works
+              {t("nav.howItWorks")}
             </Link>
             <Link
               href="#management"
               className="text-sm font-medium text-on-surface-variant transition hover:text-on-surface"
             >
-              Management
+              {t("nav.management")}
             </Link>
           </nav>
 
           <div className="flex items-center gap-2">
-            {/* <Link
-              href="/dashboard"
-              className="hidden rounded-md px-3 py-2 text-sm font-medium text-on-surface-variant transition hover:bg-surface-container hover:text-on-surface sm:inline-flex"
-            >
-              Sign in
-            </Link> */}
-
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-2 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-on-primary shadow-floating transition hover:bg-primary-container"
             >
-              Get started
-              <ArrowRight className="size-4" />
+              {t("nav.getStarted")}
+              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
             </Link>
+
+            <LanguageSelector variant="compact" />
           </div>
         </div>
       </header>
@@ -144,18 +116,16 @@ export default function LandingPage() {
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-outline-variant bg-surface-low px-3 py-1.5 text-xs font-medium text-on-surface-variant">
               <span className="size-1.5 rounded-full bg-success" />
-              Everything your store needs in one place
+              {t("hero.badge")}
             </div>
 
             <h1 className="text-display-lg sm:text-5xl lg:text-6xl">
-              Run your store with{" "}
-              <span className="text-secondary">less work.</span>
+              {t("hero.titleLead")}{" "}
+              <span className="text-secondary">{t("hero.titleAccent")}</span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-body-lg text-on-surface-variant sm:text-lg">
-              Manage sales, purchases, products, suppliers, and your team from
-              one organized workspace. Let Store Manager handle the
-              calculations while you focus on running your business.
+              {t("hero.description")}
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -163,16 +133,16 @@ export default function LandingPage() {
                 href="/dashboard"
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary shadow-floating transition hover:bg-primary-container"
               >
-                Start managing your store
-                <ArrowRight className="size-4" />
+                {t("hero.ctaPrimary")}
+                <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
               </Link>
 
               <a
                 href="#features"
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-outline-variant bg-surface-lowest px-5 text-sm font-semibold text-on-surface transition hover:bg-surface-low"
               >
-                Explore features
-                <ChevronRight className="size-4" />
+                {t("hero.ctaSecondary")}
+                <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -184,11 +154,11 @@ export default function LandingPage() {
                 <span className="size-2.5 rounded-full bg-danger" />
                 <span className="size-2.5 rounded-full bg-warning" />
                 <span className="size-2.5 rounded-full bg-success" />
-                <div className="ml-3 h-5 max-w-64 flex-1 rounded bg-surface-container" />
+                <div className="ms-3 h-5 max-w-64 flex-1 rounded bg-surface-container" />
               </div>
 
               <div className="grid min-h-80 lg:grid-cols-[180px_1fr]">
-                <aside className="hidden border-r border-outline-variant bg-surface-low p-4 lg:block">
+                <aside className="hidden border-e border-outline-variant bg-surface-low p-4 lg:block">
                   <div className="mb-6 h-7 w-28 rounded bg-surface-high" />
 
                   <div className="space-y-2">
@@ -196,8 +166,8 @@ export default function LandingPage() {
                       <div
                         key={item}
                         className={`h-8 rounded ${item === 1
-                            ? "bg-primary"
-                            : "bg-surface-container"
+                          ? "bg-primary"
+                          : "bg-surface-container"
                           }`}
                       />
                     ))}
@@ -217,17 +187,17 @@ export default function LandingPage() {
                   <div className="mt-7 grid gap-3 sm:grid-cols-3">
                     <DashboardCard
                       icon={<BarChart3 className="size-4" />}
-                      label="Sales"
+                      label={tNav("sales")}
                       value="$12,480"
                     />
                     <DashboardCard
                       icon={<Package className="size-4" />}
-                      label="Products"
+                      label={tNav("products")}
                       value="248"
                     />
                     <DashboardCard
                       icon={<Truck className="size-4" />}
-                      label="Purchases"
+                      label={tNav("purchases")}
                       value="$6,320"
                     />
                   </div>
@@ -279,16 +249,16 @@ export default function LandingPage() {
       >
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="max-w-2xl">
-            <p className="label-caps text-secondary">Built for everyday work</p>
+            <p className="label-caps text-secondary">
+              {t("features.label")}
+            </p>
 
             <h2 className="mt-3 text-headline-lg sm:text-3xl">
-              Spend less time managing numbers and more time managing your
-              store.
+              {t("features.title")}
             </h2>
 
             <p className="mt-4 text-body-lg text-on-surface-variant">
-              Store Manager brings the repetitive parts of store management
-              into one clear workflow.
+              {t("features.description")}
             </p>
           </div>
 
@@ -298,17 +268,19 @@ export default function LandingPage() {
 
               return (
                 <article
-                  key={feature.title}
+                  key={feature.key}
                   className="rounded-lg border border-outline-variant bg-surface p-5 transition hover:-translate-y-0.5 hover:shadow-floating"
                 >
                   <div className="flex size-10 items-center justify-center rounded-md bg-info-bg text-info">
-                    <Icon className="size-5" />
+                    <Icon className="size-5" aria-hidden="true" />
                   </div>
 
-                  <h3 className="mt-5 text-headline-sm">{feature.title}</h3>
+                  <h3 className="mt-5 text-headline-sm">
+                    {t(`features.items.${feature.key}.title`)}
+                  </h3>
 
                   <p className="mt-2 text-body-md text-on-surface-variant">
-                    {feature.description}
+                    {t(`features.items.${feature.key}.description`)}
                   </p>
                 </article>
               );
@@ -322,24 +294,24 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
             <div className="lg:sticky lg:top-24">
-              <p className="label-caps text-secondary">How it works</p>
+              <p className="label-caps text-secondary">
+                {t("workflow.label")}
+              </p>
 
               <h2 className="mt-3 text-headline-lg sm:text-3xl">
-                One workflow for your whole store.
+                {t("workflow.title")}
               </h2>
 
               <p className="mt-4 max-w-lg text-body-lg text-on-surface-variant">
-                Keep your team, inventory, transactions, and suppliers
-                connected without turning your daily work into a pile of
-                spreadsheets and notes.
+                {t("workflow.description")}
               </p>
 
               <Link
                 href="/dashboard"
                 className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:underline"
               >
-                Create your store
-                <ArrowRight className="size-4" />
+                {t("workflow.cta")}
+                <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
               </Link>
             </div>
 
@@ -349,11 +321,11 @@ export default function LandingPage() {
 
                 return (
                   <div
-                    key={item.number}
+                    key={item.key}
                     className="grid gap-5 rounded-lg border border-outline-variant bg-surface-lowest p-5 sm:grid-cols-[56px_1fr] sm:p-6"
                   >
                     <div className="flex size-12 items-center justify-center rounded-md bg-surface-container text-on-surface">
-                      <Icon className="size-5" />
+                      <Icon className="size-5" aria-hidden="true" />
                     </div>
 
                     <div>
@@ -362,11 +334,11 @@ export default function LandingPage() {
                       </span>
 
                       <h3 className="mt-1 text-headline-sm">
-                        {item.title}
+                        {t(`workflow.items.${item.key}.title`)}
                       </h3>
 
                       <p className="mt-2 text-body-md text-on-surface-variant">
-                        {item.description}
+                        {t(`workflow.items.${item.key}.description`)}
                       </p>
                     </div>
                   </div>
@@ -386,30 +358,31 @@ export default function LandingPage() {
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
               <p className="label-caps text-primary-fixed">
-                Everything connected
+                {t("management.label")}
               </p>
 
               <h2 className="mt-3 text-headline-lg sm:text-3xl">
-                Your store operations, organized in one place.
+                {t("management.title")}
               </h2>
 
               <p className="mt-5 max-w-xl text-body-lg text-primary-fixed">
-                From the first sale of the day to the last purchase, keep the
-                information your team needs close at hand.
+                {t("management.description")}
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              {managementItems.map((item) => (
+              {managementItemKeys.map((itemKey) => (
                 <div
-                  key={item}
+                  key={itemKey}
                   className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 px-4 py-3"
                 >
                   <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/10">
-                    <Check className="size-3.5" />
+                    <Check className="size-3.5" aria-hidden="true" />
                   </span>
 
-                  <span className="text-sm font-medium">{item}</span>
+                  <span className="text-sm font-medium">
+                    {t(`management.items.${itemKey}`)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -422,41 +395,29 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mx-auto flex size-11 items-center justify-center rounded-md bg-info-bg text-info">
-              <ShieldCheck className="size-5" />
+              <ShieldCheck className="size-5" aria-hidden="true" />
             </div>
 
             <h2 className="mt-5 text-headline-lg sm:text-3xl">
-              Give every team member the right access.
+              {t("roles.title")}
             </h2>
 
             <p className="mt-4 text-body-lg text-on-surface-variant">
-              Create stores, invite members, and manage roles so your team can
-              work together without giving everyone access to everything.
+              {t("roles.description")}
             </p>
           </div>
 
           <div className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
-            {[
-              {
-                role: "Owner",
-                description: "Full control of the store",
-              },
-              {
-                role: "Manager",
-                description: "Manage day-to-day operations",
-              },
-              {
-                role: "Staff",
-                description: "Focus on assigned tasks",
-              },
-            ].map((item) => (
+            {roleCards.map((card) => (
               <div
-                key={item.role}
+                key={card.roleKey}
                 className="rounded-lg border border-outline-variant bg-surface-lowest p-5 text-center"
               >
-                <div className="text-title-md">{item.role}</div>
+                <div className="text-title-md">
+                  {tStatus(card.roleKey)}
+                </div>
                 <p className="mt-1 text-body-sm text-on-surface-variant">
-                  {item.description}
+                  {t(`roles.${card.descKey}`)}
                 </p>
               </div>
             ))}
@@ -468,12 +429,11 @@ export default function LandingPage() {
       <section className="border-t border-outline-variant bg-surface-low">
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8 lg:py-24">
           <h2 className="text-headline-lg sm:text-3xl">
-            Make your store easier to manage.
+            {t("cta.title")}
           </h2>
 
           <p className="mx-auto mt-4 max-w-xl text-body-lg text-on-surface-variant">
-            Bring your sales, purchases, products, suppliers, and team into
-            one organized workflow.
+            {t("cta.description")}
           </p>
 
           <div className="mt-7">
@@ -481,8 +441,8 @@ export default function LandingPage() {
               href="/dashboard"
               className="inline-flex h-11 items-center gap-2 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary shadow-floating transition hover:bg-primary-container"
             >
-              Get started
-              <ArrowRight className="size-4" />
+              {t("cta.button")}
+              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -496,19 +456,23 @@ export default function LandingPage() {
             className="flex items-center gap-2 font-semibold tracking-tight"
           >
             <span className="flex size-8 items-center justify-center rounded-md bg-primary text-on-primary">
-              <Store className="size-4" />
+              <Store className="size-4" aria-hidden="true" />
             </span>
             Store Manager
           </Link>
 
           <p className="text-body-sm text-on-surface-variant">
-            Manage your store. Simplify your workflow.
+            {t("footer.tagline")}
           </p>
         </div>
       </footer>
     </main>
   );
 }
+
+/* ========================================================================== */
+/*  DashboardCard — decorative mock preview card                              */
+/* ========================================================================== */
 
 function DashboardCard({
   icon,

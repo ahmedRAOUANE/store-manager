@@ -859,5 +859,96 @@
         "itemsCount": "{count} items",
         "changeRole": "Change role (currently {role})",
         "notifications": "Notifications"
+    },
+    "landing": {
+        "nav": {
+            "features": "Features",
+            "howItWorks": "How it works",
+            "management": "Management",
+            "getStarted": "Get started"
+        },
+        "hero": {
+            "badge": "Everything your store needs in one place",
+            "titleLead": "Run your store with",
+            "titleAccent": "less work.",
+            "description": "Manage sales, purchases, products, suppliers, and your team from one organized workspace. Let Store Manager handle the calculations while you focus on running your business.",
+            "ctaPrimary": "Start managing your store",
+            "ctaSecondary": "Explore features"
+        },
+        "features": {
+            "label": "Built for everyday work",
+            "title": "Spend less time managing numbers and more time managing your store.",
+            "description": "Store Manager brings the repetitive parts of store management into one clear workflow.",
+            "items": {
+                "simplerCalculations": {
+                    "title": "Simpler calculations",
+                    "description": "Let the system handle totals, payments, discounts, taxes, and outstanding amounts so you spend less time calculating."
+                },
+                "organizedInventory": {
+                    "title": "Organized inventory",
+                    "description": "Keep your products, stock quantities, costs, and selling prices organized and easy to understand."
+                },
+                "financialTracking": {
+                    "title": "Clear financial tracking",
+                    "description": "Track sales, purchases, payments, and amounts due without keeping everything in your head or scattered across notebooks."
+                },
+                "smootherWorkflow": {
+                    "title": "A smoother workflow",
+                    "description": "Bring sales, purchases, suppliers, products, and store members into one organized workspace."
+                }
+            }
+        },
+        "workflow": {
+            "label": "How it works",
+            "title": "One workflow for your whole store.",
+            "description": "Keep your team, inventory, transactions, and suppliers connected without turning your daily work into a pile of spreadsheets and notes.",
+            "cta": "Create your store",
+            "items": {
+                "createOrJoin": {
+                    "title": "Create or join a store",
+                    "description": "Start your own store or join an existing one and work from the same organized workspace."
+                },
+                "setupTeam": {
+                    "title": "Set up your team",
+                    "description": "Invite members and assign roles so everyone knows what they can access and manage."
+                },
+                "organizeProducts": {
+                    "title": "Organize your products",
+                    "description": "Keep your products and stock information structured and ready for everyday operations."
+                },
+                "manageSalesPurchases": {
+                    "title": "Manage sales and purchases",
+                    "description": "Record transactions and let the system take care of the calculations and totals."
+                }
+            }
+        },
+        "management": {
+            "label": "Everything connected",
+            "title": "Your store operations, organized in one place.",
+            "description": "From the first sale of the day to the last purchase, keep the information your team needs close at hand.",
+            "items": {
+                "salesAndPayments": "Sales and payments",
+                "productsAndStock": "Products and stock",
+                "purchasesAndSuppliers": "Purchases and suppliers",
+                "storeMembers": "Store members",
+                "rolesAndPermissions": "Roles and permissions",
+                "multipleStores": "Multiple stores"
+            }
+        },
+        "roles": {
+            "title": "Give every team member the right access.",
+            "description": "Create stores, invite members, and manage roles so your team can work together without giving everyone access to everything.",
+            "ownerDescription": "Full control of the store",
+            "managerDescription": "Manage day-to-day operations",
+            "staffDescription": "Focus on assigned tasks"
+        },
+        "cta": {
+            "title": "Make your store easier to manage.",
+            "description": "Bring your sales, purchases, products, suppliers, and team into one organized workflow.",
+            "button": "Get started"
+        },
+        "footer": {
+            "tagline": "Manage your store. Simplify your workflow."
+        }
     }
 }
