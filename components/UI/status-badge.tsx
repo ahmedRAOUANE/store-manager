@@ -4,6 +4,7 @@
 /* -------------------------------------------------------------------------- */
 
 import { cn } from "@/utils/jsx-classes";
+import { useTranslations } from "next-intl";
 
 export type StatusTone = "success" | "warning" | "danger" | "neutral" | "info";
 
@@ -37,7 +38,7 @@ const TONE_DOT: Record<StatusTone, string> = {
 /* -------------------------------------------------------------------------- */
 
 type StatusDefinition = {
-    label: string;
+    translationKey: string;
     tone: StatusTone;
 };
 
@@ -47,32 +48,27 @@ type StatusDefinition = {
  * (StoreStatus, MembershipStatus, GlobalRole, StoreRole, payment state, stock state).
  */
 const STATUS_REGISTRY = {
-    /* Store + Membership lifecycle (store.schema.ts / membership.schema.ts) */
-    ACTIVE: { label: "Active", tone: "success" },
-    PENDING: { label: "Pending", tone: "warning" },
-    SUSPENDED: { label: "Suspended", tone: "danger" },
-    REJECTED: { label: "Rejected", tone: "danger" },
-    INACTIVE: { label: "Inactive", tone: "neutral" },
-    INVALIDATED: { label: "Removed", tone: "neutral" },
+    ACTIVE: { translationKey: "active", tone: "success" },
+    PENDING: { translationKey: "pending", tone: "warning" },
+    SUSPENDED: { translationKey: "suspended", tone: "danger" },
+    REJECTED: { translationKey: "rejected", tone: "danger" },
+    INACTIVE: { translationKey: "inactive", tone: "neutral" },
+    INVALIDATED: { translationKey: "removed", tone: "neutral" },
 
-    /* Payment state — derived from amountPaid / amountDue */
-    PAID: { label: "Paid", tone: "success" },
-    PARTIAL: { label: "Partial", tone: "warning" },
-    UNPAID: { label: "Unpaid", tone: "danger" },
+    PAID: { translationKey: "paid", tone: "success" },
+    PARTIAL: { translationKey: "partial", tone: "warning" },
+    UNPAID: { translationKey: "unpaid", tone: "danger" },
 
-    /* Stock health — derived from stockQuantity / minimumStock */
-    IN_STOCK: { label: "In Stock", tone: "success" },
-    LOW_STOCK: { label: "Low Stock", tone: "warning" },
-    OUT_OF_STOCK: { label: "Out of Stock", tone: "danger" },
+    IN_STOCK: { translationKey: "inStock", tone: "success" },
+    LOW_STOCK: { translationKey: "lowStock", tone: "warning" },
+    OUT_OF_STOCK: { translationKey: "outOfStock", tone: "danger" },
 
-    /* StoreRole (membership.schema.ts) */
-    OWNER: { label: "Owner", tone: "info" },
-    MANAGER: { label: "Manager", tone: "info" },
-    STAFF: { label: "Staff", tone: "neutral" },
+    OWNER: { translationKey: "owner", tone: "info" },
+    MANAGER: { translationKey: "manager", tone: "info" },
+    STAFF: { translationKey: "staff", tone: "neutral" },
 
-    /* GlobalRole (user.schema.ts) */
-    ADMIN: { label: "Admin", tone: "info" },
-    USER: { label: "User", tone: "neutral" },
+    ADMIN: { translationKey: "admin", tone: "info" },
+    USER: { translationKey: "user", tone: "neutral" },
 } as const satisfies Record<string, StatusDefinition>;
 
 export type StatusKey = keyof typeof STATUS_REGISTRY;
@@ -144,9 +140,18 @@ export function StatusBadge({
     size = "sm",
     className,
 }: StatusBadgeProps) {
-    const resolved: StatusDefinition = status
+    const t = useTranslations("status");
+
+    const resolved = status
         ? STATUS_REGISTRY[status]
-        : { label: label ?? "", tone: tone ?? "neutral" };
+        : {
+            translationKey: "",
+            tone: tone ?? "neutral",
+        };
+
+    const resolvedLabel = status
+        ? t(resolved.translationKey)
+        : (label ?? "");
 
     return (
         <span
@@ -163,7 +168,7 @@ export function StatusBadge({
                     className={cn("size-1.5 shrink-0 rounded-full", TONE_DOT[resolved.tone])}
                 />
             )}
-            {resolved.label}
+            {resolvedLabel}
         </span>
     );
 }

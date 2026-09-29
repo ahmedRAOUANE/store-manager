@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { UserStore } from "./store-list";
+import { useTranslations } from "next-intl";
 
 type StoreCardProps = {
     store: UserStore;
@@ -14,6 +17,10 @@ export default function StoreCard({
     isPending,
     isRequesting,
 }: StoreCardProps) {
+    const actionsT = useTranslations("actions");
+    const storesT = useTranslations("stores");
+    const navigationT = useTranslations("navigation");
+    
     const canRequest =
         store.membershipStatus === null ||
         store.membershipStatus === "REJECTED" ||
@@ -49,20 +56,20 @@ export default function StoreCard({
                     {isRequesting
                         ? "Sending request..."
                         : store.membershipStatus === "REJECTED"
-                            ? "Request again"
-                            : "Request to join"}
+                            ? actionsT("requestAgain")
+                            : actionsT("request")}
                 </button>
             )}
 
             {store.membershipStatus === "PENDING" && (
                 <div className="mt-5 rounded-lg border px-4 py-2 text-center text-sm text-muted-foreground">
-                    Request pending
+                    {storesT("membershipRequestPending")}
                 </div>
             )}
 
             {(store.membershipStatus === "ACTIVE" && store.role) && (
                 <Link href={`/stores/${store.id}/${store.role.toLowerCase()}/dashboard/`} className="block mt-5 rounded-lg border px-4 py-2 text-center text-sm">
-                    dashboard
+                    {navigationT("dashboard")}
                 </Link>
             )}
         </div>

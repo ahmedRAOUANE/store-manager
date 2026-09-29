@@ -1,4 +1,4 @@
-// import "temporal-polyfill/full/global";
+import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/UI/page-header";
 import { StatCard } from "@/components/UI/stats-card";
@@ -30,10 +30,21 @@ type SaleDetail = GetsaleWithItems;
 /*  Line items                                                                */
 /* ========================================================================== */
 
+interface LineItemsLabels {
+    product: string;
+    qty: string;
+    unitPrice: string;
+    discount: string;
+    tax: string;
+    lineTotal: string;
+}
+
 function LineItems({
     items,
+    labels,
 }: {
     items: SaleDetail["items"];
+    labels: LineItemsLabels;
 }) {
     /*
      * Per-line discount/tax are rare; only render those columns when present.
@@ -53,32 +64,32 @@ function LineItems({
                 <table className="w-full border-collapse">
                     <thead>
                         <tr className="border-b border-outline-variant">
-                            <th className="px-3 py-2.5 text-left text-label-sm uppercase text-on-surface-variant">
-                                Product
+                            <th className="px-3 py-2.5 text-start text-label-sm uppercase text-on-surface-variant">
+                                {labels.product}
                             </th>
 
-                            <th className="w-16 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                Qty
+                            <th className="w-16 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                {labels.qty}
                             </th>
 
-                            <th className="w-28 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                Unit Price
+                            <th className="w-28 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                {labels.unitPrice}
                             </th>
 
                             {hasLineDiscount && (
-                                <th className="w-24 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                    Discount
+                                <th className="w-24 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                    {labels.discount}
                                 </th>
                             )}
 
                             {hasLineTax && (
-                                <th className="w-20 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                    Tax
+                                <th className="w-20 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                    {labels.tax}
                                 </th>
                             )}
 
-                            <th className="w-28 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                Line Total
+                            <th className="w-28 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                {labels.lineTotal}
                             </th>
                         </tr>
                     </thead>
@@ -90,40 +101,38 @@ function LineItems({
                                 className="border-b border-outline-variant last:border-b-0"
                             >
                                 <td className="px-3 py-2.5 text-body-md text-on-surface">
-                                    {item.product.name} {/* //! this must change to item.productName */}
+                                    {item.product.name}
                                 </td>
 
-                                <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                     {item.quantity}
                                 </td>
 
-                                <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                     {formatCurrency(item.unitPrice)}
                                 </td>
 
                                 {hasLineDiscount && (
-                                    <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                    <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                         {item.discountAmount > 0
-                                            ? `−${
-    formatCurrency(
-        item.discountAmount,
-    )
-}`
+                                            ? `−${formatCurrency(
+                                                item.discountAmount,
+                                            )}`
                                             : "—"}
                                     </td>
                                 )}
 
                                 {hasLineTax && (
-                                    <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                    <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                         {item.taxAmount > 0
                                             ? formatCurrency(
-                                                  item.taxAmount,
-                                              )
+                                                item.taxAmount,
+                                            )
                                             : "—"}
                                     </td>
                                 )}
 
-                                <td className="px-3 py-2.5 text-right text-body-md font-medium tabular-nums text-on-surface">
+                                <td className="px-3 py-2.5 text-end text-body-md font-medium tabular-nums text-on-surface">
                                     {formatCurrency(
                                         item.totalAmount,
                                     )}
@@ -184,16 +193,25 @@ function LineItems({
 /*  Totals                                                                    */
 /* ========================================================================== */
 
+interface TotalsLabels {
+    subtotal: string;
+    discount: string;
+    tax: string;
+    total: string;
+}
+
 function TotalsBlock({
     sale,
+    labels,
 }: {
     sale: SaleDetail;
+    labels: TotalsLabels;
 }) {
     return (
-        <dl className="ml-auto w-full max-w-xs space-y-1.5 text-body-md">
+        <dl className="ms-auto w-full max-w-xs space-y-1.5 text-body-md">
             <div className="flex items-center justify-between">
                 <dt className="text-on-surface-variant">
-                    Subtotal
+                    {labels.subtotal}
                 </dt>
 
                 <dd className="tabular-nums text-on-surface">
@@ -204,7 +222,7 @@ function TotalsBlock({
             {sale.discountAmount > 0 && (
                 <div className="flex items-center justify-between">
                     <dt className="text-on-surface-variant">
-                        Discount
+                        {labels.discount}
                     </dt>
 
                     <dd className="tabular-nums text-warning-fg">
@@ -219,7 +237,7 @@ function TotalsBlock({
             {sale.taxAmount > 0 && (
                 <div className="flex items-center justify-between">
                     <dt className="text-on-surface-variant">
-                        Tax
+                        {labels.tax}
                     </dt>
 
                     <dd className="tabular-nums text-on-surface">
@@ -230,7 +248,7 @@ function TotalsBlock({
 
             <div className="flex items-center justify-between border-t border-outline-variant pt-2">
                 <dt className="text-title-md text-on-surface">
-                    Total
+                    {labels.total}
                 </dt>
 
                 <dd className="text-title-md tabular-nums text-on-surface">
@@ -262,7 +280,7 @@ function DetailRow({
 
             <dd
                 className={cn(
-                    "min-w-0 text-right text-body-md text-on-surface",
+                    "min-w-0 text-end text-body-md text-on-surface",
                     mono && "font-mono text-body-sm",
                 )}
             >
@@ -281,6 +299,10 @@ export default async function SaleDetailPage({
 }: PageProps<"/stores/[storeId]/owner/sales/[saleId]">) {
     const { storeId, saleId } = await params;
 
+    const tSales = await getTranslations("sales");
+    const tDetail = await getTranslations("sales.detail");
+    const tCommon = await getTranslations("common");
+
     const sale = await getSaleById(
         storeId,
         saleId,
@@ -293,7 +315,7 @@ export default async function SaleDetailPage({
         return (
             <EmptyState
                 size="sm"
-                title="Unable to load sale"
+                title={tSales("errors.loadFailed")}
                 description={sale.message}
             />
         );
@@ -307,13 +329,13 @@ export default async function SaleDetailPage({
         return (
             <EmptyState
                 size="sm"
-                title="Sale not found"
-                description="The requested sale could not be found in this store."
+                title={tSales("errors.notFound")}
+                description={tSales("errors.notFoundDescription")}
             />
         );
     }
 
-    const base = `/stores/${ storeId }/owner/sales`;
+    const base = `/stores/${storeId}/owner/sales`;
 
     const paymentStatus = getPaymentStatus(
         sale.amountPaid,
@@ -326,6 +348,24 @@ export default async function SaleDetailPage({
         (sum, item) => sum + item.quantity,
         0,
     );
+
+    /* ---------- Translated label bundles for helper components ---------- */
+
+    const lineItemsLabels: LineItemsLabels = {
+        product: tDetail("product"),
+        qty: tDetail("quantity"),
+        unitPrice: tDetail("unitPrice"),
+        discount: tDetail("discount"),
+        tax: tDetail("tax"),
+        lineTotal: tDetail("lineTotal"),
+    };
+
+    const totalsLabels: TotalsLabels = {
+        subtotal: tDetail("subtotal"),
+        discount: tDetail("discount"),
+        tax: tDetail("tax"),
+        total: tDetail("total"),
+    };
 
     return (
         <div className="space-y-6">
@@ -351,7 +391,7 @@ export default async function SaleDetailPage({
                 }
                 breadcrumbs={[
                     {
-                        label: "Sales",
+                        label: tSales("title"),
                         href: base,
                     },
                     {
@@ -363,18 +403,18 @@ export default async function SaleDetailPage({
 
             {/* ─── Headline metrics ────────────────────────────────────── */}
             <section
-                aria-label="Sale summary"
+                aria-label={tDetail("summary")}
                 className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4"
             >
                 <StatCard
-                    label="Total"
+                    label={tDetail("total")}
                     value={formatCurrency(
                         sale.totalAmount,
                     )}
                 />
 
                 <StatCard
-                    label="Amount Paid"
+                    label={tDetail("amountPaid")}
                     value={formatCurrency(
                         sale.amountPaid,
                     )}
@@ -382,7 +422,7 @@ export default async function SaleDetailPage({
                 />
 
                 <StatCard
-                    label="Amount Due"
+                    label={tDetail("amountDue")}
                     value={formatCurrency(
                         sale.amountDue,
                     )}
@@ -394,9 +434,9 @@ export default async function SaleDetailPage({
                 />
 
                 <StatCard
-                    label="Items"
+                    label={tDetail("items")}
                     value={itemCount}
-                    hint={`${ totalUnits } units`}
+                    hint={`${totalUnits} ${tDetail("units", { count: totalUnits })}`}
                 />
             </section>
 
@@ -407,18 +447,20 @@ export default async function SaleDetailPage({
                     <Card>
                         <CardHeader>
                             <CardTitle>
-                                Items
+                                {tDetail("items")}
                             </CardTitle>
                         </CardHeader>
 
                         <CardBody flush>
                             <LineItems
                                 items={sale.items}
+                                labels={lineItemsLabels}
                             />
 
                             <div className="border-t border-outline-variant px-3.5 py-4">
                                 <TotalsBlock
                                     sale={sale}
+                                    labels={totalsLabels}
                                 />
                             </div>
                         </CardBody>
@@ -428,7 +470,7 @@ export default async function SaleDetailPage({
                         <Card>
                             <CardHeader>
                                 <CardTitle>
-                                    Notes
+                                    {tDetail("notes")}
                                 </CardTitle>
                             </CardHeader>
 
@@ -446,13 +488,13 @@ export default async function SaleDetailPage({
                     <Card>
                         <CardHeader>
                             <CardTitle>
-                                Payment
+                                {tDetail("payment")}
                             </CardTitle>
                         </CardHeader>
 
                         <CardBody>
                             <dl className="divide-y divide-outline-variant">
-                                <DetailRow label="Status">
+                                <DetailRow label={tCommon("status")}>
                                     <StatusBadge
                                         status={
                                             paymentStatus
@@ -460,7 +502,7 @@ export default async function SaleDetailPage({
                                     />
                                 </DetailRow>
 
-                                <DetailRow label="Total">
+                                <DetailRow label={tDetail("total")}>
                                     <span className="tabular-nums">
                                         {formatCurrency(
                                             sale.totalAmount,
@@ -468,7 +510,7 @@ export default async function SaleDetailPage({
                                     </span>
                                 </DetailRow>
 
-                                <DetailRow label="Paid">
+                                <DetailRow label={tDetail("paid")}>
                                     <span className="tabular-nums text-success-fg">
                                         {formatCurrency(
                                             sale.amountPaid,
@@ -476,7 +518,7 @@ export default async function SaleDetailPage({
                                     </span>
                                 </DetailRow>
 
-                                <DetailRow label="Due">
+                                <DetailRow label={tDetail("due")}>
                                     {sale.amountDue > 0 ? (
                                         <span className="tabular-nums font-medium text-danger-fg">
                                             {formatCurrency(
@@ -496,14 +538,14 @@ export default async function SaleDetailPage({
                     <Card>
                         <CardHeader>
                             <CardTitle>
-                                Record
+                                {tDetail("record")}
                             </CardTitle>
                         </CardHeader>
 
                         <CardBody>
                             <dl className="divide-y divide-outline-variant">
                                 <DetailRow
-                                    label="Invoice"
+                                    label={tDetail("invoice")}
                                     mono
                                 >
                                     {
@@ -511,32 +553,32 @@ export default async function SaleDetailPage({
                                     }
                                 </DetailRow>
 
-                                <DetailRow label="Sale date">
+                                <DetailRow label={tDetail("saleDate")}>
                                     {formatDateTime(
                                         sale.saleDate,
                                     )}
                                 </DetailRow>
 
-                                <DetailRow label="Created by">
+                                <DetailRow label={tDetail("createdBy")}>
                                     <span className="font-mono text-body-sm">
                                         {sale.createdBy.firstName}
                                     </span>
                                 </DetailRow>
 
-                                <DetailRow label="Created">
+                                <DetailRow label={tDetail("created")}>
                                     {formatDateTime(
                                         sale.createdAt,
                                     )}
                                 </DetailRow>
 
-                                <DetailRow label="Updated">
+                                <DetailRow label={tDetail("updated")}>
                                     {formatDateTime(
                                         sale.updatedAt,
                                     )}
                                 </DetailRow>
 
                                 <DetailRow
-                                    label="Sale ID"
+                                    label={tDetail("saleId")}
                                     mono
                                 >
                                     <span

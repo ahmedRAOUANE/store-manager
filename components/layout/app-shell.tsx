@@ -14,6 +14,8 @@ import {
     type StoreRole,
 } from "./nav-items";
 import { cn } from "@/utils/jsx-classes";
+import { useTranslations } from "next-intl";
+import { TriangleAlert } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Shared types                                                              */
@@ -34,16 +36,16 @@ export type StoreStatus = "PENDING" | "ACTIVE" | "SUSPENDED";
 /* -------------------------------------------------------------------------- */
 
 function StatusBanner({ status }: { status: Exclude<StoreStatus, "ACTIVE"> }) {
+    const t = useTranslations("stores");
+
     const config = {
         PENDING: {
             tone: "border-warning-border bg-warning-bg text-warning-fg",
-            message:
-                "This store is pending approval. Some features may be limited until it is activated.",
+            message: t("status.pendingBanner"),
         },
         SUSPENDED: {
             tone: "border-danger-border bg-danger-bg text-danger-fg",
-            message:
-                "This store is currently suspended. Contact platform support if you believe this is a mistake.",
+            message: t("status.suspendedBanner"),
         },
     }[status];
 
@@ -55,20 +57,10 @@ function StatusBanner({ status }: { status: Exclude<StoreStatus, "ACTIVE"> }) {
                 config.tone,
             )}
         >
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
+            <TriangleAlert
                 aria-hidden="true"
                 className="mt-0.5 size-4 shrink-0"
-            >
-                <path
-                    d="M12 8v5m0 3h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+            />
             <p>{config.message}</p>
         </div>
     );
@@ -89,6 +81,12 @@ interface AppShellProps {
     children: ReactNode;
 }
 
+const roleTranslationKey = {
+    OWNER: "owner",
+    MANAGER: "manager",
+    STAFF: "staff",
+} as const;
+
 function AppShell({
     sidebar,
     user,
@@ -96,6 +94,7 @@ function AppShell({
     contentClassName,
     children,
 }: AppShellProps) {
+
     return (
         <div className="flex h-dvh">
             {/* Desktop sidebar */}
@@ -155,18 +154,6 @@ export interface StoreShellProps {
     children: ReactNode;
 }
 
-/** Maps a StoreRole to its display label used as the sidebar subtitle. */
-function roleLabel(role: StoreRole): string {
-    switch (role) {
-        case "OWNER":
-            return "Owner";
-        case "MANAGER":
-            return "Manager";
-        case "STAFF":
-            return "Staff";
-    }
-}
-
 export function StoreShell({
     store,
     user,
@@ -174,6 +161,7 @@ export function StoreShell({
     contentClassName,
     children,
 }: StoreShellProps) {
+    const t = useTranslations("status");
     const items: NavItem[] = buildStoreNavItems(store.id, role);
 
     return (
@@ -181,13 +169,21 @@ export function StoreShell({
             sidebar={{
                 items,
                 title: store.name,
-                subtitle: roleLabel(role),
+                subtitle: t(roleTranslationKey[role]),
                 avatarUrl: store.logoUrl,
-                footer: <SidebarUser name={user.name} email={user.email} imageUrl={user.imageUrl} />,
+                footer: (
+                    <SidebarUser
+                        name={user.name}
+                        email={user.email}
+                        imageUrl={user.imageUrl}
+                    />
+                ),
             }}
             user={user}
             banner={
-                store.status !== "ACTIVE" ? <StatusBanner status={store.status} /> : null
+                store.status !== "ACTIVE" ? (
+                    <StatusBanner status={store.status} />
+                ) : null
             }
             contentClassName={contentClassName}
         >
@@ -206,14 +202,26 @@ export interface AdminShellProps {
     children: ReactNode;
 }
 
-export function AdminShell({ user, contentClassName, children }: AdminShellProps) {
+export function AdminShell({
+    user,
+    contentClassName,
+    children,
+}: AdminShellProps) {
+    const t = useTranslations("admin");
+
     return (
         <AppShell
             sidebar={{
                 items: buildAdminNavItems(user.id),
-                title: "Admin",
-                subtitle: "Platform",
-                footer: <SidebarUser name={user.name} email={user.email} imageUrl={user.imageUrl} />,
+                title: t("title"),
+                subtitle: t("platform"),
+                footer: (
+                    <SidebarUser
+                        name={user.name}
+                        email={user.email}
+                        imageUrl={user.imageUrl}
+                    />
+                ),
             }}
             user={user}
             contentClassName={contentClassName}

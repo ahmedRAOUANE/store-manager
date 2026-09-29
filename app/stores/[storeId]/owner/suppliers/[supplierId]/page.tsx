@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ChevronRight } from "lucide-react";
-// import "temporal-polyfill/full/global";
 
 import { getSupplierById } from "@/actions/supplier.actions";
 import { getAllPurchases } from "@/actions/purchase.actions";
@@ -74,7 +74,7 @@ function DetailRow({
             </dt>
             <dd
                 className={cn(
-                    "min-w-0 text-right text-body-md text-on-surface",
+                    "min-w-0 text-end text-body-md text-on-surface",
                     mono && "font-mono text-body-sm",
                 )}
             >
@@ -100,7 +100,7 @@ function HistoryLink({ href, label }: { href: string; label: string }) {
         >
             <span>{label}</span>
             <ChevronRight
-                className="size-3.5 text-on-surface-variant"
+                className="size-3.5 text-on-surface-variant rtl:rotate-180"
                 aria-hidden="true"
             />
         </Link>
@@ -111,11 +111,22 @@ function HistoryLink({ href, label }: { href: string; label: string }) {
 /*  Recent purchases columns                                                  */
 /* ========================================================================== */
 
-function buildPurchaseColumns(storeId: string): Column<RecentPurchase>[] {
+interface PurchaseColumnsLabels {
+    invoice: string;
+    date: string;
+    total: string;
+    due: string;
+    status: string;
+}
+
+function buildPurchaseColumns(
+    storeId: string,
+    labels: PurchaseColumnsLabels,
+): Column<RecentPurchase>[] {
     return [
         {
             key: "invoice",
-            header: "Invoice",
+            header: labels.invoice,
             mobile: "primary",
             cell: (p) => (
                 <Link
@@ -128,7 +139,7 @@ function buildPurchaseColumns(storeId: string): Column<RecentPurchase>[] {
         },
         {
             key: "date",
-            header: "Date",
+            header: labels.date,
             mobile: "secondary",
             width: "w-32",
             cell: (p) => (
@@ -139,7 +150,7 @@ function buildPurchaseColumns(storeId: string): Column<RecentPurchase>[] {
         },
         {
             key: "total",
-            header: "Total",
+            header: labels.total,
             align: "right",
             width: "w-28",
             cell: (p) => (
@@ -150,7 +161,7 @@ function buildPurchaseColumns(storeId: string): Column<RecentPurchase>[] {
         },
         {
             key: "due",
-            header: "Due",
+            header: labels.due,
             align: "right",
             width: "w-28",
             cell: (p) => {
@@ -166,7 +177,7 @@ function buildPurchaseColumns(storeId: string): Column<RecentPurchase>[] {
         },
         {
             key: "status",
-            header: "Status",
+            header: labels.status,
             width: "w-28",
             cell: (p) => (
                 <StatusBadge
@@ -188,6 +199,15 @@ export default async function SupplierDetailPage({
 
     const base = `/stores/${storeId}/owner/suppliers`;
     const purchasesBase = `/stores/${storeId}/owner/purchases`;
+
+    const t = await getTranslations("suppliers");
+    const tDetail = await getTranslations("suppliers.detail");
+    const tCommon = await getTranslations("common");
+    const tSales = await getTranslations("sales");
+    const tSalesDetail = await getTranslations("sales.detail");
+    const tPurchases = await getTranslations("purchases");
+    const tActions = await getTranslations("actions");
+    const tProfile = await getTranslations("profile");
 
     /* ---------- Fetch ---------- */
 
@@ -231,9 +251,18 @@ export default async function SupplierDetailPage({
         .sort((a, b) => Temporal.Instant.compare(b.createdAt, a.createdAt))
         .slice(0, RECENT_LIMIT);
 
+    /* ---------- Columns ---------- */
+
+    const columns = buildPurchaseColumns(storeId, {
+        invoice: tSales("table.invoice"),
+        date: tCommon("date"),
+        total: tCommon("total"),
+        due: tSales("table.due"),
+        status: tCommon("status"),
+    });
+
     /* ---------- Derived ---------- */
 
-    const columns = buildPurchaseColumns(storeId);
     const hasOutstanding = detail.outstandingAmount > 0;
     const hasContactInfo =
         Boolean(detail.phone) ||
@@ -249,54 +278,59 @@ export default async function SupplierDetailPage({
                 description={
                     detail.purchaseCount > 0 ? (
                         <span className="tabular-nums">
-                            {detail.purchaseCount}{" "}
-                            {detail.purchaseCount === 1 ? "order" : "orders"}
+                            {tDetail("ordersCount", {
+                                count: detail.purchaseCount,
+                            })}
                         </span>
                     ) : (
                         <span className="text-on-surface-variant">
-                            No purchases yet
+                            {tPurchases("empty.title")}
                         </span>
                     )
                 }
                 breadcrumbs={[
-                    { label: "Suppliers", href: base },
+                    { label: t("title"), href: base },
                     { label: detail.name },
                 ]}
                 backHref={base}
                 actions={
                     <Link
                         href={`${base}/${detail.id}/edit`}
-                        className={buttonVariants({ variant: "primary", size: "sm" })}
+                        className={buttonVariants({ variant: "primary", size: "sm", className: "text-white" })}
                     >
-                        Edit Supplier
+                        {t("editTitle")}
                     </Link>
                 }
             />
 
             {/* ─── At-a-glance metrics ────────────────────────────────────── */}
             <section
-                aria-label="Supplier summary"
+                aria-label={tDetail("summary")}
                 className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4"
             >
                 <StatCard
-                    label="Outstanding"
+                    label={t("columns.outstanding")}
                     value={formatCurrency(detail.outstandingAmount)}
                     tone={hasOutstanding ? "danger" : "default"}
-                    hint={hasOutstanding ? "Owed to this supplier" : "All settled"}
+                    hint={
+                        hasOutstanding
+                            ? tDetail("outstandingHint")
+                            : tDetail("settledHint")
+                    }
                 />
                 <StatCard
-                    label="Total Purchased"
+                    label={tDetail("totalPurchased")}
                     value={formatCurrency(detail.totalPurchased)}
                 />
                 <StatCard
-                    label="Total Paid"
+                    label={tDetail("totalPaid")}
                     value={formatCurrency(detail.totalPaid)}
                     tone="success"
                 />
                 <StatCard
-                    label="Orders"
+                    label={tDetail("orders")}
                     value={detail.purchaseCount}
-                    hint="All time"
+                    hint={tDetail("allTime")}
                 />
             </section>
 
@@ -306,13 +340,13 @@ export default async function SupplierDetailPage({
                 <div className="space-y-4 lg:col-span-2">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Contact Information</CardTitle>
+                            <CardTitle>{tDetail("contactInformation")}</CardTitle>
                         </CardHeader>
                         <CardBody>
                             {hasContactInfo ? (
                                 <dl className="divide-y divide-outline-variant">
                                     {detail.phone && (
-                                        <DetailRow label="Phone" mono>
+                                        <DetailRow label={tCommon("phone")} mono>
                                             <a
                                                 href={`tel:${detail.phone.replace(/\s+/g, "")}`}
                                                 className="hover:text-info"
@@ -322,7 +356,7 @@ export default async function SupplierDetailPage({
                                         </DetailRow>
                                     )}
                                     {detail.email && (
-                                        <DetailRow label="Email">
+                                        <DetailRow label={tCommon("email")}>
                                             <a
                                                 href={`mailto:${detail.email}`}
                                                 className="truncate hover:text-info"
@@ -332,7 +366,7 @@ export default async function SupplierDetailPage({
                                         </DetailRow>
                                     )}
                                     {detail.address && (
-                                        <DetailRow label="Address">
+                                        <DetailRow label={tCommon("address")}>
                                             <span className="whitespace-pre-line">
                                                 {detail.address}
                                             </span>
@@ -341,7 +375,7 @@ export default async function SupplierDetailPage({
                                 </dl>
                             ) : (
                                 <p className="text-body-md text-on-surface-variant">
-                                    No contact details on file.
+                                    {tDetail("noContact")}
                                 </p>
                             )}
                         </CardBody>
@@ -350,7 +384,7 @@ export default async function SupplierDetailPage({
                     {detail.notes && (
                         <Card>
                             <CardHeader>
-                                <CardTitle>Notes</CardTitle>
+                                <CardTitle>{tSalesDetail("notes")}</CardTitle>
                             </CardHeader>
                             <CardBody>
                                 <p className="whitespace-pre-wrap text-body-md text-on-surface">
@@ -362,7 +396,9 @@ export default async function SupplierDetailPage({
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Recent Purchases</CardTitle>
+                            <CardTitle>
+                                {tPurchases("recentPurchases")}
+                            </CardTitle>
                             <CardActions>
                                 <Link
                                     href={`${purchasesBase}?supplier=${detail.id}`}
@@ -371,7 +407,7 @@ export default async function SupplierDetailPage({
                                         size: "sm",
                                     })}
                                 >
-                                    View all
+                                    {tActions("viewAll")}
                                 </Link>
                             </CardActions>
                         </CardHeader>
@@ -383,8 +419,8 @@ export default async function SupplierDetailPage({
                                 empty={
                                     <EmptyState
                                         size="sm"
-                                        title="No purchases yet"
-                                        description="Purchases recorded from this supplier will appear here."
+                                        title={tPurchases("empty.title")}
+                                        description={tPurchases("empty.description")}
                                         action={
                                             <Link
                                                 href={`${purchasesBase}/new`}
@@ -393,7 +429,7 @@ export default async function SupplierDetailPage({
                                                     size: "sm",
                                                 })}
                                             >
-                                                New Purchase
+                                                {tPurchases("newPurchase")}
                                             </Link>
                                         }
                                     />
@@ -407,11 +443,11 @@ export default async function SupplierDetailPage({
                 <div className="space-y-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Account</CardTitle>
+                            <CardTitle>{tProfile("account")}</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <dl className="divide-y divide-outline-variant">
-                                <DetailRow label="Outstanding">
+                                <DetailRow label={t("columns.outstanding")}>
                                     {hasOutstanding ? (
                                         <span className="font-medium tabular-nums text-danger-fg">
                                             {formatCurrency(detail.outstandingAmount)}
@@ -420,18 +456,21 @@ export default async function SupplierDetailPage({
                                         <span className="text-on-surface-variant">—</span>
                                     )}
                                 </DetailRow>
-                                <DetailRow label="Total purchased">
+                                <DetailRow label={tDetail("totalPurchased")}>
                                     <span className="tabular-nums">
                                         {formatCurrency(detail.totalPurchased)}
                                     </span>
                                 </DetailRow>
-                                <DetailRow label="Total paid">
+                                <DetailRow label={tDetail("totalPaid")}>
                                     <span className="tabular-nums text-success-fg">
                                         {formatCurrency(detail.totalPaid)}
                                     </span>
                                 </DetailRow>
                                 {detail.taxNumber && (
-                                    <DetailRow label="Tax number" mono>
+                                    <DetailRow
+                                        label={t("fields.taxNumber.label")}
+                                        mono
+                                    >
                                         {detail.taxNumber}
                                     </DetailRow>
                                 )}
@@ -441,19 +480,19 @@ export default async function SupplierDetailPage({
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Record</CardTitle>
+                            <CardTitle>{tSalesDetail("record")}</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <dl className="divide-y divide-outline-variant">
-                                <DetailRow label="Supplier ID" mono>
+                                <DetailRow label={tDetail("supplierId")} mono>
                                     <span className="truncate" title={detail.id}>
                                         {detail.id.slice(0, 8)}…
                                     </span>
                                 </DetailRow>
-                                <DetailRow label="Added">
+                                <DetailRow label={tDetail("added")}>
                                     {formatDateTime(detail.createdAt)}
                                 </DetailRow>
-                                <DetailRow label="Updated">
+                                <DetailRow label={tSalesDetail("updated")}>
                                     {formatDateTime(detail.updatedAt)}
                                 </DetailRow>
                             </dl>
@@ -462,20 +501,20 @@ export default async function SupplierDetailPage({
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>History</CardTitle>
+                            <CardTitle>{tDetail("history")}</CardTitle>
                         </CardHeader>
                         <CardBody className="space-y-2">
                             <HistoryLink
                                 href={`${purchasesBase}?supplier=${detail.id}`}
-                                label="All purchases"
+                                label={tDetail("allPurchases")}
                             />
                             <HistoryLink
                                 href={`${purchasesBase}?supplier=${detail.id}&payment=unpaid`}
-                                label="Unpaid purchases"
+                                label={tDetail("unpaidPurchases")}
                             />
                             <HistoryLink
                                 href={`${purchasesBase}/new`}
-                                label="Record a purchase"
+                                label={tDetail("recordPurchase")}
                             />
                         </CardBody>
                     </Card>

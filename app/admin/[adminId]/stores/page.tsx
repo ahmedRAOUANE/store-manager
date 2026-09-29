@@ -1,9 +1,18 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { getAllStores } from "@/actions/admin.actions";
 
-export default async function AdminStoresPage({ params }: PageProps<"/admin/[adminId]/stores">) {
+export default async function AdminStoresPage({
+    params,
+}: PageProps<"/admin/[adminId]/stores">) {
     const { adminId } = await params;
+
+    const t = await getTranslations("admin.stores");
+    const tStores = await getTranslations("stores");
+    const tCommon = await getTranslations("common");
+    const tStatus = await getTranslations("status");
+
     const result = await getAllStores();
 
     if (!result || !result.ok) {
@@ -11,11 +20,11 @@ export default async function AdminStoresPage({ params }: PageProps<"/admin/[adm
             <div className="flex min-h-full items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-lg font-semibold text-(--on-surface)">
-                        Unable to load stores
+                        {t("errors.loadFailed")}
                     </h1>
 
                     <p className="mt-1 text-sm text-gray-500">
-                        Something went wrong while loading the stores.
+                        {t("errors.loadFailedDescription")}
                     </p>
                 </div>
             </div>
@@ -24,16 +33,29 @@ export default async function AdminStoresPage({ params }: PageProps<"/admin/[adm
 
     const stores = result.data;
 
+    /* ---------- Translated labels for the helper components ---------- */
+
+    const statusLabels: StoreStatusLabels = {
+        PENDING: tStatus("pending"),
+        ACTIVE: tStatus("active"),
+        SUSPENDED: tStatus("suspended"),
+    };
+
+    const actionLabels: StoreActionLabels = {
+        review: t("actions.review"),
+        manage: t("actions.manage"),
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
             <div>
                 <h1 className="text-2xl font-semibold text-(--on-surface)">
-                    Stores
+                    {tStores("title")}
                 </h1>
 
                 <p className="mt-1 text-sm text-gray-500">
-                    Manage store status and review store information.
+                    {t("description")}
                 </p>
             </div>
 
@@ -41,37 +63,37 @@ export default async function AdminStoresPage({ params }: PageProps<"/admin/[adm
             {(stores && stores.length === 0) ? (
                 <div className="rounded-xl border border-gray-200 bg-white p-10 text-center">
                     <h2 className="font-medium text-(--on-surface)">
-                        No stores
+                        {t("empty.title")}
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-500">
-                        There are currently no stores in the system.
+                        {t("empty.description")}
                     </p>
                 </div>
             ) : (
                 <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-200 text-left">
+                        <table className="w-full min-w-200 text-start">
                             <thead className="border-b border-gray-200 bg-gray-50">
                                 <tr>
                                     <th className="px-5 py-3 text-sm font-medium text-gray-600">
-                                        Store
+                                        {t("columns.store")}
                                     </th>
 
                                     <th className="px-5 py-3 text-sm font-medium text-gray-600">
-                                        Contact
+                                        {t("columns.contact")}
                                     </th>
 
                                     <th className="px-5 py-3 text-sm font-medium text-gray-600">
-                                        Address
+                                        {tCommon("address")}
                                     </th>
 
                                     <th className="px-5 py-3 text-sm font-medium text-gray-600">
-                                        Status
+                                        {tCommon("status")}
                                     </th>
 
-                                    <th className="px-5 py-3 text-right text-sm font-medium text-gray-600">
-                                        Action
+                                    <th className="px-5 py-3 text-end text-sm font-medium text-gray-600">
+                                        {t("columns.action")}
                                     </th>
                                 </tr>
                             </thead>
@@ -107,11 +129,18 @@ export default async function AdminStoresPage({ params }: PageProps<"/admin/[adm
                                         </td>
 
                                         <td className="px-5 py-4">
-                                            <StoreStatus status={store.status} />
+                                            <StoreStatus
+                                                status={store.status}
+                                                labels={statusLabels}
+                                            />
                                         </td>
 
-                                        <td className="px-5 py-4 text-right">
-                                            <StoreAction adminId={adminId} store={store} />
+                                        <td className="px-5 py-4 text-end">
+                                            <StoreAction
+                                                adminId={adminId}
+                                                store={store}
+                                                labels={actionLabels}
+                                            />
                                         </td>
                                     </tr>
                                 ))}
@@ -124,21 +153,27 @@ export default async function AdminStoresPage({ params }: PageProps<"/admin/[adm
     );
 }
 
+/* ========================================================================== */
+/*  StoreStatus                                                               */
+/* ========================================================================== */
+
+interface StoreStatusLabels {
+    PENDING: string;
+    ACTIVE: string;
+    SUSPENDED: string;
+}
+
 function StoreStatus({
     status,
+    labels,
 }: {
     status: "PENDING" | "ACTIVE" | "SUSPENDED";
+    labels: StoreStatusLabels;
 }) {
     const styles = {
         PENDING: "bg-yellow-50 text-yellow-700",
         ACTIVE: "bg-green-50 text-green-700",
         SUSPENDED: "bg-red-50 text-red-700",
-    };
-
-    const labels = {
-        PENDING: "Pending",
-        ACTIVE: "Active",
-        SUSPENDED: "Suspended",
     };
 
     return (
@@ -150,15 +185,26 @@ function StoreStatus({
     );
 }
 
+/* ========================================================================== */
+/*  StoreAction                                                               */
+/* ========================================================================== */
+
+interface StoreActionLabels {
+    review: string;
+    manage: string;
+}
+
 function StoreAction({
     store,
-    adminId
+    adminId,
+    labels,
 }: {
     adminId: string;
     store: {
         id: string;
         status: "PENDING" | "ACTIVE" | "SUSPENDED";
     };
+    labels: StoreActionLabels;
 }) {
     if (store.status === "PENDING") {
         return (
@@ -166,7 +212,7 @@ function StoreAction({
                 href={`/admin/${adminId}/stores/${store.id}`}
                 className="text-sm font-medium text-(--secondary) hover:underline"
             >
-                Review
+                {labels.review}
             </Link>
         );
     }
@@ -177,7 +223,7 @@ function StoreAction({
                 href={`/admin/${adminId}/stores/${store.id}`}
                 className="text-sm font-medium text-red-600 hover:underline"
             >
-                Manage
+                {labels.manage}
             </Link>
         );
     }
@@ -187,7 +233,7 @@ function StoreAction({
             href={`/admin/${adminId}/stores/${store.id}`}
             className="text-sm font-medium text-(--secondary) hover:underline"
         >
-            Manage
+            {labels.manage}
         </Link>
     );
 }

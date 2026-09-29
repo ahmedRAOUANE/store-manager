@@ -9,6 +9,7 @@ import {
 import { buttonVariants } from "@/components/UI/btn";
 import { ErrorState } from "@/components/UI/state";
 import { AppError } from "@/errors/base.error";
+import { getTranslations } from "next-intl/server";
 
 export default async function StaffNewSalePage({
     params,
@@ -17,10 +18,13 @@ export default async function StaffNewSalePage({
 
     const result = await getAllProducts(storeId);
 
+    const t = await getTranslations("products")
+    const actionsT = await getTranslations("actions")
+
     if (result instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load products"
+                title={t("loadFailed")}
                 description={result.message}
                 action={
                     <Link
@@ -30,7 +34,7 @@ export default async function StaffNewSalePage({
                             size: "md",
                         })}
                     >
-                        Try Again
+                        {actionsT("tryAgain")}
                     </Link>
                 }
             />

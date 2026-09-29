@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { getAllProducts } from "@/actions/product.actions";
 import { getAllSuppliers } from "@/actions/supplier.actions";
@@ -17,6 +18,10 @@ export default async function ManagerNewPurchasePage({
 }: PageProps<"/stores/[storeId]/manager/purchases/new">) {
   const { storeId } = await params;
 
+  const t = await getTranslations("purchases.errors");
+  const tErrors = await getTranslations("errors");
+  const tActions = await getTranslations("actions");
+
   const [productsResult, suppliersResult] = await Promise.all([
     getAllProducts(storeId),
     getAllSuppliers(storeId),
@@ -28,8 +33,8 @@ export default async function ManagerNewPurchasePage({
   ) {
     return (
       <ErrorState
-        title="Couldn't load data"
-        description="Something went wrong while fetching products or suppliers. Please try again."
+        title={tErrors("failedToLoad")}
+        description={t("loadDataFailed")}
         action={
           <Link
             href={`/stores/${storeId}/manager/purchases/new`}
@@ -38,7 +43,7 @@ export default async function ManagerNewPurchasePage({
               size: "md",
             })}
           >
-            Try Again
+            {tActions("tryAgain")}
           </Link>
         }
       />

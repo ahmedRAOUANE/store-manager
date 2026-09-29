@@ -1,5 +1,7 @@
 {
     "common": {
+        "notSet": "غير محدد",
+        "all": "الكل",
         "save": "حفظ",
         "cancel": "إلغاء",
         "close": "إغلاق",
@@ -31,7 +33,10 @@
         "status": "الحالة",
         "total": "الإجمالي",
         "quantity": "الكمية",
-        "price": "السعر"
+        "price": "السعر",
+        "stock": "المخزون",
+        "amount": "المبلغ",
+        "unknown": "غير معروف"
     },
     "navigation": {
         "dashboard": "لوحة التحكم",
@@ -42,9 +47,12 @@
         "members": "الأعضاء",
         "settings": "الإعدادات",
         "profile": "الملف الشخصي",
-        "stores": "المتاجر"
+        "stores": "المتاجر",
+        "adminDashboard": "لوحة تحكم المسؤول",
+        "search": "بحث"
     },
     "userMenu": {
+        "viewProfile": "عرض الملف الشخصي",
         "account": "الحساب",
         "profile": "الملف الشخصي",
         "signOut": "تسجيل الخروج",
@@ -66,7 +74,18 @@
         "cancelled": "ملغى",
         "approved": "مقبول",
         "rejected": "مرفوض",
-        "inactive": "غير نشط"
+        "inactive": "غير نشط",
+        "removed": "تمت الإزالة",
+        "paid": "مدفوع",
+        "partial": "جزئي",
+        "unpaid": "غير مدفوع",
+        "inStock": "متوفر",
+        "lowStock": "مخزون منخفض",
+        "owner": "المالك",
+        "manager": "المدير",
+        "staff": "الموظف",
+        "admin": "مسؤول",
+        "user": "مستخدم"
     },
     "actions": {
         "open": "فتح",
@@ -79,7 +98,13 @@
         "filter": "تصفية",
         "sort": "ترتيب",
         "expand": "توسيع",
-        "collapse": "طي"
+        "collapse": "طي",
+        "request": "طلب الانضمام",
+        "requestAgain": "إعادة طلب الانضمام",
+        "sendingRequest": "جارٍ إرسال الطلب...",
+        "search": "بحث",
+        "tryAgain": "اعادة المحاولة",
+        "viewAll": "عرض الكل"
     },
     "forms": {
         "required": "هذا الحقل مطلوب",
@@ -95,7 +120,8 @@
         "failedToSave": "فشل حفظ التغييرات",
         "failedToDelete": "فشل الحذف",
         "unauthorized": "ليس لديك صلاحية لتنفيذ هذا الإجراء",
-        "notFound": "لم يتم العثور على العنصر المطلوب"
+        "notFound": "لم يتم العثور على العنصر المطلوب",
+        "loadRetry": "تعذر تحميل هذه المعلومات. يرجى المحاولة مرة أخرى."
     },
     "emptyStates": {
         "noData": "لا توجد بيانات متاحة",
@@ -111,14 +137,73 @@
         "deleteTitle": "حذف",
         "deleteMessage": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟",
         "unsavedChangesTitle": "تغييرات غير محفوظة",
-        "unsavedChangesMessage": "لديك تغييرات غير محفوظة. هل أنت متأكد من أنك تريد المغادرة؟"
+        "unsavedChangesMessage": "لديك تغييرات غير محفوظة. هل أنت متأكد من أنك تريد المغادرة؟",
+        "rejectMembershipTitle": "رفض طلب {userName}؟",
+        "rejectMembershipDescription": "لن تتم إضافته إلى المتجر. ويمكنه طلب الانضمام مرة أخرى في أي وقت.",
+        "rejectMembership": "رفض الطلب"
     },
     "dashboard": {
         "title": "لوحة التحكم",
         "welcome": "مرحبًا",
         "overview": "نظرة عامة",
         "recentActivity": "النشاط الأخير",
-        "statistics": "الإحصائيات"
+        "statistics": "الإحصائيات",
+        "staffDescription": "نظرة سريعة على نشاط اليوم.",
+        "comingSoon": "قريبًا...",
+        "description": "نظرة سريعة على نشاط متجرك.",
+        "summary": "الملخص",
+        "stats": {
+            "todaySales": "مبيعات اليوم",
+            "todayRevenue": "إيرادات اليوم",
+            "monthlySales": "مبيعات الشهر",
+            "monthlyPurchases": "مشتريات الشهر",
+            "customerOutstanding": "مستحقات العملاء",
+            "supplierOutstanding": "مستحقات الموردين",
+            "inventoryValue": "قيمة المخزون",
+            "grossProfitMonth": "الربح الإجمالي (الشهر)",
+            "totalProducts": "إجمالي المنتجات",
+            "lowStock": "مخزون منخفض",
+            "monthlyRevenue": "إيرادات الشهر",
+            "todayPurchases": "مشتريات اليوم",
+            "todaySpending": "مصروفات اليوم",
+            "monthlySpending": "مصروفات الشهر",
+            "customerPaymentsDue": "مدفوعات العملاء المستحقة",
+            "supplierPaymentsDue": "مدفوعات الموردين المستحقة"
+        },
+        "lowStockProducts": {
+            "title": "منتجات بمخزون منخفض",
+            "emptyTitle": "جميع المنتجات متوفرة بكميات كافية",
+            "emptyDescription": "لا توجد منتجات أقل من الحد الأدنى للمخزون."
+        },
+        "financialOverview": "النظرة المالية",
+        "errors": {
+            "loadFailed": "تعذر تحميل لوحة التحكم"
+        },
+        "hints": {
+            "transactionsToday": "عدد العمليات اليوم",
+            "revenueGeneratedToday": "الإيرادات المحققة اليوم",
+            "transactionsThisMonth": "عدد العمليات هذا الشهر",
+            "revenueGeneratedThisMonth": "الإيرادات المحققة هذا الشهر",
+            "purchasesToday": "المشتريات اليوم",
+            "amountSpentToday": "المبلغ المصروف اليوم",
+            "purchasesThisMonth": "المشتريات هذا الشهر",
+            "amountSpentThisMonth": "المبلغ المصروف هذا الشهر",
+            "outstandingCustomerBalances": "أرصدة العملاء المستحقة",
+            "outstandingSupplierBalances": "أرصدة الموردين المستحقة",
+            "revenueMinusCost": "إيرادات البيع ناقص تكلفة المنتجات",
+            "productsInCatalog": "المنتجات في الكتالوج",
+            "productsBelowMinimum": "منتجات أقل من الحد الأدنى للمخزون",
+            "productsWithNoStock": "منتجات بدون مخزون",
+            "currentInventoryCostValue": "قيمة تكلفة المخزون الحالي"
+        },
+        "recentSales": {
+            "emptyTitle": "لا توجد مبيعات حديثة",
+            "emptyDescription": "ستظهر المبيعات هنا بمجرد تسجيل العمليات."
+        },
+        "recentPurchases": {
+            "emptyTitle": "لا توجد مشتريات حديثة",
+            "emptyDescription": "ستظهر المشتريات هنا بمجرد تسجيلها."
+        }
     },
     "stores": {
         "title": "المتاجر",
@@ -129,81 +214,548 @@
         "description": "وصف المتجر",
         "address": "عنوان المتجر",
         "currency": "العملة",
-        "timezone": "المنطقة الزمنية"
+        "timezone": "المنطقة الزمنية",
+        "status": {
+            "pendingBanner": "هذا المتجر قيد الموافقة. قد تكون بعض الميزات محدودة حتى يتم تفعيله.",
+            "suspendedBanner": "هذا المتجر موقوف حاليًا. تواصل مع دعم المنصة إذا كنت تعتقد أن هذا الإجراء تم عن طريق الخطأ."
+        },
+        "membershipRequestPending": "طلب الانضمام قيد الانتظار",
+        "membershipRequestSent": "تم إرسال طلب الانضمام بنجاح.",
+        "yourStores": "متاجرك",
+        "pendingRequests": "طلبات الانضمام المعلقة",
+        "discoverMore": "اكتشف المزيد",
+        "seeMore": "عرض المزيد",
+        "noStores": "لا توجد متاجر هنا بعد.",
+        "availableStores": "المتاجر المتاحة",
+        "discoverDescription": "اكتشف المتاجر واطلب الانضمام إليها.",
+        "requestNew": "طلب متجر جديد",
+        "fields": {
+            "name": "اسم المتجر",
+            "description": "الوصف",
+            "phone": "رقم الهاتف",
+            "email": "البريد الإلكتروني",
+            "address": "العنوان",
+            "currency": "العملة",
+            "timezone": "المنطقة الزمنية"
+        },
+        "placeholders": {
+            "name": "مثال: سوق وسط المدينة",
+            "description": "أخبر الناس عن هذا المتجر."
+        },
+        "creating": "جارٍ الإنشاء...",
+        "createStore": "إنشاء المتجر",
+        "cancel": "إلغاء",
+        "activation": {
+            "suspendedTitle": "تم تعليق متجرك",
+            "pendingTitle": "تفعيل متجرك",
+            "suspendedDescription": "تم تعليق متجرك مؤقتًا وهو غير متاح حاليًا.",
+            "pendingDescription": "تم إنشاء متجرك بنجاح، ولكنه يحتاج إلى التفعيل قبل أن تتمكن من البدء في استخدامه.",
+            "suspendedStatus": "المتجر معلّق",
+            "pendingStatus": "تفعيل المتجر قيد الانتظار",
+            "suspendedStatusDescription": "يرجى التواصل مع المسؤول للحصول على مزيد من المعلومات.",
+            "pendingStatusDescription": "يحتاج أحد المسؤولين إلى تفعيل متجرك.",
+            "suspendedHelp": "بعد رفع التعليق، سيصبح متجرك متاحًا مرة أخرى وستتمكن من الوصول إلى لوحة تحكم المتجر.",
+            "pendingHelp": "بعد تفعيل متجرك، ستتمكن من الوصول إلى لوحة تحكم المتجر والبدء في إدارة منتجاتك ومبيعاتك ومشترياتك وأعضائك."
+        }
     },
     "products": {
         "title": "المنتجات",
+        "edit": "تعديل",
+        "new": "جديد",
         "create": "إنشاء منتج",
-        "edit": "تعديل المنتج",
-        "details": "تفاصيل المنتج",
-        "name": "اسم المنتج",
-        "sku": "رمز SKU",
-        "barcode": "الباركود",
-        "price": "سعر البيع",
-        "cost": "التكلفة",
-        "stock": "المخزون",
-        "stockQuantity": "كمية المخزون",
-        "minimumStock": "الحد الأدنى للمخزون",
-        "category": "الفئة"
+        "createTitle": "إضافة منتج",
+        "editTitle": "تعديل المنتج",
+        "createDescription": "أدخل تفاصيل المنتج أدناه. الحقول التي تحمل علامة * مطلوبة.",
+        "editDescription": "حدّث تفاصيل هذا المنتج.",
+        "basicInformation": "المعلومات الأساسية",
+        "pricing": "التسعير",
+        "inventory": "المخزون",
+        "description": "الوصف",
+        "saving": "جارٍ الحفظ…",
+        "saveChanges": "حفظ التغييرات",
+        "status": {
+            "active": "نشط",
+            "inactive": "غير نشط"
+        },
+        "notifications": {
+            "success": "تم بنجاح",
+            "error": "حدث خطأ ما",
+            "created": "تم إنشاء المنتج بنجاح.",
+            "updated": "تم تحديث المنتج بنجاح."
+        },
+        "errors": {
+            "saveFailed": "تعذر حفظ المنتج. يرجى المحاولة مرة أخرى.",
+            "loadFailed": "تعذر تحميل المنتجات"
+        },
+        "fields": {
+            "name": {
+                "label": "اسم المنتج",
+                "placeholder": "مثال: أفوكادو هاس عضوي"
+            },
+            "sku": {
+                "label": "رمز SKU",
+                "description": "لا يمكن تغيير رمز SKU بعد إنشاء المنتج."
+            },
+            "unit": {
+                "label": "الوحدة",
+                "description": "كيفية بيع المنتج، مثل: حبة، كغ، رغيف.",
+                "placeholder": "حبة"
+            },
+            "barcode": {
+                "label": "الباركود",
+                "description": "اختياري. امسح أو الصق رمز EAN/UPC.",
+                "placeholder": "8901234567890"
+            },
+            "sellingPrice": {
+                "label": "سعر البيع"
+            },
+            "costPrice": {
+                "label": "سعر التكلفة",
+                "description": "يُحتسب من سجل المشتريات. لا يمكن تعديله هنا."
+            },
+            "currentStock": {
+                "label": "المخزون الحالي",
+                "description": "يتم تحديثه من خلال المشتريات والمبيعات. لا يمكن تعديله هنا."
+            },
+            "minimumStock": {
+                "label": "الحد الأدنى للمخزون",
+                "description": "ينبهك عندما ينخفض المخزون إلى هذا المستوى أو أقل."
+            },
+            "status": {
+                "label": "الحالة",
+                "description": "المنتجات غير النشطة مخفية من شاشة البيع."
+            },
+            "description": {
+                "label": "الوصف",
+                "description": "اختياري. يظهر في صفحة تفاصيل المنتج وشاشة البيع.",
+                "placeholder": "أضف أي ملاحظات حول هذا المنتج…"
+            }
+        },
+        "pageDescription": "إدارة كتالوج متجرك ومخزونه.",
+        "showingResults": "عرض {from}–{to} من أصل {total} منتج",
+        "aria": {
+            "viewProduct": "عرض المنتج",
+            "editProduct": "تعديل المنتج"
+        },
+        "filters": {
+            "searchLabel": "البحث في المنتجات",
+            "allStatuses": "جميع الحالات",
+            "allStock": "جميع حالات المخزون"
+        },
+        "empty": {
+            "filteredTitle": "لا توجد منتجات تطابق عوامل التصفية",
+            "title": "لا توجد منتجات بعد",
+            "description": "أضف منتجك الأول لبدء إدارة مخزونك."
+        },
+        "detail": {
+            "keyMetrics": "المؤشرات الرئيسية",
+            "margin": "هامش الربح",
+            "averageCost": "متوسط التكلفة",
+            "minimumStockHint": "الحد الأدنى: {value}",
+            "productInformation": "معلومات المنتج",
+            "marginPerUnit": "هامش الربح للوحدة",
+            "current": "الحالي",
+            "minimum": "الحد الأدنى",
+            "visibility": "الظهور",
+            "productId": "معرّف المنتج",
+            "history": "السجل",
+            "salesHistory": "سجل المبيعات",
+            "purchaseHistory": "سجل المشتريات",
+            "noDescription": "لم يتم تقديم أي وصف."
+        }
     },
     "sales": {
         "title": "المبيعات",
-        "create": "إنشاء عملية بيع",
-        "details": "تفاصيل عملية البيع",
-        "invoice": "الفاتورة",
-        "customer": "العميل",
-        "items": "العناصر",
+        "description": "جميع عمليات البيع المكتملة لهذا المتجر.",
+        "aria": {
+            "viewSale": "عرض عملية البيع"
+        },
+        "errors": {
+            "loadFailed": "تعذر تحميل المبيعات",
+            "loadCatalogFailed": "حدث خطأ أثناء تحميل كتالوج المنتجات. يرجى المحاولة مرة أخرى.",
+            "notFound": "لم يتم العثور على عملية البيع",
+            "notFoundDescription": "تعذر العثور على عملية البيع المطلوبة في هذا المتجر."
+        },
+        "searchProducts": "البحث بالاسم أو رمز المنتج…",
+        "clearSearch": "مسح البحث",
+        "outOfStock": "نفد المخزون",
+        "removeItem": "إزالة {name}",
+        "decreaseQuantity": "تقليل الكمية",
+        "quantityFor": "كمية {name}",
+        "increaseQuantity": "زيادة الكمية",
+        "max": "الحد الأقصى",
+        "cartEmpty": "السلة فارغة",
+        "cartEmptyDescription": "اضغط على المنتجات لإضافتها إلى عملية البيع.",
         "subtotal": "المجموع الفرعي",
         "discount": "الخصم",
+        "discountAmount": "مبلغ الخصم",
         "tax": "الضريبة",
         "total": "الإجمالي",
+        "paid": "المدفوع",
         "amountPaid": "المبلغ المدفوع",
-        "amountDue": "المبلغ المستحق"
+        "exact": "بالضبط",
+        "change": "الباقي",
+        "due": "المتبقي",
+        "completing": "جارٍ إتمام العملية…",
+        "completeSale": "إتمام البيع",
+        "saveError": "تعذر إتمام عملية البيع. يرجى المحاولة مرة أخرى.",
+        "noProductsFound": "لم يتم العثور على منتجات",
+        "tryDifferentSearch": "جرّب البحث باسم أو رمز منتج مختلف.",
+        "currentSale": "عملية البيع الحالية",
+        "itemCount": "{count, plural, =0 {لا توجد منتجات} =1 {منتج واحد} =2 {منتجان} few {# منتجات} many {# منتجًا} other {# منتج}}",
+        "clear": "مسح",
+        "viewCart": "عرض السلة",
+        "closeCart": "إغلاق السلة",
+        "recentSales": "المبيعات الأخيرة",
+        "mySales": "مبيعاتي",
+        "mySalesDescription": "المبيعات التي سجلتها في هذا المتجر.",
+        "newSale": "بيع جديد",
+        "createSale": "إنشاء عملية بيع",
+        "viewSale": "عرض عملية البيع",
+        "loadError": "تعذر تحميل مبيعاتك.",
+        "showingResults": "عرض {from}–{to} من أصل {total} عملية بيع",
+        "table": {
+            "invoice": "الفاتورة",
+            "date": "التاريخ",
+            "total": "الإجمالي",
+            "paid": "المدفوع",
+            "due": "المتبقي",
+            "status": "الحالة"
+        },
+        "filters": {
+            "searchPlaceholder": "البحث برقم الفاتورة…",
+            "searchLabel": "البحث في مبيعاتي",
+            "payment": "الدفع",
+            "allPayments": "جميع حالات الدفع",
+            "paid": "مدفوع",
+            "partial": "مدفوع جزئيًا",
+            "unpaid": "غير مدفوع",
+            "date": "التاريخ",
+            "allTime": "كل الوقت",
+            "today": "اليوم",
+            "last7Days": "آخر 7 أيام",
+            "thisMonth": "هذا الشهر",
+            "searchLabelAll": "البحث في المبيعات"
+        },
+        "empty": {
+            "filteredTitle": "لا توجد مبيعات تطابق عوامل التصفية",
+            "filteredDescription": "حاول تعديل البحث أو مسح عوامل التصفية.",
+            "title": "لا توجد مبيعات بعد",
+            "description": "ستظهر هنا المبيعات التي تسجلها.",
+            "noProductsDescription": "أضف منتجات إلى كتالوجك قبل تسجيل عملية بيع."
+        },
+        "detail": {
+            "summary": "ملخص عملية البيع",
+            "product": "المنتج",
+            "quantity": "الكمية",
+            "unitPrice": "سعر الوحدة",
+            "discount": "الخصم",
+            "tax": "الضريبة",
+            "lineTotal": "إجمالي السطر",
+            "subtotal": "المجموع الفرعي",
+            "total": "الإجمالي",
+            "amountPaid": "المبلغ المدفوع",
+            "amountDue": "المبلغ المتبقي",
+            "items": "المنتجات",
+            "units": "{count, plural, =0 {لا توجد وحدات} =1 {وحدة واحدة} =2 {وحدتان} few {# وحدات} many {# وحدة} other {# وحدة}}",
+            "saleSummary": "ملخص عملية البيع",
+            "notes": "ملاحظات",
+            "payment": "الدفع",
+            "status": "الحالة",
+            "paid": "المدفوع",
+            "due": "المتبقي",
+            "record": "السجل",
+            "invoice": "الفاتورة",
+            "saleDate": "تاريخ البيع",
+            "createdBy": "أنشأها",
+            "created": "تاريخ الإنشاء",
+            "updated": "آخر تحديث",
+            "saleId": "معرّف البيع",
+            "you": "أنت"
+        }
     },
     "purchases": {
+        "noSupplier": "لا يوجد مورد",
         "title": "المشتريات",
-        "create": "إنشاء عملية شراء",
-        "details": "تفاصيل عملية الشراء",
-        "invoice": "الفاتورة",
-        "supplier": "المورد",
-        "items": "العناصر",
-        "subtotal": "المجموع الفرعي",
-        "discount": "الخصم",
-        "tax": "الضريبة",
-        "shipping": "الشحن",
-        "total": "الإجمالي",
-        "amountPaid": "المبلغ المدفوع",
-        "amountDue": "المبلغ المستحق"
+        "supplierBar": {
+            "purchasingFrom": "الشراء من",
+            "supplier": "المورد",
+            "noSuppliers": "لا يوجد موردون بعد.",
+            "addSupplier": "إضافة مورد",
+            "selectSupplier": "اختر موردًا…"
+        },
+        "search": {
+            "placeholder": "البحث بالاسم أو رمز SKU…",
+            "clear": "مسح البحث"
+        },
+        "product": {
+            "inactive": "غير نشط",
+            "averageCost": "متوسط التكلفة"
+        },
+        "line": {
+            "remove": "إزالة {name}",
+            "decreaseQuantity": "تقليل الكمية",
+            "quantityFor": "كمية {name}",
+            "increaseQuantity": "زيادة الكمية",
+            "unitCost": "تكلفة الوحدة",
+            "unitCostFor": "تكلفة وحدة {name}"
+        },
+        "cart": {
+            "emptyTitle": "لا توجد عناصر بعد",
+            "emptyDescription": "اضغط على المنتجات على اليسار لإضافتها إلى عملية الشراء."
+        },
+        "totals": {
+            "subtotal": "المجموع الفرعي",
+            "discount": "الخصم",
+            "discountAmount": "قيمة الخصم",
+            "tax": "الضريبة",
+            "taxAmount": "قيمة الضريبة",
+            "shipping": "الشحن",
+            "shippingCost": "تكلفة الشحن",
+            "other": "أخرى",
+            "otherCost": "التكلفة الأخرى",
+            "additionalCharges": "رسوم إضافية",
+            "hideAdditionalCharges": "إخفاء الرسوم الإضافية",
+            "none": "—",
+            "total": "الإجمالي",
+            "paid": "المدفوع",
+            "amountPaid": "المبلغ المدفوع",
+            "due": "المتبقي",
+            "exact": "بالضبط"
+        },
+        "actions": {
+            "selectSupplierFirst": "اختر موردًا أولًا",
+            "completing": "جارٍ الإكمال…",
+            "completePurchase": "إتمام عملية الشراء",
+            "clear": "مسح",
+            "viewPurchase": "عرض عملية الشراء"
+        },
+        "success": {
+            "recorded": "تم تسجيل عملية الشراء",
+            "view": "عرض",
+            "dismiss": "إغلاق"
+        },
+        "currentPurchase": {
+            "title": "عملية الشراء الحالية",
+            "from": "من",
+            "noSupplier": "لم يتم اختيار مورد ·",
+            "units": "{count, plural, =0 {وحدة} =1 {وحدة} =2 {وحدتان} few {وحدات} many {وحدة} other {وحدة}}",
+            "lines": "{count, plural, =0 {أسطر} =1 {سطر} =2 {سطران} few {أسطر} many {سطرًا} other {سطر}}"
+        },
+        "errors": {
+            "completeFailed": "تعذر إتمام عملية الشراء. يرجى المحاولة مرة أخرى.",
+            "loadFailed": "تعذر تحميل المشتريات",
+            "loadDataFailed": "حدث خطأ أثناء تحميل المنتجات أو الموردين. يرجى المحاولة مرة أخرى."
+        },
+        "detail": {
+            "fallbackTitle": "عملية شراء",
+            "summary": "ملخص عملية الشراء",
+            "viewSupplier": "عرض المورد",
+            "purchaseId": "معرّف الشراء"
+        },
+        "newPurchase": "عملية شراء جديدة",
+        "recentPurchases": "المشتريات الأخيرة",
+        "empty": {
+            "title": "لا توجد مشتريات بعد",
+            "description": "ستظهر هنا المشتريات التي تسجلها من الموردين.",
+            "filteredTitle": "لا توجد مشتريات تطابق عوامل التصفية"
+        },
+        "description": "المخزون الذي تشتريه من الموردين.",
+        "showingResults": "عرض {from}–{to} من أصل {total} عملية شراء",
+        "aria": {
+            "viewPurchase": "عرض عملية الشراء"
+        },
+        "filters": {
+            "searchLabel": "البحث في المشتريات",
+            "allSuppliers": "جميع الموردين"
+        }
     },
     "suppliers": {
         "title": "الموردون",
         "create": "إنشاء مورد",
-        "edit": "تعديل المورد",
-        "details": "تفاصيل المورد",
-        "name": "اسم المورد",
-        "email": "البريد الإلكتروني",
-        "phone": "رقم الهاتف",
-        "address": "العنوان"
+        "edit": "تعديل",
+        "new": "جديد",
+        "createTitle": "إضافة مورد",
+        "editTitle": "تعديل المورد",
+        "createDescription": "سجّل مورّدًا تشتري منه المخزون. اسم المورد فقط مطلوب.",
+        "editDescription": "حدّث بيانات هذا المورد.",
+        "basicInformation": "المعلومات الأساسية",
+        "addressAndNotes": "العنوان والملاحظات",
+        "saving": "جارٍ الحفظ…",
+        "saveChanges": "حفظ التغييرات",
+        "fields": {
+            "name": {
+                "label": "اسم المورد",
+                "placeholder": "مثال: مزارع الورقة الخضراء"
+            },
+            "phone": {
+                "label": "الهاتف",
+                "description": "أضف رمز الدولة إذا كان المورد دوليًا.",
+                "placeholder": "+213 550 00 00 00"
+            },
+            "email": {
+                "label": "البريد الإلكتروني",
+                "description": "يُستخدم لأوامر الشراء والمراسلات.",
+                "placeholder": "orders@example.com"
+            },
+            "taxNumber": {
+                "label": "الرقم الجبائي",
+                "description": "اختياري. رقم NIF أو NIS أو الرقم الجبائي المحلي.",
+                "placeholder": "مثال: 000000000000000"
+            },
+            "address": {
+                "label": "العنوان",
+                "description": "عنوان مقر المورد، إذا كان معروفًا.",
+                "placeholder": "12 شارع ديدوش مراد\nالجزائر الوسطى، 16000"
+            },
+            "notes": {
+                "label": "ملاحظات",
+                "description": "مواعيد التسليم، شروط الدفع، أو أي معلومات مهمة للتذكر.",
+                "placeholder": "مثال: التسليم مرتان في الأسبوع (الثلاثاء والجمعة)."
+            }
+        },
+        "detail": {
+            "summary": "ملخص المورد",
+            "ordersCount": "{count, plural, =0 {لا توجد مشتريات بعد} =1 {طلب واحد} =2 {طلبان} few {# طلبات} many {# طلبًا} other {# طلب}}",
+            "contactInformation": "معلومات الاتصال",
+            "noContact": "لا توجد تفاصيل اتصال مسجلة.",
+            "totalPurchased": "إجمالي المشتريات",
+            "totalPaid": "إجمالي المدفوع",
+            "orders": "الطلبات",
+            "outstandingHint": "مستحقة لهذا المورد",
+            "settledHint": "مسوّاة بالكامل",
+            "allTime": "كل الوقت",
+            "supplierId": "معرّف المورد",
+            "added": "تاريخ الإضافة",
+            "history": "السجل",
+            "allPurchases": "جميع المشتريات",
+            "unpaidPurchases": "المشتريات غير المدفوعة",
+            "recordPurchase": "تسجيل عملية شراء"
+        },
+        "validation": {
+            "nameRequired": "اسم المورد مطلوب."
+        },
+        "errors": {
+            "saveFailed": "تعذر حفظ المورد. يرجى المحاولة مرة أخرى.",
+            "loadFailed": "تعذر تحميل الموردين"
+        },
+        "description": {
+            "outstanding": "مستحقات بقيمة {amount} موزّعة على {count, plural, =0 {لا موردين} =1 {مورد واحد} =2 {موردين} few {# موردين} many {# موردًا} other {# مورد}}.",
+            "settled": "جميع حسابات الموردين مسوّاة."
+        },
+        "columns": {
+            "outstanding": "المستحقات"
+        },
+        "aria": {
+            "viewSupplier": "عرض المورد",
+            "editSupplier": "تعديل المورد"
+        },
+        "filters": {
+            "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني أو الهاتف…",
+            "searchLabel": "البحث في الموردين"
+        },
+        "empty": {
+            "filteredTitle": "لا يوجد موردون يطابقون بحثك",
+            "filteredDescription": "جرّب اسمًا أو بريدًا إلكترونيًا أو رقم هاتف مختلفًا.",
+            "title": "لا يوجد موردون بعد",
+            "description": "أضف موردك الأول لبدء تسجيل المشتريات."
+        },
+        "showingResults": "عرض {from}–{to} من أصل {total, plural, =0 {لا موردين} =1 {مورد واحد} =2 {موردين} few {# موردين} many {# موردًا} other {# مورد}}"
     },
     "members": {
         "title": "الأعضاء",
         "add": "إضافة عضو",
         "details": "تفاصيل العضو",
         "role": "الدور",
-        "status": "حالة العضوية"
+        "status": "حالة العضوية",
+        "accept": "قبول",
+        "reject": "رفض",
+        "roles": {
+            "owner": "المالك",
+            "manager": "المدير",
+            "staff": "الموظف"
+        },
+        "description": "كل من يمكنه الوصول إلى هذا المتجر.",
+        "unnamed": "بدون اسم",
+        "columns": {
+            "user": "المستخدم",
+            "member": "العضو",
+            "requested": "تاريخ الطلب",
+            "joined": "تاريخ الانضمام"
+        },
+        "pending": {
+            "title": "طلبات الانضمام المعلقة",
+            "description": "{count, plural, =0 {لا أحد في انتظار الانضمام.} =1 {شخص واحد في انتظار الانضمام.} =2 {شخصان في انتظار الانضمام.} few {# أشخاص في انتظار الانضمام.} many {# شخصًا في انتظار الانضمام.} other {# شخص في انتظار الانضمام.}}"
+        },
+        "count": "{count, plural, =0 {لا يوجد أعضاء} =1 {عضو واحد} =2 {عضوان} few {# أعضاء} many {# عضوًا} other {# عضو}}",
+        "errors": {
+            "loadFailed": "تعذر تحميل الأعضاء",
+            "verifyFailed": "تعذر التحقق من صلاحياتك"
+        },
+        "empty": {
+            "rejectedTitle": "لا توجد طلبات مرفوضة",
+            "allTitle": "لا يوجد أعضاء سابقون",
+            "activeTitle": "لا يوجد أعضاء بعد",
+            "activeDescription": "عندما يطلب شخص الانضمام إلى هذا المتجر، سيظهر هنا.",
+            "defaultDescription": "لا يوجد شيء لعرضه في هذا العرض."
+        }
     },
     "profile": {
-        "title": "الملف الشخصي",
-        "personalInformation": "المعلومات الشخصية",
+        "loadError": "تعذر تحميل ملفك الشخصي.",
         "account": "الحساب",
-        "preferences": "التفضيلات",
-        "notifications": "الإشعارات",
-        "notificationsDescription": "تلقي تحديثات حول متاجرك وحسابك.",
-        "emailNotifications": "إشعارات البريد الإلكتروني",
-        "emailNotificationsDescription": "تلقي تحديثات مهمة حول حسابك ومتاجرك عبر البريد الإلكتروني.",
-        "language": "اللغة",
-        "languageDescription": "اختر اللغة المستخدمة في التطبيق.",
-        "comingSoon": "قريبًا"
+        "title": "الملف الشخصي",
+        "description": "إدارة معلوماتك الشخصية وتفاصيل حسابك وتفضيلاتك.",
+        "editProfile": "تعديل الملف الشخصي",
+        "notSet": "غير محدد",
+        "enabled": "مفعّل",
+        "disabled": "معطّل",
+        "overview": {
+            "title": "نظرة عامة على الملف الشخصي",
+            "description": "معلومات حسابك الشخصية."
+        },
+        "personalInfo": {
+            "title": "المعلومات الشخصية",
+            "description": "المعلومات المرتبطة بحسابك."
+        },
+        "fields": {
+            "firstName": "الاسم الأول",
+            "lastName": "اسم العائلة",
+            "email": "البريد الإلكتروني",
+            "notifications": "الإشعارات"
+        },
+        "accountSection": {
+            "title": "الحساب",
+            "description": "معلومات الحساب والوصول."
+        },
+        "accountStatus": {
+            "title": "حالة الحساب",
+            "description": "حسابك نشط ومتاح للاستخدام."
+        },
+        "password": {
+            "title": "كلمة المرور",
+            "description": "حافظ على أمان حسابك باستخدام كلمة مرور قوية.",
+            "action": "تغيير كلمة المرور"
+        },
+        "email": {
+            "title": "البريد الإلكتروني",
+            "description": "يُستخدم بريدك الإلكتروني للتواصل بشأن الحساب."
+        },
+        "preferences": {
+            "title": "التفضيلات",
+            "description": "خصص طريقة عمل حسابك."
+        },
+        "notifications": {
+            "title": "الإشعارات",
+            "description": "تلقي التحديثات المتعلقة بمتاجرك وحسابك."
+        },
+        "emailNotifications": {
+            "title": "إشعارات البريد الإلكتروني",
+            "description": "تلقي تحديثات الحساب والمتجر المهمة عبر البريد الإلكتروني."
+        },
+        "comingSoon": {
+            "title": "المزيد من إعدادات الملف الشخصي قريبًا",
+            "description": "ستتوفر هنا إمكانية تعديل الملف الشخصي وتفضيلات الإشعارات وتغيير كلمة المرور وإعدادات الحساب الأخرى مع تطور نظام الحسابات."
+        }
     },
     "settings": {
         "title": "الإعدادات",
@@ -214,16 +766,83 @@
     "admin": {
         "title": "الإدارة",
         "users": "المستخدمون",
-        "stores": "المتاجر",
+        "storesTitle": "المتاجر",
         "members": "الأعضاء",
-        "overview": "نظرة عامة"
+        "overview": "نظرة عامة",
+        "platform": "المنصة",
+        "dashboard": "لوحة التحكم",
+        "dashboardTitle": "لوحة تحكم المسؤول",
+        "dashboardDescription": "نظرة عامة على المستخدمين والمتاجر.",
+        "errors": {
+            "loadFailed": "تعذر تحميل لوحة التحكم",
+            "loadFailedDescription": "حدث خطأ أثناء تحميل لوحة تحكم المسؤول."
+        },
+        "stats": {
+            "totalUsers": "إجمالي المستخدمين",
+            "totalStores": "إجمالي المتاجر",
+            "pendingStores": "متاجر قيد الانتظار",
+            "activeStores": "متاجر نشطة"
+        },
+        "storeOverview": {
+            "title": "نظرة عامة على المتاجر",
+            "description": "الحالة الحالية لجميع المتاجر."
+        },
+        "recentRequests": {
+            "title": "طلبات المتاجر الأخيرة",
+            "description": "أحدث المتاجر في انتظار المراجعة.",
+            "empty": "لا توجد طلبات متاجر معلقة.",
+            "requestedOn": "تم الطلب في {date}"
+        },
+        "stores": {
+            "description": "إدارة حالة المتاجر ومراجعة معلوماتها.",
+            "columns": {
+                "store": "المتجر",
+                "contact": "بيانات الاتصال",
+                "action": "الإجراء"
+            },
+            "actions": {
+                "review": "مراجعة",
+                "manage": "إدارة"
+            },
+            "empty": {
+                "title": "لا توجد متاجر",
+                "description": "لا توجد حاليًا أي متاجر في النظام."
+            },
+            "errors": {
+                "loadFailed": "تعذر تحميل المتاجر",
+                "loadFailedDescription": "حدث خطأ أثناء تحميل المتاجر."
+            }
+        },
+        "storeDetail": {
+            "backToStores": "رجوع إلى المتاجر",
+            "storeInformation": "معلومات المتجر",
+            "storeManagement": "إدارة المتجر",
+            "storeStatus": "حالة المتجر",
+            "statusDescriptions": {
+                "pending": "هذا المتجر في انتظار موافقة المسؤول.",
+                "active": "هذا المتجر نشط حاليًا ومتاح لأعضائه.",
+                "suspended": "هذا المتجر موقوف حاليًا."
+            },
+            "actions": {
+                "activate": "تفعيل المتجر",
+                "suspend": "تعليق المتجر"
+            }
+        }
     },
     "table": {
         "noData": "لا توجد بيانات متاحة",
         "noResults": "لم يتم العثور على نتائج",
         "rowsPerPage": "الصفوف في الصفحة",
         "previousPage": "الصفحة السابقة",
-        "nextPage": "الصفحة التالية"
+        "nextPage": "الصفحة التالية",
+        "pagination": "التنقل بين الصفحات",
+        "page": "صفحة",
+        "of": "من"
+    },
+    "filters": {
+        "search": "بحث",
+        "clear": "مسح عوامل التصفية",
+        "clearSearch": "مسح البحث"
     },
     "accessibility": {
         "openMenu": "فتح القائمة",
@@ -231,6 +850,15 @@
         "openSidebar": "فتح الشريط الجانبي",
         "closeSidebar": "إغلاق الشريط الجانبي",
         "expand": "توسيع",
-        "collapse": "طي"
+        "collapse": "طي",
+        "breadcrumb": "مسار التنقل",
+        "goBack": "رجوع",
+        "sidebar": "الشريط الجانبي",
+        "openNavigation": "فتح التنقل",
+        "navigation": "التنقل",
+        "primaryNavigation": "التنقل الرئيسي",
+        "itemsCount": "{count} عنصر",
+        "changeRole": "تغيير الدور (الدور الحالي: {role})",
+        "notifications": "الإشعارات"
     }
 }

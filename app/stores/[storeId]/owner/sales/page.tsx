@@ -1,5 +1,6 @@
 import Link from "next/link";
-// import "temporal-polyfill/full/global";
+import { getTranslations } from "next-intl/server";
+import { Eye } from "lucide-react";
 
 import { PageHeader } from "@/components/UI/page-header";
 import { FilterBar } from "@/components/UI/filter-bar";
@@ -202,122 +203,25 @@ function applyQuery(
 }
 
 /* ========================================================================== */
-/*  Columns                                                                   */
-/* ========================================================================== */
-
-const columns: Column<GetSale>[] = [
-    {
-        key: "invoice",
-        header: "Invoice",
-        mobile: "primary",
-        cell: (sale) => (
-            <Link
-                href={`/ stores / ${sale.storeId} /owner/sales / ${sale.id}`}
-                className="font-mono text-body-sm font-medium text-on-surface hover:text-info"
-            >
-                {sale.invoiceNumber}
-            </Link>
-        ),
-    },
-    {
-        key: "date",
-        header: "Date",
-        mobile: "secondary",
-        width: "w-32",
-        cell: (sale) => (
-            <span className="text-on-surface-variant">
-                {formatDate(sale.saleDate)}
-            </span>
-        ),
-    },
-    {
-        key: "total",
-        header: "Total",
-        align: "right",
-        width: "w-28",
-        cell: (sale) => (
-            <span className="font-medium">
-                {formatCurrency(sale.totalAmount)}
-            </span>
-        ),
-    },
-    {
-        key: "paid",
-        header: "Paid",
-        align: "right",
-        width: "w-28",
-        cell: (sale) => (
-            <span className="text-on-surface-variant">
-                {formatCurrency(sale.amountPaid)}
-            </span>
-        ),
-    },
-    {
-        key: "due",
-        header: "Due",
-        align: "right",
-        width: "w-28",
-        cell: (sale) => {
-            if (sale.amountDue <= 0) {
-                return (
-                    <span className="text-on-surface-variant">
-                        —
-                    </span>
-                );
-            }
-
-            return (
-                <span className="font-medium text-danger-fg tabular-nums">
-                    {formatCurrency(sale.amountDue)}
-                </span>
-            );
-        },
-    },
-    {
-        key: "status",
-        header: "Status",
-        width: "w-28",
-        cell: (sale) => (
-            <StatusBadge
-                status={getPaymentStatus(
-                    sale.amountPaid,
-                    sale.amountDue,
-                )}
-            />
-        ),
-    },
-];
-
-/* ========================================================================== */
 /*  Row actions                                                               */
 /* ========================================================================== */
 
 function SaleRowActions({
     storeId,
     saleId,
+    viewLabel,
 }: {
     storeId: string;
     saleId: string;
+    viewLabel: string;
 }) {
     return (
         <Link
             href={`/stores/${storeId}/owner/sales/${saleId}`}
-            aria-label="View sale"
+            aria-label={viewLabel}
             className="inline-flex size-8 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-slate-100 hover:text-on-surface"
         >
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="size-4"
-                aria-hidden="true"
-            >
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-                <circle cx="12" cy="12" r="3" />
-            </svg>
+            <Eye className="size-4" aria-hidden="true" />
         </Link>
     );
 }
@@ -335,6 +239,9 @@ export default async function SalesPage({
 
     const query = parseQuery(sp);
 
+    const t = await getTranslations("sales");
+    const tCommon = await getTranslations("common");
+
     const sales = await getAllSales(storeId);
 
     /*
@@ -347,7 +254,7 @@ export default async function SalesPage({
         return (
             <EmptyState
                 size="sm"
-                title="Unable to load sales"
+                title={t("errors.loadFailed")}
                 description={sales.message}
             />
         );
@@ -388,6 +295,93 @@ export default async function SalesPage({
             : base;
     };
 
+    /* ---------- Columns ---------- */
+
+    const columns: Column<GetSale>[] = [
+        {
+            key: "invoice",
+            header: t("table.invoice"),
+            mobile: "primary",
+            cell: (sale) => (
+                <Link
+                    href={`/stores/${sale.storeId}/owner/sales/${sale.id}`}
+                    className="font-mono text-body-sm font-medium text-on-surface hover:text-info"
+                >
+                    {sale.invoiceNumber}
+                </Link>
+            ),
+        },
+        {
+            key: "date",
+            header: tCommon("date"),
+            mobile: "secondary",
+            width: "w-32",
+            cell: (sale) => (
+                <span className="text-on-surface-variant">
+                    {formatDate(sale.saleDate)}
+                </span>
+            ),
+        },
+        {
+            key: "total",
+            header: tCommon("total"),
+            align: "right",
+            width: "w-28",
+            cell: (sale) => (
+                <span className="font-medium">
+                    {formatCurrency(sale.totalAmount)}
+                </span>
+            ),
+        },
+        {
+            key: "paid",
+            header: t("table.paid"),
+            align: "right",
+            width: "w-28",
+            cell: (sale) => (
+                <span className="text-on-surface-variant">
+                    {formatCurrency(sale.amountPaid)}
+                </span>
+            ),
+        },
+        {
+            key: "due",
+            header: t("table.due"),
+            align: "right",
+            width: "w-28",
+            cell: (sale) => {
+                if (sale.amountDue <= 0) {
+                    return (
+                        <span className="text-on-surface-variant">
+                            —
+                        </span>
+                    );
+                }
+
+                return (
+                    <span className="font-medium text-danger-fg tabular-nums">
+                        {formatCurrency(sale.amountDue)}
+                    </span>
+                );
+            },
+        },
+        {
+            key: "status",
+            header: tCommon("status"),
+            width: "w-28",
+            cell: (sale) => (
+                <StatusBadge
+                    status={getPaymentStatus(
+                        sale.amountPaid,
+                        sale.amountDue,
+                    )}
+                />
+            ),
+        },
+    ];
+
+    /* ---------- Derived ---------- */
+
     const hasAnySales = sales.length > 0;
     const hasFilteredResults = rows.length > 0;
 
@@ -400,8 +394,8 @@ export default async function SalesPage({
     return (
         <div className="space-y-4">
             <PageHeader
-                title="Sales"
-                description="Every completed sale for this store."
+                title={t("title")}
+                description={t("description")}
                 actions={
                     <Link
                         href={`${base}/new`}
@@ -412,8 +406,8 @@ export default async function SalesPage({
                             })
                         }
                     >
-                        New Sale
-                    </Link >
+                        {t("newSale")}
+                    </Link>
                 }
             />
 
@@ -430,53 +424,52 @@ export default async function SalesPage({
                             {
                                 type: "search",
                                 key: "q",
-                                placeholder:
-                                    "Search by invoice number…",
-                                label: "Search sales",
+                                placeholder: t("filters.searchPlaceholder"),
+                                label: t("filters.searchLabelAll"),
                             },
                             {
                                 type: "select",
                                 key: "payment",
-                                label: "Payment",
+                                label: t("filters.payment"),
                                 options: [
                                     {
                                         value: "all",
-                                        label: "All payments",
+                                        label: t("filters.allPayments"),
                                     },
                                     {
                                         value: "paid",
-                                        label: "Paid",
+                                        label: t("filters.paid"),
                                     },
                                     {
                                         value: "partial",
-                                        label: "Partial",
+                                        label: t("filters.partial"),
                                     },
                                     {
                                         value: "unpaid",
-                                        label: "Unpaid",
+                                        label: t("filters.unpaid"),
                                     },
                                 ],
                             },
                             {
                                 type: "select",
                                 key: "date",
-                                label: "Date",
+                                label: t("filters.date"),
                                 options: [
                                     {
                                         value: "all",
-                                        label: "All time",
+                                        label: t("filters.allTime"),
                                     },
                                     {
                                         value: "today",
-                                        label: "Today",
+                                        label: t("filters.today"),
                                     },
                                     {
                                         value: "week",
-                                        label: "Last 7 days",
+                                        label: t("filters.last7Days"),
                                     },
                                     {
                                         value: "month",
-                                        label: "This month",
+                                        label: t("filters.thisMonth"),
                                     },
                                 ],
                             },
@@ -493,20 +486,21 @@ export default async function SalesPage({
                     <SaleRowActions
                         storeId={storeId}
                         saleId={sale.id}
+                        viewLabel={t("aria.viewSale")}
                     />
                 )}
                 empty={
                     hasAnySales && isFiltering ? (
                         <EmptyState
                             size="sm"
-                            title="No sales match your filters"
-                            description="Try adjusting your search or clearing the filters."
+                            title={t("empty.filteredTitle")}
+                            description={t("empty.filteredDescription")}
                         />
                     ) : (
                         <EmptyState
                             size="sm"
-                            title="No sales yet"
-                            description="Sales will appear here once you complete your first sale."
+                            title={t("empty.title")}
+                            description={t("empty.description")}
                             action={
                                 <Link
                                     href={`${base}/new`}
@@ -515,7 +509,7 @@ export default async function SalesPage({
                                         size: "sm",
                                     })}
                                 >
-                                    Create Sale
+                                    {t("createSale")}
                                 </Link>
                             }
                         />
@@ -536,22 +530,17 @@ export default async function SalesPage({
             {
                 hasFilteredResults && (
                     <p className="text-body-sm text-on-surface-variant">
-                        Showing{" "}
-                        <span className="tabular-nums">
-                            {(currentPage - 1) * PAGE_SIZE + 1}–
-                            {Math.min(
+                        {t("showingResults", {
+                            from: (currentPage - 1) * PAGE_SIZE + 1,
+                            to: Math.min(
                                 currentPage * PAGE_SIZE,
                                 total,
-                            )}
-                        </span>{" "}
-                        of{" "}
-                        <span className="tabular-nums">
-                            {total}
-                        </span>{" "}
-                        sales
+                            ),
+                            total,
+                        })}
                     </p>
                 )
             }
-        </div >
+        </div>
     );
 }

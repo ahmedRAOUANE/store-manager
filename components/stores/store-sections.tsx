@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import StoreCard from "./store-card";
 import { UserStore } from "./store-list";
 
@@ -16,6 +17,8 @@ export default function StoreSection({
     isPending = false,
     selectedStoreId = null,
 }: StoreSectionProps) {
+    const storesT = useTranslations("stores");
+    
     return (
         <section>
             <div className="mb-4 flex items-center justify-between">
@@ -28,7 +31,7 @@ export default function StoreSection({
                         type="button"
                         className="text-sm text-muted-foreground hover:text-foreground"
                     >
-                        See more
+                        {storesT("seeMore")}
                     </button>
                 )}
             </div>
@@ -36,7 +39,7 @@ export default function StoreSection({
             {stores.length === 0 ? (
                 <div className="rounded-lg border border-dashed p-6 text-center">
                     <p className="text-sm text-muted-foreground">
-                        No stores here yet.
+                        {storesT("noStores")}
                     </p>
                 </div>
             ) : (

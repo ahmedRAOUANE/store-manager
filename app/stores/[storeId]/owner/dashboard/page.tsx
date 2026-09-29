@@ -1,5 +1,5 @@
-// import "temporal-polyfill/full/global";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/UI/page-header";
 import { StatCard } from "@/components/UI/stats-card";
@@ -51,128 +51,6 @@ function formatDate(instant: Temporal.Instant): string {
 }
 
 /* ========================================================================== */
-/*  Column definitions                                                        */
-/* ========================================================================== */
-
-const lowStockColumns: Column<StoreDashboard["lowStockProducts"][number]>[] = [
-    {
-        key: "product",
-        header: "Product",
-        mobile: "primary",
-        cell: (p) => (
-            <span className="font-medium">{p.name}</span>
-        ),
-    },
-    {
-        key: "sku",
-        header: "SKU",
-        mobile: "secondary",
-        cell: (p) => (
-            <span className="font-mono text-body-sm">
-                {p.sku}
-            </span>
-        ),
-    },
-    {
-        key: "stock",
-        header: "Stock",
-        align: "right",
-        width: "w-32",
-        cell: (p) => (
-            <span className="tabular-nums">
-                <span className="font-medium text-warning-fg">
-                    {p.stockQuantity}
-                </span>
-                <span className="text-on-surface-variant">
-                    {" / "}
-                    {p.minimumStock}
-                </span>
-            </span>
-        ),
-    },
-];
-
-const recentSalesColumns: Column<StoreDashboard["recentSales"][number]>[] = [
-    {
-        key: "invoice",
-        header: "Invoice",
-        mobile: "primary",
-        cell: (s) => (
-            <span className="font-mono text-body-sm">
-                {s.invoiceNumber}
-            </span>
-        ),
-    },
-    {
-        key: "date",
-        header: "Date",
-        mobile: "secondary",
-        cell: (s) => formatDate(s.saleDate),
-    },
-    {
-        key: "amount",
-        header: "Amount",
-        align: "right",
-        width: "w-28",
-        cell: (s) => formatCurrency(s.totalAmount),
-    },
-    {
-        key: "status",
-        header: "Status",
-        width: "w-28",
-        cell: (s) => (
-            <StatusBadge
-                status={getPaymentStatus(
-                    s.totalAmount - s.amountDue,
-                    s.amountDue
-                )}
-            />
-        ),
-    },
-];
-
-const recentPurchasesColumns: Column<
-    StoreDashboard["recentPurchases"][number]
->[] = [
-        {
-            key: "invoice",
-            header: "Invoice",
-            mobile: "primary",
-            cell: (p) => (
-                <span className="font-mono text-body-sm">
-                    {p.invoiceNumber}
-                </span>
-            ),
-        },
-        {
-            key: "supplier",
-            header: "Supplier",
-            mobile: "secondary",
-            cell: () => "Unknown",
-        },
-        {
-            key: "amount",
-            header: "Amount",
-            align: "right",
-            width: "w-28",
-            cell: (p) => formatCurrency(p.totalAmount),
-        },
-        {
-            key: "status",
-            header: "Status",
-            width: "w-28",
-            cell: (p) => (
-                <StatusBadge
-                    status={getPaymentStatus(
-                        p.totalAmount - p.amountDue,
-                        p.amountDue
-                    )}
-                />
-            ),
-        },
-    ];
-
-/* ========================================================================== */
 /*  Page                                                                      */
 /* ========================================================================== */
 
@@ -183,31 +61,166 @@ export default async function StoreDashboardPage(
 
     const base = `/stores/${storeId}/owner`;
 
+    const t = await getTranslations("dashboard");
+    const tSales = await getTranslations("sales");
+    const tPurchases = await getTranslations("purchases");
+    const tProducts = await getTranslations("products");
+    const tCommon = await getTranslations("common");
+    const tActions = await getTranslations("actions");
+    const tEmpty = await getTranslations("emptyStates");
+    const tErrors = await getTranslations("errors");
+
     const data = await getManagementDashboard(storeId);
 
     if (data instanceof AppError) {
         return (
             <div className="space-y-6 min-h-full">
                 <PageHeader
-                    title="Dashboard"
-                    description="A quick overview of your store's activity."
+                    title={t("title")}
+                    description={t("description")}
                 />
 
                 <EmptyState
-                    title="No data found"
-                    description="We couldn't load the dashboard data for this store."
+                    title={tEmpty("noData")}
+                    description={tErrors("loadRetry")}
                 />
             </div>
         );
     }
+
+    /* ===================== Column definitions ===================== */
+
+    const lowStockColumns: Column<
+        StoreDashboard["lowStockProducts"][number]
+    >[] = [
+            {
+                key: "product",
+                header: tSales("detail.product"),
+                mobile: "primary",
+                cell: (p) => (
+                    <span className="font-medium">{p.name}</span>
+                ),
+            },
+            {
+                key: "sku",
+                header: tProducts("fields.sku.label"),
+                mobile: "secondary",
+                cell: (p) => (
+                    <span className="font-mono text-body-sm">
+                        {p.sku}
+                    </span>
+                ),
+            },
+            {
+                key: "stock",
+                header: tCommon("stock"),
+                align: "right",
+                width: "w-32",
+                cell: (p) => (
+                    <span className="tabular-nums">
+                        <span className="font-medium text-warning-fg">
+                            {p.stockQuantity}
+                        </span>
+                        <span className="text-on-surface-variant">
+                            {" / "}
+                            {p.minimumStock}
+                        </span>
+                    </span>
+                ),
+            },
+        ];
+
+    const recentSalesColumns: Column<
+        StoreDashboard["recentSales"][number]
+    >[] = [
+            {
+                key: "invoice",
+                header: tSales("table.invoice"),
+                mobile: "primary",
+                cell: (s) => (
+                    <span className="font-mono text-body-sm">
+                        {s.invoiceNumber}
+                    </span>
+                ),
+            },
+            {
+                key: "date",
+                header: tCommon("date"),
+                mobile: "secondary",
+                cell: (s) => formatDate(s.saleDate),
+            },
+            {
+                key: "amount",
+                header: tCommon("amount"),
+                align: "right",
+                width: "w-28",
+                cell: (s) => formatCurrency(s.totalAmount),
+            },
+            {
+                key: "status",
+                header: tCommon("status"),
+                width: "w-28",
+                cell: (s) => (
+                    <StatusBadge
+                        status={getPaymentStatus(
+                            s.totalAmount - s.amountDue,
+                            s.amountDue
+                        )}
+                    />
+                ),
+            },
+        ];
+
+    const recentPurchasesColumns: Column<
+        StoreDashboard["recentPurchases"][number]
+    >[] = [
+            {
+                key: "invoice",
+                header: tSales("table.invoice"),
+                mobile: "primary",
+                cell: (p) => (
+                    <span className="font-mono text-body-sm">
+                        {p.invoiceNumber}
+                    </span>
+                ),
+            },
+            {
+                key: "supplier",
+                header: tPurchases("supplierBar.supplier"),
+                mobile: "secondary",
+                cell: () => tCommon("unknown"),
+            },
+            {
+                key: "amount",
+                header: tCommon("amount"),
+                align: "right",
+                width: "w-28",
+                cell: (p) => formatCurrency(p.totalAmount),
+            },
+            {
+                key: "status",
+                header: tCommon("status"),
+                width: "w-28",
+                cell: (p) => (
+                    <StatusBadge
+                        status={getPaymentStatus(
+                            p.totalAmount - p.amountDue,
+                            p.amountDue
+                        )}
+                    />
+                ),
+            },
+        ];
+
+    /* ===================== Render ===================== */
 
     return (
         <div className="space-y-6 min-h-full">
             {/* ─── Header + Quick Actions ─────────────────────────────────── */}
 
             <PageHeader
-                title="Dashboard"
-                description="A quick overview of your store's activity."
+                title={t("title")}
+                description={t("description")}
                 actions={
                     <>
                         <Link
@@ -217,7 +230,7 @@ export default async function StoreDashboardPage(
                                 size: "sm",
                             })}
                         >
-                            New Sale
+                            {tSales("newSale")}
                         </Link>
 
                         <Link
@@ -227,7 +240,7 @@ export default async function StoreDashboardPage(
                                 size: "sm",
                             })}
                         >
-                            Add Product
+                            {tProducts("createTitle")}
                         </Link>
 
                         <Link
@@ -237,7 +250,7 @@ export default async function StoreDashboardPage(
                                 size: "sm",
                             })}
                         >
-                            New Purchase
+                            {tPurchases("newPurchase")}
                         </Link>
                     </>
                 }
@@ -246,33 +259,33 @@ export default async function StoreDashboardPage(
             {/* ─── Summary cards ──────────────────────────────────────────── */}
 
             <section
-                aria-label="Summary"
+                aria-label={t("summary")}
                 className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4"
             >
                 <StatCard
-                    label="Today's Sales"
+                    label={t("stats.todaySales")}
                     value={data.sales.todayCount}
                     hint={formatCurrency(data.sales.todayRevenue)}
                 />
 
                 <StatCard
-                    label="Today's Revenue"
+                    label={t("stats.todayRevenue")}
                     value={formatCurrency(data.sales.todayRevenue)}
                 />
 
                 <StatCard
-                    label="Monthly Sales"
+                    label={t("stats.monthlySales")}
                     value={data.purchases.monthCount}
                     hint={formatCurrency(data.purchases.monthAmount)}
                 />
 
                 <StatCard
-                    label="Monthly Purchases"
+                    label={t("stats.monthlyPurchases")}
                     value={formatCurrency(data.purchases.monthAmount)}
                 />
 
                 <StatCard
-                    label="Customer Outstanding"
+                    label={t("stats.customerOutstanding")}
                     value={formatCurrency(data.sales.outstanding)}
                     tone={
                         data.sales.outstanding > 0
@@ -282,7 +295,7 @@ export default async function StoreDashboardPage(
                 />
 
                 <StatCard
-                    label="Supplier Outstanding"
+                    label={t("stats.supplierOutstanding")}
                     value={formatCurrency(data.purchases.outstanding)}
                     tone={
                         data.purchases.outstanding > 0
@@ -292,12 +305,12 @@ export default async function StoreDashboardPage(
                 />
 
                 <StatCard
-                    label="Inventory Value"
+                    label={t("stats.inventoryValue")}
                     value={formatCurrency(data.inventory.inventoryValue)}
                 />
 
                 <StatCard
-                    label="Gross Profit (Month)"
+                    label={t("stats.grossProfitMonth")}
                     value={formatCurrency(data.profit.month)}
                     tone={
                         data.profit.month >= 0
@@ -310,17 +323,17 @@ export default async function StoreDashboardPage(
             {/* ─── Inventory ──────────────────────────────────────────────── */}
 
             <section
-                aria-label="Inventory"
+                aria-label={tProducts("inventory")}
                 className="space-y-3"
             >
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                     <StatCard
-                        label="Total Products"
+                        label={t("stats.totalProducts")}
                         value={data.inventory.productCount}
                     />
 
                     <StatCard
-                        label="Low Stock"
+                        label={t("stats.lowStock")}
                         value={data.inventory.lowStockCount}
                         tone={
                             data.inventory.lowStockCount > 0
@@ -330,7 +343,7 @@ export default async function StoreDashboardPage(
                     />
 
                     <StatCard
-                        label="Inventory Value"
+                        label={t("stats.inventoryValue")}
                         value={formatCurrency(
                             data.inventory.inventoryValue
                         )}
@@ -340,7 +353,7 @@ export default async function StoreDashboardPage(
                 <Card>
                     <CardHeader>
                         <CardTitle>
-                            Low Stock Products
+                            {t("lowStockProducts.title")}
                         </CardTitle>
 
                         <CardActions>
@@ -351,7 +364,7 @@ export default async function StoreDashboardPage(
                                     size: "sm",
                                 })}
                             >
-                                View all
+                                {tActions("viewAll")}
                             </Link>
                         </CardActions>
                     </CardHeader>
@@ -364,8 +377,8 @@ export default async function StoreDashboardPage(
                             empty={
                                 <EmptyState
                                     size="sm"
-                                    title="All products are well-stocked"
-                                    description="No items are below their minimum stock level."
+                                    title={t("lowStockProducts.emptyTitle")}
+                                    description={t("lowStockProducts.emptyDescription")}
                                 />
                             }
                         />
@@ -376,12 +389,12 @@ export default async function StoreDashboardPage(
             {/* ─── Recent Activity ────────────────────────────────────────── */}
 
             <section
-                aria-label="Recent activity"
+                aria-label={t("recentActivity")}
                 className="grid gap-4 lg:grid-cols-2"
             >
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Sales</CardTitle>
+                        <CardTitle>{tSales("recentSales")}</CardTitle>
 
                         <CardActions>
                             <Link
@@ -391,7 +404,7 @@ export default async function StoreDashboardPage(
                                     size: "sm",
                                 })}
                             >
-                                View all
+                                {tActions("viewAll")}
                             </Link>
                         </CardActions>
                     </CardHeader>
@@ -404,8 +417,8 @@ export default async function StoreDashboardPage(
                             empty={
                                 <EmptyState
                                     size="sm"
-                                    title="No sales yet"
-                                    description="Sales will appear here once you complete your first sale."
+                                    title={tSales("empty.title")}
+                                    description={tSales("empty.description")}
                                     action={
                                         <Link
                                             href={`${base}/sales/new`}
@@ -414,7 +427,7 @@ export default async function StoreDashboardPage(
                                                 size: "sm",
                                             })}
                                         >
-                                            Create Sale
+                                            {tSales("createSale")}
                                         </Link>
                                     }
                                 />
@@ -425,7 +438,9 @@ export default async function StoreDashboardPage(
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Purchases</CardTitle>
+                        <CardTitle>
+                            {tPurchases("recentPurchases")}
+                        </CardTitle>
 
                         <CardActions>
                             <Link
@@ -435,7 +450,7 @@ export default async function StoreDashboardPage(
                                     size: "sm",
                                 })}
                             >
-                                View all
+                                {tActions("viewAll")}
                             </Link>
                         </CardActions>
                     </CardHeader>
@@ -448,8 +463,8 @@ export default async function StoreDashboardPage(
                             empty={
                                 <EmptyState
                                     size="sm"
-                                    title="No purchases yet"
-                                    description="Purchases you record from suppliers will appear here."
+                                    title={tPurchases("empty.title")}
+                                    description={tPurchases("empty.description")}
                                     action={
                                         <Link
                                             href={`${base}/purchases/new`}
@@ -458,7 +473,7 @@ export default async function StoreDashboardPage(
                                                 size: "sm",
                                             })}
                                         >
-                                            New Purchase
+                                            {tPurchases("newPurchase")}
                                         </Link>
                                     }
                                 />

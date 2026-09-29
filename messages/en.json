@@ -1,5 +1,7 @@
 {
     "common": {
+        "notSet": "Not set",
+        "all": "All",
         "save": "Save",
         "cancel": "Cancel",
         "close": "Close",
@@ -31,7 +33,10 @@
         "status": "Status",
         "total": "Total",
         "quantity": "Quantity",
-        "price": "Price"
+        "price": "Price",
+        "stock": "Stock",
+        "amount": "Amount",
+        "unknown": "Unknown"
     },
     "navigation": {
         "dashboard": "Dashboard",
@@ -42,9 +47,11 @@
         "members": "Members",
         "settings": "Settings",
         "profile": "Profile",
-        "stores": "Stores"
+        "stores": "Stores",
+        "adminDashboard": "Admin dashboard"
     },
     "userMenu": {
+        "viewProfile": "View Profile",
         "account": "Account",
         "profile": "Profile",
         "signOut": "Sign out",
@@ -66,7 +73,18 @@
         "cancelled": "Cancelled",
         "approved": "Approved",
         "rejected": "Rejected",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "removed": "Removed",
+        "paid": "Paid",
+        "partial": "Partial",
+        "unpaid": "Unpaid",
+        "inStock": "In stock",
+        "lowStock": "Low stock",
+        "owner": "Owner",
+        "manager": "Manager",
+        "staff": "Staff",
+        "admin": "Admin",
+        "user": "User"
     },
     "actions": {
         "open": "Open",
@@ -79,7 +97,13 @@
         "filter": "Filter",
         "sort": "Sort",
         "expand": "Expand",
-        "collapse": "Collapse"
+        "collapse": "Collapse",
+        "request": "Request to join",
+        "requestAgain": "Request again",
+        "sendingRequest": "Sending request...",
+        "search": "Search",
+        "tryAgain": "Try Again",
+        "viewAll": "View all"
     },
     "forms": {
         "required": "This field is required",
@@ -95,7 +119,8 @@
         "failedToSave": "Failed to save changes",
         "failedToDelete": "Failed to delete",
         "unauthorized": "You are not authorized to perform this action",
-        "notFound": "The requested resource was not found"
+        "notFound": "The requested resource was not found",
+        "loadRetry": "We couldn't load this information. Please try again."
     },
     "emptyStates": {
         "noData": "No data available",
@@ -111,14 +136,73 @@
         "deleteTitle": "Delete",
         "deleteMessage": "Are you sure you want to delete this item?",
         "unsavedChangesTitle": "Unsaved changes",
-        "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to leave?"
+        "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to leave?",
+        "rejectMembershipTitle": "Reject {userName}'s request?",
+        "rejectMembershipDescription": "They will not be added to the store. They can request to join again at any time.",
+        "rejectMembership": "Reject request"
     },
     "dashboard": {
+        "financialOverview": "Financial overview",
         "title": "Dashboard",
         "welcome": "Welcome",
         "overview": "Overview",
         "recentActivity": "Recent activity",
-        "statistics": "Statistics"
+        "statistics": "Statistics",
+        "staffDescription": "Today's activity at a glance.",
+        "comingSoon": "Coming soon...",
+        "description": "A quick overview of your store's activity.",
+        "summary": "Summary",
+        "stats": {
+            "todaySales": "Today's Sales",
+            "todayRevenue": "Today's Revenue",
+            "monthlySales": "Monthly Sales",
+            "monthlyPurchases": "Monthly Purchases",
+            "customerOutstanding": "Customer Outstanding",
+            "supplierOutstanding": "Supplier Outstanding",
+            "inventoryValue": "Inventory Value",
+            "grossProfitMonth": "Gross Profit (Month)",
+            "totalProducts": "Total Products",
+            "lowStock": "Low Stock",
+            "monthlyRevenue": "This month's revenue",
+            "todayPurchases": "Today's purchases",
+            "todaySpending": "Today's spending",
+            "monthlySpending": "This month's spending",
+            "customerPaymentsDue": "Customer payments due",
+            "supplierPaymentsDue": "Supplier payments due"
+        },
+        "lowStockProducts": {
+            "title": "Low Stock Products",
+            "emptyTitle": "All products are well-stocked",
+            "emptyDescription": "No items are below their minimum stock level."
+        },
+        "errors": {
+            "loadFailed": "Couldn't load your dashboard"
+        },
+        "hints": {
+            "transactionsToday": "Transactions today",
+            "revenueGeneratedToday": "Revenue generated today",
+            "transactionsThisMonth": "Transactions this month",
+            "revenueGeneratedThisMonth": "Revenue generated this month",
+            "purchasesToday": "Purchases today",
+            "amountSpentToday": "Amount spent today",
+            "purchasesThisMonth": "Purchases this month",
+            "amountSpentThisMonth": "Amount spent this month",
+            "outstandingCustomerBalances": "Outstanding customer balances",
+            "outstandingSupplierBalances": "Outstanding supplier balances",
+            "revenueMinusCost": "Sales revenue minus product cost",
+            "productsInCatalog": "Products in catalog",
+            "productsBelowMinimum": "Products below minimum stock",
+            "productsWithNoStock": "Products with no stock",
+            "currentInventoryCostValue": "Current inventory cost value"
+        },
+        "recentSales": {
+            "emptyTitle": "No recent sales",
+            "emptyDescription": "Sales will appear here once transactions are recorded."
+        },
+        "recentPurchases": {
+            "emptyTitle": "No recent purchases",
+            "emptyDescription": "Purchases will appear here once they are recorded."
+        }
     },
     "stores": {
         "title": "Stores",
@@ -129,81 +213,548 @@
         "description": "Store description",
         "address": "Store address",
         "currency": "Currency",
-        "timezone": "Timezone"
+        "timezone": "Timezone",
+        "status": {
+            "pendingBanner": "This store is pending approval. Some features may be limited until it is activated.",
+            "suspendedBanner": "This store is currently suspended. Contact platform support if you believe this is a mistake."
+        },
+        "membershipRequestPending": "Request pending",
+        "membershipRequestSent": "Membership request sent successfully.",
+        "yourStores": "Your stores",
+        "pendingRequests": "Pending requests",
+        "discoverMore": "Discover more",
+        "seeMore": "See more",
+        "noStores": "No stores here yet.",
+        "availableStores": "Available Stores",
+        "discoverDescription": "Discover stores and request membership.",
+        "requestNew": "Request a new store",
+        "fields": {
+            "name": "Store name",
+            "description": "Description",
+            "phone": "Phone",
+            "email": "Email",
+            "address": "Address",
+            "currency": "Currency",
+            "timezone": "Timezone"
+        },
+        "placeholders": {
+            "name": "e.g. Downtown Market",
+            "description": "Tell people what this store is about."
+        },
+        "creating": "Creating...",
+        "createStore": "Create store",
+        "cancel": "Cancel",
+        "activation": {
+            "suspendedTitle": "Your store has been suspended",
+            "pendingTitle": "Activate your store",
+            "suspendedDescription": "Your store has been temporarily suspended and is currently unavailable.",
+            "pendingDescription": "Your store has been created successfully, but it still needs to be activated before you can start using it.",
+            "suspendedStatus": "Store suspended",
+            "pendingStatus": "Store activation pending",
+            "suspendedStatusDescription": "Please contact an administrator for more information.",
+            "pendingStatusDescription": "An administrator needs to activate your store.",
+            "suspendedHelp": "Once the suspension is lifted, your store will become available again and you will be able to access your store dashboard.",
+            "pendingHelp": "Once your store is activated, you will be able to access your store dashboard and start managing your products, sales, purchases, and members."
+        }
     },
     "products": {
         "title": "Products",
-        "create": "Create product",
-        "edit": "Edit product",
-        "details": "Product details",
-        "name": "Product name",
-        "sku": "SKU",
-        "barcode": "Barcode",
-        "price": "Selling price",
-        "cost": "Cost",
-        "stock": "Stock",
-        "stockQuantity": "Stock quantity",
-        "minimumStock": "Minimum stock",
-        "category": "Category"
+        "edit": "Edit",
+        "new": "New",
+        "create": "Create Product",
+        "createTitle": "Add Product",
+        "editTitle": "Edit Product",
+        "createDescription": "Fill in the details below. Fields marked with * are required.",
+        "editDescription": "Update the details for this product.",
+        "basicInformation": "Basic Information",
+        "pricing": "Pricing",
+        "inventory": "Inventory",
+        "description": "Description",
+        "saving": "Saving…",
+        "saveChanges": "Save Changes",
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "notifications": {
+            "success": "Success",
+            "error": "Something went wrong",
+            "created": "Product created successfully.",
+            "updated": "Product updated successfully."
+        },
+        "errors": {
+            "saveFailed": "Could not save the product. Please try again.",
+            "loadFailed": "Couldn't load products"
+        },
+        "fields": {
+            "name": {
+                "label": "Product Name",
+                "placeholder": "e.g. Organic Hass Avocado"
+            },
+            "sku": {
+                "label": "SKU",
+                "description": "SKU cannot be changed after a product is created."
+            },
+            "unit": {
+                "label": "Unit",
+                "description": "How the product is sold, e.g. each, kg, loaf.",
+                "placeholder": "each"
+            },
+            "barcode": {
+                "label": "Barcode",
+                "description": "Optional. Scan or paste the EAN/UPC.",
+                "placeholder": "8901234567890"
+            },
+            "sellingPrice": {
+                "label": "Selling Price"
+            },
+            "costPrice": {
+                "label": "Cost Price",
+                "description": "Derived from purchase history. Not editable here."
+            },
+            "currentStock": {
+                "label": "Current Stock",
+                "description": "Updated by purchases and sales. Not editable here."
+            },
+            "minimumStock": {
+                "label": "Minimum Stock",
+                "description": "Alerts you when stock drops to or below this level."
+            },
+            "status": {
+                "label": "Status",
+                "description": "Inactive products are hidden from the sale screen."
+            },
+            "description": {
+                "label": "Description",
+                "description": "Optional. Shown on the product detail page and sale screen.",
+                "placeholder": "Add any notes about this product…"
+            }
+        },
+        "pageDescription": "Manage your store's catalog and stock.",
+        "showingResults": "Showing {from}–{to} of {total} products",
+        "aria": {
+            "viewProduct": "View product",
+            "editProduct": "Edit product"
+        },
+        "filters": {
+            "searchLabel": "Search products",
+            "allStatuses": "All statuses",
+            "allStock": "All stock"
+        },
+        "empty": {
+            "filteredTitle": "No products match your filters",
+            "title": "No products yet",
+            "description": "Add your first product to start managing your inventory."
+        },
+        "detail": {
+            "keyMetrics": "Key metrics",
+            "margin": "Margin",
+            "averageCost": "Average cost",
+            "minimumStockHint": "Min: {value}",
+            "productInformation": "Product Information",
+            "marginPerUnit": "Margin per unit",
+            "current": "Current",
+            "minimum": "Minimum",
+            "visibility": "Visibility",
+            "productId": "Product ID",
+            "history": "History",
+            "salesHistory": "Sales history",
+            "purchaseHistory": "Purchase history",
+            "noDescription": "No description provided."
+        }
     },
     "sales": {
         "title": "Sales",
-        "create": "Create sale",
-        "details": "Sale details",
-        "invoice": "Invoice",
-        "customer": "Customer",
-        "items": "Items",
+        "description": "Every completed sale for this store.",
+        "aria": {
+            "viewSale": "View sale"
+        },
+        "errors": {
+            "loadFailed": "Unable to load sales",
+            "loadCatalogFailed": "Something went wrong while fetching your catalog. Please try again.",
+            "notFound": "Sale not found",
+            "notFoundDescription": "The requested sale could not be found in this store."
+        },
+        "searchProducts": "Search by name or SKU…",
+        "clearSearch": "Clear search",
+        "outOfStock": "Out of stock",
+        "removeItem": "Remove {name}",
+        "decreaseQuantity": "Decrease quantity",
+        "quantityFor": "Quantity for {name}",
+        "increaseQuantity": "Increase quantity",
+        "max": "Max",
+        "cartEmpty": "Cart is empty",
+        "cartEmptyDescription": "Tap products to add them to the sale.",
         "subtotal": "Subtotal",
         "discount": "Discount",
+        "discountAmount": "Discount amount",
         "tax": "Tax",
         "total": "Total",
+        "paid": "Paid",
         "amountPaid": "Amount paid",
-        "amountDue": "Amount due"
+        "exact": "Exact",
+        "change": "Change",
+        "due": "Due",
+        "completing": "Completing…",
+        "completeSale": "Complete Sale",
+        "saveError": "Could not complete the sale. Please try again.",
+        "noProductsFound": "No products found",
+        "tryDifferentSearch": "Try a different name or SKU.",
+        "currentSale": "Current Sale",
+        "itemCount": "{count, plural, one {# item} other {# items}}",
+        "clear": "Clear",
+        "viewCart": "View Cart",
+        "closeCart": "Close cart",
+        "recentSales": "Recent Sales",
+        "mySales": "My Sales",
+        "mySalesDescription": "Sales you've recorded at this store.",
+        "newSale": "New Sale",
+        "createSale": "Create Sale",
+        "viewSale": "View sale",
+        "loadError": "Couldn't load your sales.",
+        "showingResults": "Showing {from}–{to} of {total} sales",
+        "table": {
+            "invoice": "Invoice",
+            "date": "Date",
+            "total": "Total",
+            "paid": "Paid",
+            "due": "Due",
+            "status": "Status"
+        },
+        "filters": {
+            "searchPlaceholder": "Search by invoice number…",
+            "searchLabel": "Search my sales",
+            "payment": "Payment",
+            "allPayments": "All payments",
+            "paid": "Paid",
+            "partial": "Partial",
+            "unpaid": "Unpaid",
+            "date": "Date",
+            "allTime": "All time",
+            "today": "Today",
+            "last7Days": "Last 7 days",
+            "thisMonth": "This month",
+            "searchLabelAll": "Search sales"
+        },
+        "empty": {
+            "filteredTitle": "No sales match your filters",
+            "filteredDescription": "Try adjusting your search or clearing the filters.",
+            "title": "No sales yet",
+            "description": "Sales you record will appear here.",
+            "noProductsDescription": "Add products to your catalog before recording a sale."
+        },
+        "detail": {
+            "summary": "Sale summary",
+            "product": "Product",
+            "quantity": "Qty",
+            "unitPrice": "Unit Price",
+            "discount": "Discount",
+            "tax": "Tax",
+            "lineTotal": "Line Total",
+            "subtotal": "Subtotal",
+            "total": "Total",
+            "amountPaid": "Amount Paid",
+            "amountDue": "Amount Due",
+            "items": "Items",
+            "units": "{count, plural, =1 {# unit} other {# units}}",
+            "saleSummary": "Sale summary",
+            "notes": "Notes",
+            "payment": "Payment",
+            "status": "Status",
+            "paid": "Paid",
+            "due": "Due",
+            "record": "Record",
+            "invoice": "Invoice",
+            "saleDate": "Sale date",
+            "createdBy": "Created by",
+            "created": "Created",
+            "updated": "Updated",
+            "saleId": "Sale ID",
+            "you": "you"
+        }
     },
     "purchases": {
+        "noSupplier": "No supplier",
         "title": "Purchases",
-        "create": "Create purchase",
-        "details": "Purchase details",
-        "invoice": "Invoice",
-        "supplier": "Supplier",
-        "items": "Items",
-        "subtotal": "Subtotal",
-        "discount": "Discount",
-        "tax": "Tax",
-        "shipping": "Shipping",
-        "total": "Total",
-        "amountPaid": "Amount paid",
-        "amountDue": "Amount due"
+        "supplierBar": {
+            "purchasingFrom": "Purchasing from",
+            "supplier": "Supplier",
+            "noSuppliers": "No suppliers yet.",
+            "addSupplier": "Add a supplier",
+            "selectSupplier": "Select a supplier…"
+        },
+        "search": {
+            "placeholder": "Search by name or SKU…",
+            "clear": "Clear search"
+        },
+        "product": {
+            "inactive": "Inactive",
+            "averageCost": "avg cost"
+        },
+        "line": {
+            "remove": "Remove {name}",
+            "decreaseQuantity": "Decrease quantity",
+            "quantityFor": "Quantity for {name}",
+            "increaseQuantity": "Increase quantity",
+            "unitCost": "Unit cost",
+            "unitCostFor": "Unit cost for {name}"
+        },
+        "cart": {
+            "emptyTitle": "No items yet",
+            "emptyDescription": "Tap products on the left to add them to this purchase."
+        },
+        "totals": {
+            "subtotal": "Subtotal",
+            "discount": "Discount",
+            "discountAmount": "Discount amount",
+            "tax": "Tax",
+            "taxAmount": "Tax amount",
+            "shipping": "Shipping",
+            "shippingCost": "Shipping cost",
+            "other": "Other",
+            "otherCost": "Other cost",
+            "additionalCharges": "Additional charges",
+            "hideAdditionalCharges": "Hide additional charges",
+            "none": "—",
+            "total": "Total",
+            "paid": "Paid",
+            "amountPaid": "Amount paid",
+            "due": "Due",
+            "exact": "Exact"
+        },
+        "actions": {
+            "selectSupplierFirst": "Select a supplier first",
+            "completing": "Completing…",
+            "completePurchase": "Complete Purchase",
+            "clear": "Clear",
+            "viewPurchase": "View Purchase"
+        },
+        "success": {
+            "recorded": "Purchase recorded",
+            "view": "View",
+            "dismiss": "Dismiss"
+        },
+        "currentPurchase": {
+            "title": "Current Purchase",
+            "from": "From",
+            "noSupplier": "No supplier selected ·",
+            "units": "{count, plural, =1 {unit} other {units}}",
+            "lines": "{count, plural, =1 {line} other {lines}}"
+        },
+        "errors": {
+            "completeFailed": "Could not complete the purchase. Please try again.",
+            "loadFailed": "Couldn't load purchases",
+            "loadDataFailed": "Something went wrong while fetching products or suppliers. Please try again."
+        },
+        "detail": {
+            "fallbackTitle": "Purchase",
+            "summary": "Purchase summary",
+            "viewSupplier": "View supplier",
+            "purchaseId": "Purchase ID"
+        },
+        "newPurchase": "New Purchase",
+        "recentPurchases": "Recent Purchases",
+        "empty": {
+            "title": "No purchases yet",
+            "description": "Purchases you record from suppliers will appear here.",
+            "filteredTitle": "No purchases match your filters"
+        },
+        "description": "Stock purchased from your suppliers.",
+        "showingResults": "Showing {from}–{to} of {total} purchases",
+        "aria": {
+            "viewPurchase": "View purchase"
+        },
+        "filters": {
+            "searchLabel": "Search purchases",
+            "allSuppliers": "All suppliers"
+        }
     },
     "suppliers": {
         "title": "Suppliers",
-        "create": "Create supplier",
-        "edit": "Edit supplier",
-        "details": "Supplier details",
-        "name": "Supplier name",
-        "email": "Email",
-        "phone": "Phone",
-        "address": "Address"
+        "create": "Create Supplier",
+        "edit": "Edit",
+        "new": "New",
+        "createTitle": "Add Supplier",
+        "editTitle": "Edit Supplier",
+        "createDescription": "Record a supplier you buy stock from. Only the name is required.",
+        "editDescription": "Update this supplier's details.",
+        "basicInformation": "Basic Information",
+        "addressAndNotes": "Address & Notes",
+        "saving": "Saving…",
+        "saveChanges": "Save Changes",
+        "fields": {
+            "name": {
+                "label": "Supplier Name",
+                "placeholder": "e.g. Green Leaf Farms"
+            },
+            "phone": {
+                "label": "Phone",
+                "description": "Include the country code if the supplier is international.",
+                "placeholder": "+213 550 00 00 00"
+            },
+            "email": {
+                "label": "Email",
+                "description": "Used for purchase orders and correspondence.",
+                "placeholder": "orders@example.com"
+            },
+            "taxNumber": {
+                "label": "Tax Number",
+                "description": "Optional. NIF, NIS, or local tax ID.",
+                "placeholder": "e.g. 000000000000000"
+            },
+            "address": {
+                "label": "Address",
+                "description": "The supplier's business address, if known.",
+                "placeholder": "12 Rue Didouche Mourad\nAlger Centre, 16000"
+            },
+            "notes": {
+                "label": "Notes",
+                "description": "Delivery schedule, payment terms, or anything worth remembering.",
+                "placeholder": "e.g. Livraison deux fois par semaine (mar. & ven.)."
+            }
+        },
+        "detail": {
+            "summary": "Supplier summary",
+            "ordersCount": "{count, plural, =0 {No purchases yet} one {# order} other {# orders}}",
+            "contactInformation": "Contact Information",
+            "noContact": "No contact details on file.",
+            "totalPurchased": "Total Purchased",
+            "totalPaid": "Total Paid",
+            "orders": "Orders",
+            "outstandingHint": "Owed to this supplier",
+            "settledHint": "All settled",
+            "allTime": "All time",
+            "supplierId": "Supplier ID",
+            "added": "Added",
+            "history": "History",
+            "allPurchases": "All purchases",
+            "unpaidPurchases": "Unpaid purchases",
+            "recordPurchase": "Record a purchase"
+        },
+        "validation": {
+            "nameRequired": "Supplier name is required."
+        },
+        "errors": {
+            "saveFailed": "Could not save the supplier. Please try again.",
+            "loadFailed": "Couldn't load suppliers"
+        },
+        "description": {
+            "outstanding": "{amount} outstanding across {count, plural, one {# supplier} other {# suppliers}}.",
+            "settled": "All supplier accounts are settled."
+        },
+        "columns": {
+            "outstanding": "Outstanding"
+        },
+        "aria": {
+            "viewSupplier": "View supplier",
+            "editSupplier": "Edit supplier"
+        },
+        "filters": {
+            "searchPlaceholder": "Search by name, email, or phone…",
+            "searchLabel": "Search suppliers"
+        },
+        "empty": {
+            "filteredTitle": "No suppliers match your search",
+            "filteredDescription": "Try a different name, email, or phone.",
+            "title": "No suppliers yet",
+            "description": "Add your first supplier to start recording purchases."
+        },
+        "showingResults": "Showing {from}–{to} of {total, plural, one {# supplier} other {# suppliers}}"
     },
     "members": {
         "title": "Members",
         "add": "Add member",
         "details": "Member details",
         "role": "Role",
-        "status": "Membership status"
+        "status": "Membership status",
+        "accept": "Accept",
+        "reject": "Reject",
+        "roles": {
+            "owner": "Owner",
+            "manager": "Manager",
+            "staff": "Staff"
+        },
+        "description": "Everyone who can access this store.",
+        "unnamed": "Unnamed",
+        "columns": {
+            "user": "User",
+            "member": "Member",
+            "requested": "Requested",
+            "joined": "Joined"
+        },
+        "pending": {
+            "title": "Pending requests",
+            "description": "{count, plural, =0 {No one is waiting to join.} one {# person is waiting to join.} other {# people are waiting to join.}}"
+        },
+        "count": "{count, plural, =0 {No members} one {# member} other {# members}}",
+        "errors": {
+            "loadFailed": "Couldn't load members",
+            "verifyFailed": "Couldn't verify your access"
+        },
+        "empty": {
+            "rejectedTitle": "No rejected requests",
+            "allTitle": "No past members",
+            "activeTitle": "No members yet",
+            "activeDescription": "When someone requests to join this store, they'll appear here.",
+            "defaultDescription": "Nothing to show in this view."
+        }
     },
     "profile": {
-        "title": "Profile",
-        "personalInformation": "Personal information",
+        "loadError": "Couldn't load your profile.",
         "account": "Account",
-        "preferences": "Preferences",
-        "notifications": "Notifications",
-        "notificationsDescription": "Receive updates about your stores and account.",
-        "emailNotifications": "Email notifications",
-        "emailNotificationsDescription": "Receive important account and store updates by email.",
-        "language": "Language",
-        "languageDescription": "Choose the language used throughout the application.",
-        "comingSoon": "Coming soon"
+        "title": "Profile",
+        "description": "Manage your personal information, account details, and preferences.",
+        "editProfile": "Edit profile",
+        "notSet": "Not set",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "overview": {
+            "title": "Profile overview",
+            "description": "Your personal account information."
+        },
+        "personalInfo": {
+            "title": "Personal information",
+            "description": "Information associated with your account."
+        },
+        "fields": {
+            "firstName": "First name",
+            "lastName": "Last name",
+            "email": "Email address",
+            "notifications": "Notifications"
+        },
+        "accountSection": {
+            "title": "Account",
+            "description": "Account and access information."
+        },
+        "accountStatus": {
+            "title": "Account status",
+            "description": "Your account is active and available to use."
+        },
+        "password": {
+            "title": "Password",
+            "description": "Keep your account secure with a strong password.",
+            "action": "Change password"
+        },
+        "email": {
+            "title": "Email address",
+            "description": "Your email is used for account communication."
+        },
+        "preferences": {
+            "title": "Preferences",
+            "description": "Customize how your account behaves."
+        },
+        "notifications": {
+            "title": "Notifications",
+            "description": "Receive updates about your stores and account."
+        },
+        "emailNotifications": {
+            "title": "Email notifications",
+            "description": "Receive important account and store updates by email."
+        },
+        "comingSoon": {
+            "title": "More profile settings are coming",
+            "description": "Profile editing, notification preferences, password changes, and other account settings will be available here as the account system grows."
+        }
     },
     "settings": {
         "title": "Settings",
@@ -214,16 +765,83 @@
     "admin": {
         "title": "Administration",
         "users": "Users",
-        "stores": "Stores",
+        "storesTitle": "Stores",
         "members": "Members",
-        "overview": "Overview"
+        "overview": "Overview",
+        "platform": "Platform",
+        "dashboard": "Dashboard",
+        "dashboardTitle": "Admin Dashboard",
+        "dashboardDescription": "Overview of your users and stores.",
+        "errors": {
+            "loadFailed": "Unable to load dashboard",
+            "loadFailedDescription": "Something went wrong while loading the admin dashboard."
+        },
+        "stats": {
+            "totalUsers": "Total Users",
+            "totalStores": "Total Stores",
+            "pendingStores": "Pending Stores",
+            "activeStores": "Active Stores"
+        },
+        "storeOverview": {
+            "title": "Store Overview",
+            "description": "Current status of all stores."
+        },
+        "recentRequests": {
+            "title": "Recent Store Requests",
+            "description": "The latest stores waiting for review.",
+            "empty": "No pending store requests.",
+            "requestedOn": "Requested {date}"
+        },
+        "stores": {
+            "description": "Manage store status and review store information.",
+            "columns": {
+                "store": "Store",
+                "contact": "Contact",
+                "action": "Action"
+            },
+            "actions": {
+                "review": "Review",
+                "manage": "Manage"
+            },
+            "empty": {
+                "title": "No stores",
+                "description": "There are currently no stores in the system."
+            },
+            "errors": {
+                "loadFailed": "Unable to load stores",
+                "loadFailedDescription": "Something went wrong while loading the stores."
+            }
+        },
+        "storeDetail": {
+            "backToStores": "Back to stores",
+            "storeInformation": "Store Information",
+            "storeManagement": "Store Management",
+            "storeStatus": "Store status",
+            "statusDescriptions": {
+                "pending": "This store is waiting for admin approval.",
+                "active": "This store is currently active and available to its members.",
+                "suspended": "This store is currently suspended."
+            },
+            "actions": {
+                "activate": "Activate Store",
+                "suspend": "Suspend Store"
+            }
+        }
     },
     "table": {
         "noData": "No data available",
         "noResults": "No results found",
         "rowsPerPage": "Rows per page",
         "previousPage": "Previous page",
-        "nextPage": "Next page"
+        "nextPage": "Next page",
+        "pagination": "Pagination",
+        "page": "Page",
+        "of": "of"
+    },
+    "filters": {
+        "search": "Search",
+        "clear": "Clear filters",
+        "clearSearch": "Clear search"
     },
     "accessibility": {
         "openMenu": "Open menu",
@@ -231,6 +849,15 @@
         "openSidebar": "Open sidebar",
         "closeSidebar": "Close sidebar",
         "expand": "Expand",
-        "collapse": "Collapse"
+        "collapse": "Collapse",
+        "goBack": "Go back",
+        "breadcrumb": "Breadcrumb",
+        "sidebar": "Sidebar",
+        "openNavigation": "Open navigation",
+        "navigation": "Navigation",
+        "primaryNavigation": "Primary navigation",
+        "itemsCount": "{count} items",
+        "changeRole": "Change role (currently {role})",
+        "notifications": "Notifications"
     }
 }

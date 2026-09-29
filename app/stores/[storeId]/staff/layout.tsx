@@ -6,6 +6,7 @@ import { UserMenu } from "@/components/layout/user-menu";
 import { AppError } from "@/errors/base.error";
 import { getCurrentStoreContext } from "@/utils/auth";
 import { Bell, Search } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 
@@ -24,6 +25,11 @@ export default async function StaffLayout({ children, params }: LayoutProps<"/st
         redirect("/dashboard");
     }
 
+    const navigationT = await getTranslations("navigation");
+    const actionsT = await getTranslations("actions");
+    const accessibilityT = await getTranslations("accessibility");
+    const userMenuT = await getTranslations("userMenu");
+
     const sidebarItems = buildStoreNavItems(storeId, "STAFF");
 
     return (
@@ -38,7 +44,7 @@ export default async function StaffLayout({ children, params }: LayoutProps<"/st
                         <div className="flex items-center gap-3">
                             <MobileNav title={store.name || ""} items={sidebarItems} />
                             <h1 className="truncate text-sm font-semibold text-on-surface">
-                                Dashboard
+                                {navigationT("dashboard")}
                             </h1>
                         </div>
                     }
@@ -48,7 +54,7 @@ export default async function StaffLayout({ children, params }: LayoutProps<"/st
                             <button
                                 type="button"
                                 className="hidden sm:inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label="Search"
+                                aria-label={actionsT("search")}
                             >
                                 <Search className="size-4" />
                             </button>
@@ -57,10 +63,10 @@ export default async function StaffLayout({ children, params }: LayoutProps<"/st
                             <button
                                 type="button"
                                 className="relative inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label="Notifications"
+                                aria-label={accessibilityT("notifications")}
                             >
                                 <Bell className="size-4" />
-                                <span className="absolute right-2 top-2 size-1.5 rounded-full bg-primary" />
+                                <span className="absolute inset-e-2 top-2 size-1.5 rounded-full bg-primary" />
                             </button>
 
                             {/* User menu */}
@@ -68,7 +74,7 @@ export default async function StaffLayout({ children, params }: LayoutProps<"/st
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
                                 links={[
-                                    { label: "View Profile", link: `/user/${user.id}/profile` }
+                                    { label: userMenuT("profile"), link: `/user/${user.id}/profile` }
                                 ]}
                             />
                         </>

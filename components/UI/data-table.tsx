@@ -1,4 +1,8 @@
+import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { cn } from "@/utils/jsx-classes";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Column definition                                                         */
@@ -50,15 +54,15 @@ export interface DataTableProps<T> {
 }
 
 const ALIGN_CELL: Record<NonNullable<Column<unknown>["align"]>, string> = {
-    left: "text-left",
+    left: "text-start",
     center: "text-center",
-    right: "text-right tabular-nums",
+    right: "text-end tabular-nums",
 };
 
 const ALIGN_HEADER: Record<NonNullable<Column<unknown>["align"]>, string> = {
-    left: "text-left",
+    left: "text-start",
     center: "text-center",
-    right: "text-right",
+    right: "text-end",
 };
 
 export function DataTable<T>({
@@ -158,7 +162,7 @@ export function DataTable<T>({
                                     </td>
                                 ))}
                                 {rowActions && (
-                                    <td className="w-px px-2 text-right align-middle">
+                                    <td className="w-px px-2 text-end align-middle">
                                         {rowActions(row)}
                                     </td>
                                 )}
@@ -200,7 +204,7 @@ export function DataTable<T>({
                                         </dt>
                                         <dd
                                             className={cn(
-                                                "min-w-0 truncate text-right text-on-surface",
+                                                "min-w-0 truncate text-end text-on-surface",
                                                 col.align === "right" && "tabular-nums",
                                                 col.className,
                                             )}
@@ -292,7 +296,7 @@ function PaginationButton({
     );
 }
 
-export function Pagination({
+export async function Pagination({
     currentPage,
     totalPages,
     buildHref,
@@ -300,13 +304,15 @@ export function Pagination({
 }: PaginationProps) {
     if (totalPages <= 1) return null;
 
+    const t = await getTranslations("table");
+
     const items = getPageItems(currentPage, totalPages);
     const hasPrev = currentPage > 1;
     const hasNext = currentPage < totalPages;
 
     return (
         <nav
-            aria-label="Pagination"
+            aria-label={t("pagination")}
             className={cn(
                 "flex items-center justify-between gap-3 py-3",
                 className,
@@ -314,7 +320,9 @@ export function Pagination({
         >
             {/* Mobile — compact text summary */}
             <p className="text-body-sm text-on-surface-variant md:hidden">
-                Page <span className="tabular-nums">{currentPage}</span> of{" "}
+                {t("page")}{" "}
+                <span className="tabular-nums">{currentPage}</span>{" "}
+                {t("of")}{" "}
                 <span className="tabular-nums">{totalPages}</span>
             </p>
 
@@ -322,24 +330,14 @@ export function Pagination({
             <ul className="hidden items-center gap-1 md:flex">
                 <li>
                     <PaginationButton
-                        ariaLabel="Previous page"
+                        ariaLabel={t("previousPage")}
                         href={hasPrev ? buildHref(currentPage - 1) : undefined}
                         disabled={!hasPrev}
                     >
-                        <svg
+                        <ChevronLeft
                             aria-hidden="true"
-                            viewBox="0 0 16 16"
                             className="size-3.5"
-                            fill="none"
-                        >
-                            <path
-                                d="m10 4-4 4 4 4"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        />
                     </PaginationButton>
                 </li>
 
@@ -372,24 +370,14 @@ export function Pagination({
 
                 <li>
                     <PaginationButton
-                        ariaLabel="Next page"
+                        ariaLabel={t("nextPage")}
                         href={hasNext ? buildHref(currentPage + 1) : undefined}
                         disabled={!hasNext}
                     >
-                        <svg
+                        <ChevronRight
                             aria-hidden="true"
-                            viewBox="0 0 16 16"
                             className="size-3.5"
-                            fill="none"
-                        >
-                            <path
-                                d="m6 4 4 4-4 4"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        />
                     </PaginationButton>
                 </li>
             </ul>
@@ -397,50 +385,27 @@ export function Pagination({
             {/* Mobile — prev / next controls */}
             <div className="flex items-center gap-1 md:hidden">
                 <PaginationButton
-                    ariaLabel="Previous page"
+                    ariaLabel={t("previousPage")}
                     href={hasPrev ? buildHref(currentPage - 1) : undefined}
                     disabled={!hasPrev}
                 >
-                    <svg
+                    <ChevronLeft
                         aria-hidden="true"
-                        viewBox="0 0 16 16"
                         className="size-3.5"
-                        fill="none"
-                    >
-                        <path
-                            d="m10 4-4 4 4 4"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
+                    />
                 </PaginationButton>
                 <PaginationButton
-                    ariaLabel="Next page"
+                    ariaLabel={t("nextPage")}
                     href={hasNext ? buildHref(currentPage + 1) : undefined}
                     disabled={!hasNext}
                 >
-                    <svg
+                    <ChevronRight
                         aria-hidden="true"
-                        viewBox="0 0 16 16"
                         className="size-3.5"
-                        fill="none"
-                    >
-                        <path
-                            d="m6 4 4 4-4 4"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
+                    />
                 </PaginationButton>
             </div>
         </nav>
     );
 }
 
-/* Re-export for convenience — `Link` is used above but imported at top */
-import Link from "next/link";
-import { cn } from "@/utils/jsx-classes";

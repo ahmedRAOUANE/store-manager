@@ -5,6 +5,7 @@ import { AppError } from "@/errors/base.error";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import StoreSection from "./store-sections";
+import { useTranslations } from "next-intl";
 
 export type UserStore = {
     id: string;
@@ -25,6 +26,8 @@ type StoreListProps = {
 };
 
 export default function StoreList({ stores }: StoreListProps) {
+    const storesT = useTranslations("stores");
+    
     const router = useRouter();
 
     const [isPending, startTransition] = useTransition();
@@ -46,7 +49,7 @@ export default function StoreList({ stores }: StoreListProps) {
                 return;
             }
 
-            setMessage("Membership request sent successfully.");
+            setMessage(storesT("membershipRequestSent"));
             setSelectedStoreId(null);
 
             router.refresh();
@@ -83,17 +86,17 @@ export default function StoreList({ stores }: StoreListProps) {
             )}
 
             <StoreSection
-                title="Your stores"
+                title={storesT("yourStores")}
                 stores={yourStores}
             />
 
             <StoreSection
-                title="Pending requests"
+                title={storesT("pendingRequests")}
                 stores={pendingStores}
             />
 
             <StoreSection
-                title="Discover more"
+                title={storesT("discoverMore")}
                 stores={discoverStores}
                 onRequest={handleRequest}
                 isPending={isPending}

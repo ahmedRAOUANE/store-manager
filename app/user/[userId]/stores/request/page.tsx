@@ -2,11 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { requestToCreateStore } from "@/actions/user.actions";
 
 export default function CreateStoreForm() {
     const [message, setMessage] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
+
+    const t = useTranslations("stores");
 
     async function handleSubmit(formData: FormData) {
         setMessage(null);
@@ -43,7 +46,7 @@ export default function CreateStoreForm() {
                     htmlFor="store-name"
                     className="mb-1.5 block text-label-md"
                 >
-                    Store name
+                    {t("fields.name")}
                 </label>
 
                 <input
@@ -51,7 +54,7 @@ export default function CreateStoreForm() {
                     name="name"
                     type="text"
                     required
-                    placeholder="e.g. Downtown Market"
+                    placeholder={t("placeholders.name")}
                     className="h-10 w-full rounded-md border border-outline-variant bg-surface-lowest px-3 text-body-md outline-none focus:border-info"
                 />
             </div>
@@ -61,14 +64,14 @@ export default function CreateStoreForm() {
                     htmlFor="store-description"
                     className="mb-1.5 block text-label-md"
                 >
-                    Description
+                    {t("fields.description")}
                 </label>
 
                 <textarea
                     id="store-description"
                     name="description"
                     rows={3}
-                    placeholder="Tell people what this store is about."
+                    placeholder={t("placeholders.description")}
                     className="w-full resize-none rounded-md border border-outline-variant bg-surface-lowest px-3 py-2 text-body-md outline-none focus:border-info"
                 />
             </div>
@@ -77,14 +80,14 @@ export default function CreateStoreForm() {
                 <input
                     name="phone"
                     type="tel"
-                    placeholder="Phone"
+                    placeholder={t("fields.phone")}
                     className="h-10 rounded-md border border-outline-variant bg-surface-lowest px-3 text-body-md outline-none focus:border-info"
                 />
 
                 <input
                     name="email"
                     type="email"
-                    placeholder="Email"
+                    placeholder={t("fields.email")}
                     className="h-10 rounded-md border border-outline-variant bg-surface-lowest px-3 text-body-md outline-none focus:border-info"
                 />
             </div>
@@ -92,25 +95,27 @@ export default function CreateStoreForm() {
             <input
                 name="address"
                 type="text"
-                placeholder="Address"
+                placeholder={t("fields.address")}
                 className="h-10 w-full rounded-md border border-outline-variant bg-surface-lowest px-3 text-body-md outline-none focus:border-info"
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
                 <select
                     name="currency"
-                    defaultValue="USD"
+                    defaultValue="DZD"
+                    aria-label={t("fields.currency")}
                     className="h-10 rounded-md border border-outline-variant bg-surface-lowest px-3 text-body-md outline-none focus:border-info"
                 >
+                    <option value="DZD">DZD</option>
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
                     <option value="GBP">GBP</option>
-                    <option value="DZD">DZD</option>
                 </select>
 
                 <select
                     name="timezone"
                     defaultValue="UTC"
+                    aria-label={t("fields.timezone")}
                     className="h-10 rounded-md border border-outline-variant bg-surface-lowest px-3 text-body-md outline-none focus:border-info"
                 >
                     <option value="UTC">UTC</option>
@@ -132,7 +137,9 @@ export default function CreateStoreForm() {
                     disabled={isPending}
                     className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60"
                 >
-                    {isPending ? "Creating..." : "Create store"}
+                    {isPending
+                        ? t("creating")
+                        : t("createStore")}
                 </button>
 
                 <button
@@ -141,7 +148,7 @@ export default function CreateStoreForm() {
                     className="inline-flex h-10 items-center gap-2 rounded-md border border-outline-variant px-4 text-sm font-medium disabled:opacity-60"
                 >
                     <X className="size-4" />
-                    Cancel
+                    {t("cancel")}
                 </button>
             </div>
         </form>

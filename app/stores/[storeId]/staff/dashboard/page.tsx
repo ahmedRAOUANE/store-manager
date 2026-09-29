@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/UI/page-header";
 import {
@@ -16,96 +17,6 @@ import { EmptyState } from "@/components/UI/state";
 
 // type RecentSale = StaffDashboard["recentSales"][number];
 // type LowStockProduct = StaffDashboard["lowStockProducts"][number];
-
-/* ========================================================================== */
-/*  Mock data                                                                 */
-/*  Replace with a server-side fetch. The page shape won't change.            */
-/* ========================================================================== */
-
-// const dashboard: StaffDashboard = {
-//     sales: {
-//         todayCount: 18,
-//         todayRevenue: 1284.5,
-//     },
-//     inventory: {
-//         productCount: 248,
-//         lowStockCount: 6,
-//     },
-//     recentSales: [
-//         {
-//             id: "55555555-0001-4000-8000-000000000001",
-//             invoiceNumber: "INV-2026-0438",
-//             totalAmount: 124.5,
-//             amountDue: 0,
-//             saleDate: Temporal.Instant.from("2026-09-12T14:22:00Z"),
-//         },
-//         {
-//             id: "55555555-0002-4000-8000-000000000002",
-//             invoiceNumber: "INV-2026-0437",
-//             totalAmount: 68.0,
-//             amountDue: 68.0,
-//             saleDate: Temporal.Instant.from("2026-09-12T13:05:00Z"),
-//         },
-//         {
-//             id: "55555555-0003-4000-8000-000000000003",
-//             invoiceNumber: "INV-2026-0436",
-//             totalAmount: 310.75,
-//             amountDue: 110.75,
-//             saleDate: Temporal.Instant.from("2026-09-12T11:48:00Z"),
-//         },
-//         {
-//             id: "55555555-0004-4000-8000-000000000004",
-//             invoiceNumber: "INV-2026-0435",
-//             totalAmount: 45.2,
-//             amountDue: 0,
-//             saleDate: Temporal.Instant.from("2026-09-12T10:32:00Z"),
-//         },
-//         {
-//             id: "55555555-0005-4000-8000-000000000005",
-//             invoiceNumber: "INV-2026-0434",
-//             totalAmount: 89.9,
-//             amountDue: 0,
-//             saleDate: Temporal.Instant.from("2026-09-12T09:15:00Z"),
-//         },
-//     ],
-//     lowStockProducts: [
-//         {
-//             id: "33333333-3333-4333-8333-000000000001",
-//             name: "Organic Hass Avocado",
-//             sku: "PRD-AVO-001",
-//             stockQuantity: 3,
-//             minimumStock: 10,
-//         },
-//         {
-//             id: "33333333-3333-4333-8333-000000000002",
-//             name: "Sourdough Loaf",
-//             sku: "PRD-BRD-014",
-//             stockQuantity: 5,
-//             minimumStock: 12,
-//         },
-//         {
-//             id: "33333333-3333-4333-8333-000000000003",
-//             name: "Cold Brew Concentrate",
-//             sku: "PRD-CFE-007",
-//             stockQuantity: 2,
-//             minimumStock: 8,
-//         },
-//         {
-//             id: "33333333-3333-4333-8333-000000000004",
-//             name: "Greek Yogurt (500g)",
-//             sku: "PRD-YGT-002",
-//             stockQuantity: 6,
-//             minimumStock: 15,
-//         },
-//         {
-//             id: "33333333-3333-4333-8333-000000000005",
-//             name: "Free-Range Eggs (Dozen)",
-//             sku: "PRD-EGG-003",
-//             stockQuantity: 4,
-//             minimumStock: 20,
-//         },
-//     ],
-// };
 
 /* ========================================================================== */
 /*  Column definitions                                                        */
@@ -183,6 +94,10 @@ export default async function StaffDashboardPage({
 }) {
     const { storeId } = await params;
 
+    const navigationT = await getTranslations("navigation");
+    const dashboardT = await getTranslations("dashboard");
+    const salesT = await getTranslations("sales");
+
     const base = `/stores/${storeId}/staff`;
     // const data = dashboard;
 
@@ -190,15 +105,18 @@ export default async function StaffDashboardPage({
         <div className="space-y-6">
             {/* ─── Header + Quick Actions ─────────────────────────────────── */}
             <PageHeader
-                title="Dashboard"
-                description="Today's activity at a glance."
+                title={navigationT("dashboard")}
+                description={dashboardT("staffDescription")}
                 actions={
                     <>
                         <Link
                             href={`${base}/sales/new`}
-                            className={buttonVariants({ variant: "primary", size: "sm" })}
+                            className={buttonVariants({
+                                variant: "primary",
+                                size: "sm",
+                            })}
                         >
-                            New Sale
+                            {salesT("newSale")}
                         </Link>
                         {/* <Link
                             href={`${base}/sales/new`}
@@ -267,7 +185,7 @@ export default async function StaffDashboardPage({
             {/* ─── Recent Sales ───────────────────────────────────────────── */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>{salesT("recentSales")}</CardTitle>
                     {/* <CardActions>
                         <Link
                             href={`${base}/sales`}
@@ -301,7 +219,7 @@ export default async function StaffDashboardPage({
                             />
                         }
                     /> */}
-                    <EmptyState title="comming soon.." />
+                    <EmptyState title={dashboardT("comingSoon")} />
                 </CardBody>
             </Card>
         </div>

@@ -1,6 +1,5 @@
-// // import "temporal-polyfill/full/global";
-
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { getManagementDashboard } from "@/actions/storeManagement.actions";
 import { getAllSuppliers } from "@/actions/supplier.actions";
@@ -42,6 +41,18 @@ export default async function ManagerDashboardPage({
     const { storeId } = await params;
     const base = `/stores/${storeId}/manager`;
 
+    const t = await getTranslations("dashboard");
+    const tHints = await getTranslations("dashboard.hints");
+    const tRecentSales = await getTranslations("dashboard.recentSales");
+    const tRecentPurchases = await getTranslations("dashboard.recentPurchases");
+    const tSales = await getTranslations("sales");
+    const tPurchases = await getTranslations("purchases");
+    const tProducts = await getTranslations("products");
+    const tCommon = await getTranslations("common");
+    const tStatus = await getTranslations("status");
+    const tSalesDetail = await getTranslations("sales.detail");
+    const tActions = await getTranslations("actions");
+
     /* ---------- Fetch dashboard + suppliers in parallel ---------- */
 
     const [dashboardResult, suppliersResult] = await Promise.all([
@@ -52,7 +63,7 @@ export default async function ManagerDashboardPage({
     if (dashboardResult instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load your dashboard"
+                title={t("errors.loadFailed")}
                 description={dashboardResult.message}
                 action={
                     <Link
@@ -62,7 +73,7 @@ export default async function ManagerDashboardPage({
                             size: "md",
                         })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />
@@ -90,13 +101,52 @@ export default async function ManagerDashboardPage({
     );
 
     /* ---------- Derived: out-of-stock count ---------- */
-    /* Not on the dashboard schema. Counting from the low-stock list works
-       as long as the service returns the *full* set (typical for small
-       stores). If the list is ever truncated, promote to a dedicated
-       `inventory.outOfStockCount` field on `StoreDashboardSchema`. */
+
     const outOfStockCount = data.lowStockProducts.filter(
         (p) => p.stockQuantity <= 0,
     ).length;
+
+    /* ---------- Translated label bundles for the card helpers ---------- */
+
+    const lowStockLabels: LowStockCardLabels = {
+        title: t("lowStockProducts.title"),
+        viewAll: tActions("viewAll"),
+        columns: {
+            product: tSalesDetail("product"),
+            stock: tCommon("stock"),
+            minimum: tProducts("detail.minimum"),
+            status: tCommon("status"),
+        },
+        emptyTitle: t("lowStockProducts.emptyTitle"),
+        emptyDescription: t("lowStockProducts.emptyDescription"),
+    };
+
+    const recentSalesLabels: RecentSalesCardLabels = {
+        title: tSales("recentSales"),
+        viewAll: tActions("viewAll"),
+        columns: {
+            invoice: tSales("table.invoice"),
+            date: tCommon("date"),
+            amount: tCommon("amount"),
+            payment: tSalesDetail("payment"),
+        },
+        emptyTitle: tRecentSales("emptyTitle"),
+        emptyDescription: tRecentSales("emptyDescription"),
+    };
+
+    const recentPurchasesLabels: RecentPurchasesCardLabels = {
+        title: tPurchases("recentPurchases"),
+        viewAll: tActions("viewAll"),
+        columns: {
+            invoice: tSales("table.invoice"),
+            supplier: tPurchases("supplierBar.supplier"),
+            date: tCommon("date"),
+            amount: tCommon("amount"),
+            payment: tSalesDetail("payment"),
+        },
+        emptyTitle: tRecentPurchases("emptyTitle"),
+        emptyDescription: tRecentPurchases("emptyDescription"),
+    };
 
     /* ---------- Render ---------- */
 
@@ -107,8 +157,8 @@ export default async function ManagerDashboardPage({
             {/* ------------------------------------------------------------ */}
 
             <PageHeader
-                title="Dashboard"
-                description="A quick overview of your store's activity."
+                title={t("title")}
+                description={t("description")}
                 actions={
                     <>
                         <Link
@@ -118,7 +168,7 @@ export default async function ManagerDashboardPage({
                                 size: "sm",
                             })}
                         >
-                            New Sale
+                            {tSales("newSale")}
                         </Link>
 
                         <Link
@@ -128,7 +178,7 @@ export default async function ManagerDashboardPage({
                                 size: "sm",
                             })}
                         >
-                            Add Product
+                            {tProducts("createTitle")}
                         </Link>
 
                         <Link
@@ -138,7 +188,7 @@ export default async function ManagerDashboardPage({
                                 size: "sm",
                             })}
                         >
-                            New Purchase
+                            {tPurchases("newPurchase")}
                         </Link>
                     </>
                 }
@@ -149,32 +199,34 @@ export default async function ManagerDashboardPage({
             {/* ------------------------------------------------------------ */}
 
             <section className="space-y-3">
-                <h2 className="text-title-md text-on-surface">Sales</h2>
+                <h2 className="text-title-md text-on-surface">
+                    {tSales("title")}
+                </h2>
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard
-                        label="Today's sales"
+                        label={t("stats.todaySales")}
                         value={data.sales.todayCount}
-                        hint="Transactions today"
+                        hint={tHints("transactionsToday")}
                     />
 
                     <StatCard
-                        label="Today's revenue"
+                        label={t("stats.todayRevenue")}
                         value={formatCurrency(data.sales.todayRevenue)}
-                        hint="Revenue generated today"
+                        hint={tHints("revenueGeneratedToday")}
                         tone="success"
                     />
 
                     <StatCard
-                        label="This month's sales"
+                        label={t("stats.monthlySales")}
                         value={data.sales.monthCount}
-                        hint="Transactions this month"
+                        hint={tHints("transactionsThisMonth")}
                     />
 
                     <StatCard
-                        label="This month's revenue"
+                        label={t("stats.monthlyRevenue")}
                         value={formatCurrency(data.sales.monthRevenue)}
-                        hint="Revenue generated this month"
+                        hint={tHints("revenueGeneratedThisMonth")}
                         tone="success"
                     />
                 </div>
@@ -185,31 +237,33 @@ export default async function ManagerDashboardPage({
             {/* ------------------------------------------------------------ */}
 
             <section className="space-y-3">
-                <h2 className="text-title-md text-on-surface">Purchases</h2>
+                <h2 className="text-title-md text-on-surface">
+                    {tPurchases("title")}
+                </h2>
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard
-                        label="Today's purchases"
+                        label={t("stats.todayPurchases")}
                         value={data.purchases.todayCount}
-                        hint="Purchases today"
+                        hint={tHints("purchasesToday")}
                     />
 
                     <StatCard
-                        label="Today's spending"
+                        label={t("stats.todaySpending")}
                         value={formatCurrency(data.purchases.todayAmount)}
-                        hint="Amount spent today"
+                        hint={tHints("amountSpentToday")}
                     />
 
                     <StatCard
-                        label="This month's purchases"
+                        label={t("stats.monthlyPurchases")}
                         value={data.purchases.monthCount}
-                        hint="Purchases this month"
+                        hint={tHints("purchasesThisMonth")}
                     />
 
                     <StatCard
-                        label="This month's spending"
+                        label={t("stats.monthlySpending")}
                         value={formatCurrency(data.purchases.monthAmount)}
-                        hint="Amount spent this month"
+                        hint={tHints("amountSpentThisMonth")}
                     />
                 </div>
             </section>
@@ -220,23 +274,23 @@ export default async function ManagerDashboardPage({
 
             <section className="space-y-3">
                 <h2 className="text-title-md text-on-surface">
-                    Financial overview
+                    {t("financialOverview")}
                 </h2>
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                     <StatCard
-                        label="Customer payments due"
+                        label={t("stats.customerPaymentsDue")}
                         value={formatCurrency(data.sales.outstanding)}
-                        hint="Outstanding customer balances"
+                        hint={tHints("outstandingCustomerBalances")}
                         tone={
                             data.sales.outstanding > 0 ? "warning" : "success"
                         }
                     />
 
                     <StatCard
-                        label="Supplier payments due"
+                        label={t("stats.supplierPaymentsDue")}
                         value={formatCurrency(data.purchases.outstanding)}
-                        hint="Outstanding supplier balances"
+                        hint={tHints("outstandingSupplierBalances")}
                         tone={
                             data.purchases.outstanding > 0
                                 ? "warning"
@@ -245,9 +299,9 @@ export default async function ManagerDashboardPage({
                     />
 
                     <StatCard
-                        label="Gross profit this month"
+                        label={t("stats.grossProfitMonth")}
                         value={formatCurrency(data.profit.month)}
-                        hint="Sales revenue minus product cost"
+                        hint={tHints("revenueMinusCost")}
                         tone="success"
                     />
                 </div>
@@ -258,19 +312,21 @@ export default async function ManagerDashboardPage({
             {/* ------------------------------------------------------------ */}
 
             <section className="space-y-3">
-                <h2 className="text-title-md text-on-surface">Inventory</h2>
+                <h2 className="text-title-md text-on-surface">
+                    {tProducts("inventory")}
+                </h2>
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard
-                        label="Products"
+                        label={tProducts("title")}
                         value={data.inventory.productCount}
-                        hint="Products in catalog"
+                        hint={tHints("productsInCatalog")}
                     />
 
                     <StatCard
-                        label="Low stock"
+                        label={t("stats.lowStock")}
                         value={data.inventory.lowStockCount}
-                        hint="Products below minimum stock"
+                        hint={tHints("productsBelowMinimum")}
                         tone={
                             data.inventory.lowStockCount > 0
                                 ? "warning"
@@ -279,16 +335,16 @@ export default async function ManagerDashboardPage({
                     />
 
                     <StatCard
-                        label="Out of stock"
+                        label={tStatus("outOfStock")}
                         value={outOfStockCount}
-                        hint="Products with no stock"
+                        hint={tHints("productsWithNoStock")}
                         tone={outOfStockCount > 0 ? "danger" : "success"}
                     />
 
                     <StatCard
-                        label="Inventory value"
+                        label={t("stats.inventoryValue")}
                         value={formatCurrency(data.inventory.inventoryValue)}
-                        hint="Current inventory cost value"
+                        hint={tHints("currentInventoryCostValue")}
                     />
                 </div>
             </section>
@@ -300,13 +356,18 @@ export default async function ManagerDashboardPage({
             <LowStockCard
                 products={data.lowStockProducts}
                 basePath={base}
+                labels={lowStockLabels}
             />
 
             {/* ------------------------------------------------------------ */}
             {/* Recent sales                                                  */}
             {/* ------------------------------------------------------------ */}
 
-            <RecentSalesCard sales={data.recentSales} basePath={base} />
+            <RecentSalesCard
+                sales={data.recentSales}
+                basePath={base}
+                labels={recentSalesLabels}
+            />
 
             {/* ------------------------------------------------------------ */}
             {/* Recent purchases                                              */}
@@ -315,6 +376,7 @@ export default async function ManagerDashboardPage({
             <RecentPurchasesCard
                 purchases={recentPurchases}
                 basePath={base}
+                labels={recentPurchasesLabels}
             />
         </div>
     );
@@ -326,35 +388,50 @@ export default async function ManagerDashboardPage({
 
 type LowStockProduct = StoreDashboard["lowStockProducts"][number];
 
+interface LowStockCardLabels {
+    title: string;
+    viewAll: string;
+    columns: {
+        product: string;
+        stock: string;
+        minimum: string;
+        status: string;
+    };
+    emptyTitle: string;
+    emptyDescription: string;
+}
+
 function LowStockCard({
     products,
     basePath,
+    labels,
 }: {
     products: LowStockProduct[];
     basePath: string;
+    labels: LowStockCardLabels;
 }) {
     const columns: Column<LowStockProduct>[] = [
         {
             key: "name",
-            header: "Product",
+            header: labels.columns.product,
             cell: (product) => product.name,
             mobile: "primary",
         },
         {
             key: "stock",
-            header: "Stock",
+            header: labels.columns.stock,
             cell: (product) => product.stockQuantity,
             mobile: "secondary",
         },
         {
             key: "minimum",
-            header: "Minimum",
+            header: labels.columns.minimum,
             cell: (product) => product.minimumStock,
             mobile: "meta",
         },
         {
             key: "status",
-            header: "Status",
+            header: labels.columns.status,
             cell: (product) => (
                 <StatusBadge
                     status={
@@ -371,14 +448,14 @@ function LowStockCard({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Low stock products</CardTitle>
+                <CardTitle>{labels.title}</CardTitle>
 
                 <CardActions>
                     <Link
                         href={`${basePath}/products`}
                         className="text-label-md text-info hover:underline"
                     >
-                        View all
+                        {labels.viewAll}
                     </Link>
                 </CardActions>
             </CardHeader>
@@ -392,8 +469,8 @@ function LowStockCard({
                     />
                 ) : (
                     <EmptyState
-                        title="No low-stock products"
-                        description="All products are currently above their minimum stock level."
+                        title={labels.emptyTitle}
+                        description={labels.emptyDescription}
                     />
                 )}
             </CardBody>
@@ -407,17 +484,32 @@ function LowStockCard({
 
 type RecentSale = StoreDashboard["recentSales"][number];
 
+interface RecentSalesCardLabels {
+    title: string;
+    viewAll: string;
+    columns: {
+        invoice: string;
+        date: string;
+        amount: string;
+        payment: string;
+    };
+    emptyTitle: string;
+    emptyDescription: string;
+}
+
 function RecentSalesCard({
     sales,
     basePath,
+    labels,
 }: {
     sales: RecentSale[];
     basePath: string;
+    labels: RecentSalesCardLabels;
 }) {
     const columns: Column<RecentSale>[] = [
         {
             key: "invoice",
-            header: "Invoice",
+            header: labels.columns.invoice,
             cell: (sale) => (
                 <Link
                     href={`${basePath}/sales/${sale.id}`}
@@ -430,20 +522,20 @@ function RecentSalesCard({
         },
         {
             key: "date",
-            header: "Date",
+            header: labels.columns.date,
             cell: (sale) => formatDate(sale.saleDate),
             mobile: "secondary",
         },
         {
             key: "amount",
-            header: "Amount",
+            header: labels.columns.amount,
             cell: (sale) => formatCurrency(sale.totalAmount),
             align: "right",
             mobile: "meta",
         },
         {
             key: "payment",
-            header: "Payment",
+            header: labels.columns.payment,
             /* `amountPaid` isn't on the schema — derived as total − due. */
             cell: (sale) => (
                 <StatusBadge
@@ -460,14 +552,14 @@ function RecentSalesCard({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Recent sales</CardTitle>
+                <CardTitle>{labels.title}</CardTitle>
 
                 <CardActions>
                     <Link
                         href={`${basePath}/sales`}
                         className="text-label-md text-info hover:underline"
                     >
-                        View all
+                        {labels.viewAll}
                     </Link>
                 </CardActions>
             </CardHeader>
@@ -481,8 +573,8 @@ function RecentSalesCard({
                     />
                 ) : (
                     <EmptyState
-                        title="No recent sales"
-                        description="Sales will appear here once transactions are recorded."
+                        title={labels.emptyTitle}
+                        description={labels.emptyDescription}
                     />
                 )}
             </CardBody>
@@ -494,17 +586,33 @@ function RecentSalesCard({
 /*  Recent purchases                                                          */
 /* ========================================================================== */
 
+interface RecentPurchasesCardLabels {
+    title: string;
+    viewAll: string;
+    columns: {
+        invoice: string;
+        supplier: string;
+        date: string;
+        amount: string;
+        payment: string;
+    };
+    emptyTitle: string;
+    emptyDescription: string;
+}
+
 function RecentPurchasesCard({
     purchases,
     basePath,
+    labels,
 }: {
     purchases: EnrichedPurchase[];
     basePath: string;
+    labels: RecentPurchasesCardLabels;
 }) {
     const columns: Column<EnrichedPurchase>[] = [
         {
             key: "invoice",
-            header: "Invoice",
+            header: labels.columns.invoice,
             cell: (purchase) => (
                 <Link
                     href={`${basePath}/purchases/${purchase.id}`}
@@ -517,26 +625,26 @@ function RecentPurchasesCard({
         },
         {
             key: "supplier",
-            header: "Supplier",
+            header: labels.columns.supplier,
             cell: (purchase) => purchase.supplier.name,
             mobile: "secondary",
         },
         {
             key: "date",
-            header: "Date",
+            header: labels.columns.date,
             cell: (purchase) => formatDate(purchase.purchaseDate),
             mobile: "meta",
         },
         {
             key: "amount",
-            header: "Amount",
+            header: labels.columns.amount,
             cell: (purchase) => formatCurrency(purchase.totalAmount),
             align: "right",
             mobile: "meta",
         },
         {
             key: "payment",
-            header: "Payment",
+            header: labels.columns.payment,
             /* Same derivation as recent sales. */
             cell: (purchase) => (
                 <StatusBadge
@@ -553,14 +661,14 @@ function RecentPurchasesCard({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Recent purchases</CardTitle>
+                <CardTitle>{labels.title}</CardTitle>
 
                 <CardActions>
                     <Link
                         href={`${basePath}/purchases`}
                         className="text-label-md text-info hover:underline"
                     >
-                        View all
+                        {labels.viewAll}
                     </Link>
                 </CardActions>
             </CardHeader>
@@ -574,8 +682,8 @@ function RecentPurchasesCard({
                     />
                 ) : (
                     <EmptyState
-                        title="No recent purchases"
-                        description="Purchases will appear here once they are recorded."
+                        title={labels.emptyTitle}
+                        description={labels.emptyDescription}
                     />
                 )}
             </CardBody>

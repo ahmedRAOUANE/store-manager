@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { SidebarNav } from "./sidebar-nav";
 import type { NavItem } from "./nav-items";
 import { cn } from "@/utils/jsx-classes";
+import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 /* -------------------------------------------------------------------------- */
 /*  Initials helper                                                           */
@@ -37,8 +39,7 @@ export function SidebarAvatar({
 
     if (imageUrl) {
         return (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
                 src={imageUrl}
                 alt=""
                 className={cn(dimension, shapeClass, "shrink-0 object-cover")}
@@ -142,12 +143,14 @@ export interface AppSidebarProps extends SidebarContentProps {
     className?: string;
 }
 
-export function AppSidebar({ className, ...content }: AppSidebarProps) {
+export async function AppSidebar({ className, ...content }: AppSidebarProps) {
+    const t = await getTranslations("accessibility");
+
     return (
         <aside
-            aria-label="Sidebar"
+            aria-label={t("sidebar")}
             className={cn(
-                "hidden h-full border-r border-outline-variant bg-surface-lowest md:block",
+                "hidden h-full border-e border-outline-variant bg-surface-lowest md:block",
                 className,
             )}
         >

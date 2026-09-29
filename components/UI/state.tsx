@@ -1,5 +1,6 @@
 import { cn } from "@/utils/jsx-classes";
-import { Inbox, TriangleAlert } from "lucide-react";
+import { Inbox, LoaderCircle, TriangleAlert } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ComponentProps, ReactNode } from "react";
 
 /* -------------------------------------------------------------------------- */
@@ -97,12 +98,13 @@ export interface LoadingStateProps {
 }
 
 export function LoadingState({
-    label = "Loading…",
+    label,
     size = "md",
     className,
 }: LoadingStateProps) {
     const isSm = size === "sm";
-    const px = isSm ? 16 : 20;
+    const t = useTranslations("common");
+    const resolvedLabel = label ?? t("loading");
 
     return (
         <div
@@ -114,30 +116,14 @@ export function LoadingState({
                 className,
             )}
         >
-            <svg
-                width={px}
-                height={px}
-                viewBox="0 0 24 24"
-                fill="none"
+            <LoaderCircle
                 aria-hidden="true"
-                className="animate-spin text-on-surface-variant motion-reduce:animate-none"
-            >
-                <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    className="opacity-25"
-                />
-                <path
-                    d="M22 12a10 10 0 0 1-10 10"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                />
-            </svg>
-            <p className="text-body-sm text-on-surface-variant">{label}</p>
+                className={cn(
+                    "animate-spin text-on-surface-variant motion-reduce:animate-none",
+                    isSm ? "size-4" : "size-5",
+                )}
+            />
+            <p className="text-body-sm text-on-surface-variant">{resolvedLabel}</p>
         </div>
     );
 }
@@ -152,15 +138,17 @@ export interface ErrorStateProps extends Omit<StateShellProps, "icon" | "title" 
 }
 
 export function ErrorState({
-    title = "Something went wrong",
-    description = "We couldn't load this information. Please try again.",
+    title,
+    description,
     ...props
 }: ErrorStateProps) {
+    const t = useTranslations("errors");
+
     return (
         <StateShell
             icon={<TriangleAlert />}
-            title={title}
-            description={description}
+            title={title ?? t("generic")}
+            description={description ?? t("loadRetry")}
             {...props}
         />
     );

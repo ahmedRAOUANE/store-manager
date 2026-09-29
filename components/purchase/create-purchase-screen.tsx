@@ -22,6 +22,7 @@ import { cn } from "@/utils/jsx-classes";
 import { createPurchase } from "@/actions/purchase.actions";
 import type { CreatePurchaseInput } from "@/zod/purchase.schema";
 import type { CreatePurchaseItemInput } from "@/zod/purchaseItem.schema";
+import { useTranslations } from "next-intl";
 
 /* ========================================================================== */
 /*  Types                                                                     */
@@ -81,25 +82,28 @@ function SupplierBar({
   onChange: (v: string) => void;
   supplierNewHref?: string;
 }) {
+  const t = useTranslations("purchases");
   const empty = suppliers.length === 0;
 
   return (
     <div className="flex shrink-0 items-center gap-3 border-b border-outline-variant bg-surface-lowest px-4 py-2.5 sm:px-6">
       <span className="flex shrink-0 items-center gap-2 text-body-sm text-on-surface-variant">
         <Truck className="hidden size-4 sm:block" aria-hidden="true" />
-        <span className="hidden sm:inline">Purchasing from</span>
-        <span className="sm:hidden">Supplier</span>
+        <span className="hidden sm:inline">{t("supplierBar.purchasingFrom")}</span>
+        <span className="sm:hidden">{t("supplierBar.supplier")}</span>
       </span>
 
       {empty ? (
         <div className="flex flex-1 items-center gap-2 text-body-sm">
-          <span className="text-on-surface-variant">No suppliers yet.</span>
+          <span className="text-on-surface-variant">
+            {t("supplierBar.noSuppliers")}
+          </span>
           {supplierNewHref && (
             <Link
               href={supplierNewHref}
               className="font-medium text-info-fg hover:underline"
             >
-              Add a supplier →
+              {t("supplierBar.addSupplier")} →
             </Link>
           )}
         </div>
@@ -107,10 +111,10 @@ function SupplierBar({
         <Select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          aria-label="Supplier"
+          aria-label={t("supplierBar.supplier")}
           className="h-8 max-w-md text-body-md"
         >
-          <option value="">Select a supplier…</option>
+          <option value="">{t("supplierBar.selectSupplier")}</option>
           {suppliers.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
@@ -135,22 +139,24 @@ function ProductSearchInput({
   onChange: (v: string) => void;
   autoFocus?: boolean;
 }) {
+  const t = useTranslations("purchases");
+
   return (
     <div className="relative">
       <Search
         aria-hidden="true"
-        className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant"
+        className="pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant"
       />
       <input
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Search by name or SKU…"
+        placeholder={t("search.placeholder")}
         autoFocus={autoFocus}
         autoComplete="off"
         spellCheck={false}
         className={cn(
-          "h-10 w-full rounded-md border border-outline-variant bg-surface-lowest pl-9 pr-3",
+          "h-10 w-full rounded-md border border-outline-variant bg-surface-lowest ps-9 pe-3",
           "text-body-md text-on-surface placeholder:text-outline",
           "focus:border-info focus:outline-none focus:ring-1 focus:ring-info",
         )}
@@ -159,8 +165,8 @@ function ProductSearchInput({
         <button
           type="button"
           onClick={() => onChange("")}
-          aria-label="Clear search"
-          className="absolute right-2 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded text-on-surface-variant hover:bg-slate-100 hover:text-on-surface"
+          aria-label={t("search.clear")}
+          className="absolute inset-e-2 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded text-on-surface-variant hover:bg-slate-100 hover:text-on-surface"
         >
           <X className="size-3.5" aria-hidden="true" />
         </button>
@@ -184,12 +190,14 @@ function ProductRow({
   onAdd: () => void;
   currency: string;
 }) {
+  const t = useTranslations("purchases");
+
   return (
     <button
       type="button"
       onClick={onAdd}
       className={cn(
-        "flex w-full items-center justify-between gap-3 px-4 py-3 text-left",
+        "flex w-full items-center justify-between gap-3 px-4 py-3 text-start",
         "transition-colors hover:bg-slate-50 active:bg-slate-100",
       )}
     >
@@ -200,8 +208,8 @@ function ProductRow({
         <p className="mt-0.5 truncate font-mono text-body-sm text-on-surface-variant">
           {product.sku}
           {!product.isActive && (
-            <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 font-sans text-label-sm uppercase text-on-surface-variant">
-              Inactive
+            <span className="ms-2 rounded bg-slate-100 px-1.5 py-0.5 font-sans text-label-sm uppercase text-on-surface-variant">
+              {t("product.inactive")}
             </span>
           )}
         </p>
@@ -211,11 +219,13 @@ function ProductRow({
         <span className="text-body-md font-medium tabular-nums text-on-surface">
           {formatCurrency(product.averageCost, currency)}
         </span>
-        <span className="text-body-sm text-on-surface-variant">avg cost</span>
+        <span className="text-body-sm text-on-surface-variant">
+          {t("product.averageCost")}
+        </span>
       </div>
 
       {inCartQuantity > 0 && (
-        <span className="ml-1 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-info text-label-sm text-on-primary tabular-nums">
+        <span className="ms-1 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-info text-label-sm text-on-primary tabular-nums">
           {inCartQuantity}
         </span>
       )}
@@ -240,6 +250,7 @@ function PurchaseLineRow({
   onRemove: () => void;
   currency: string;
 }) {
+  const t = useTranslations("purchases");
   const lineTotal = line.unitCost * line.quantity;
 
   const stepperBtn = cn(
@@ -262,7 +273,9 @@ function PurchaseLineRow({
         <button
           type="button"
           onClick={onRemove}
-          aria-label={`Remove ${line.name}`}
+          aria-label={t("line.remove", {
+            name: line.name,
+          })}
           className="inline-flex size-7 shrink-0 items-center justify-center rounded text-on-surface-variant hover:bg-slate-100 hover:text-danger-fg"
         >
           <Trash2 className="size-4" aria-hidden="true" />
@@ -274,7 +287,7 @@ function PurchaseLineRow({
           type="button"
           onClick={() => onQtyChange(line.quantity - 1)}
           disabled={line.quantity <= 1}
-          aria-label="Decrease quantity"
+          aria-label={t("line.decreaseQuantity")}
           className={stepperBtn}
         >
           <Minus className="size-3.5" aria-hidden="true" />
@@ -288,27 +301,29 @@ function PurchaseLineRow({
             if (Number.isFinite(next)) onQtyChange(next);
           }}
           min={1}
-          aria-label={`Quantity for ${line.name}`}
+          aria-label={t("line.quantityFor", {
+            name: line.name,
+          })}
           className="h-8 w-16 rounded-md border border-outline-variant bg-surface-lowest text-center text-body-md tabular-nums text-on-surface focus:border-info focus:outline-none focus:ring-1 focus:ring-info"
         />
 
         <button
           type="button"
           onClick={() => onQtyChange(line.quantity + 1)}
-          aria-label="Increase quantity"
+          aria-label={t("line.increaseQuantity")}
           className={stepperBtn}
         >
           <Plus className="size-3.5" aria-hidden="true" />
         </button>
 
-        <span className="ml-1 text-body-sm text-on-surface-variant">
+        <span className="ms-1 text-body-sm text-on-surface-variant">
           {line.unit}
         </span>
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-3">
         <label className="flex items-center gap-2 text-body-sm text-on-surface-variant">
-          <span className="shrink-0">Unit cost</span>
+          <span className="shrink-0">{t("line.unitCost")}</span>
           <Input
             type="number"
             inputMode="decimal"
@@ -319,8 +334,10 @@ function PurchaseLineRow({
               const next = Number.parseFloat(e.target.value);
               onCostChange(Number.isFinite(next) ? next : 0);
             }}
-            aria-label={`Unit cost for ${line.name}`}
-            className="h-8 w-24 text-right tabular-nums"
+            aria-label={t("line.unitCostFor", {
+              name: line.name,
+            })}
+            className="h-8 w-24 text-end tabular-nums"
           />
         </label>
 
@@ -349,13 +366,15 @@ function CartItems({
   onRemove: (productId: string) => void;
   currency: string;
 }) {
+  const t = useTranslations("purchases");
+
   if (cart.length === 0) {
     return (
       <EmptyState
         size="sm"
         icon={<ShoppingCart aria-hidden="true" />}
-        title="No items yet"
-        description="Tap products on the left to add them to this purchase."
+        title={t("cart.emptyTitle")}
+        description={t("cart.emptyDescription")}
       />
     );
   }
@@ -402,7 +421,7 @@ function CurrencyInput({
       placeholder="0.00"
       disabled={disabled}
       aria-label={ariaLabel}
-      className="h-8 text-right tabular-nums"
+      className="h-8 text-end tabular-nums"
     />
   );
 }
@@ -458,6 +477,7 @@ function CartTotals({
   pending: boolean;
   error: string | null;
 }) {
+  const t = useTranslations("purchases");
   const [additionalOpen, setAdditionalOpen] = useState(false);
 
   const empty = cart.length === 0;
@@ -472,20 +492,24 @@ function CartTotals({
     >
       <dl className="space-y-1.5 text-body-md">
         <div className="flex items-center justify-between">
-          <dt className="text-on-surface-variant">Subtotal</dt>
+          <dt className="text-on-surface-variant">
+            {t("totals.subtotal")}
+          </dt>
           <dd className="tabular-nums text-on-surface">
             {formatCurrency(totals.subtotal, currency)}
           </dd>
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <dt className="shrink-0 text-on-surface-variant">Discount</dt>
+          <dt className="shrink-0 text-on-surface-variant">
+            {t("totals.discount")}
+          </dt>
           <dd className="w-28">
             <CurrencyInput
               value={discountAmount}
               onChange={setDiscountAmount}
               disabled={empty}
-              ariaLabel="Discount amount"
+              ariaLabel={t("totals.discountAmount")}
             />
           </dd>
         </div>
@@ -493,35 +517,41 @@ function CartTotals({
         {additionalOpen ? (
           <>
             <div className="flex items-center justify-between gap-3">
-              <dt className="shrink-0 text-on-surface-variant">Tax</dt>
+              <dt className="shrink-0 text-on-surface-variant">
+                {t("totals.tax")}
+              </dt>
               <dd className="w-28">
                 <CurrencyInput
                   value={taxAmount}
                   onChange={setTaxAmount}
                   disabled={empty}
-                  ariaLabel="Tax amount"
+                  ariaLabel={t("totals.taxAmount")}
                 />
               </dd>
             </div>
             <div className="flex items-center justify-between gap-3">
-              <dt className="shrink-0 text-on-surface-variant">Shipping</dt>
+              <dt className="shrink-0 text-on-surface-variant">
+                {t("totals.shipping")}
+              </dt>
               <dd className="w-28">
                 <CurrencyInput
                   value={shippingCost}
                   onChange={setShippingCost}
                   disabled={empty}
-                  ariaLabel="Shipping cost"
+                  ariaLabel={t("totals.shippingCost")}
                 />
               </dd>
             </div>
             <div className="flex items-center justify-between gap-3">
-              <dt className="shrink-0 text-on-surface-variant">Other</dt>
+              <dt className="shrink-0 text-on-surface-variant">
+                {t("totals.other")}
+              </dt>
               <dd className="w-28">
                 <CurrencyInput
                   value={otherCost}
                   onChange={setOtherCost}
                   disabled={empty}
-                  ariaLabel="Other cost"
+                  ariaLabel={t("totals.otherCost")}
                 />
               </dd>
             </div>
@@ -534,12 +564,12 @@ function CartTotals({
           >
             <span className="flex items-center gap-1.5 text-info-fg">
               <ChevronDown className="size-3.5" aria-hidden="true" />
-              Additional charges
+              {t("totals.additionalCharges")}
             </span>
             <span className="tabular-nums text-on-surface-variant">
               {additionalSum > 0
                 ? formatCurrency(additionalSum, currency)
-                : "—"}
+                : t("totals.none")}
             </span>
           </button>
         )}
@@ -550,26 +580,30 @@ function CartTotals({
             onClick={() => setAdditionalOpen(false)}
             className="text-body-sm text-info-fg hover:underline"
           >
-            Hide additional charges
+            {t("totals.hideAdditionalCharges")}
           </button>
         )}
 
         <div className="flex items-center justify-between border-t border-outline-variant pt-2">
-          <dt className="text-title-md text-on-surface">Total</dt>
+          <dt className="text-title-md text-on-surface">
+            {t("totals.total")}
+          </dt>
           <dd className="text-title-md tabular-nums text-on-surface">
             {formatCurrency(totals.total, currency)}
           </dd>
         </div>
 
         <div className="flex items-center justify-between gap-3 pt-1.5">
-          <dt className="shrink-0 text-on-surface-variant">Paid</dt>
+          <dt className="shrink-0 text-on-surface-variant">
+            {t("totals.paid")}
+          </dt>
           <dd className="flex w-full items-center justify-end gap-1.5">
             <div className="w-28">
               <CurrencyInput
                 value={amountPaid}
                 onChange={setAmountPaid}
                 disabled={empty}
-                ariaLabel="Amount paid"
+                ariaLabel={t("totals.amountPaid")}
               />
             </div>
             <button
@@ -578,14 +612,16 @@ function CartTotals({
               disabled={empty}
               className="h-8 shrink-0 rounded-md px-2 text-body-sm font-medium text-info-fg transition-colors hover:bg-info-bg disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Exact
+              {t("totals.exact")}
             </button>
           </dd>
         </div>
 
         {totals.due > 0 && (
           <div className="flex items-center justify-between">
-            <dt className="text-on-surface-variant">Due</dt>
+            <dt className="text-on-surface-variant">
+              {t("totals.due")}
+            </dt>
             <dd className="tabular-nums font-medium text-danger-fg">
               {formatCurrency(totals.due, currency)}
             </dd>
@@ -611,10 +647,10 @@ function CartTotals({
         loading={pending}
       >
         {!supplierSelected
-          ? "Select a supplier first"
+          ? t("actions.selectSupplierFirst")
           : pending
-            ? "Completing…"
-            : "Complete Purchase"}
+            ? t("actions.completing")
+            : t("actions.completePurchase")}
       </Button>
     </form>
   );
@@ -633,6 +669,8 @@ function SuccessBanner({
   viewHref: string;
   onDismiss: () => void;
 }) {
+  const t = useTranslations("purchases");
+
   return (
     <div
       role="status"
@@ -646,7 +684,7 @@ function SuccessBanner({
 
         <div className="min-w-0 flex-1">
           <p className="text-body-md font-medium text-success-fg">
-            Purchase recorded
+            {t("success.recorded")}
           </p>
           <p className="mt-0.5 truncate font-mono text-body-sm text-success-fg/80">
             #{purchaseId.slice(0, 8)}
@@ -657,14 +695,14 @@ function SuccessBanner({
           href={viewHref}
           className="shrink-0 self-center text-body-sm font-medium text-success-fg underline-offset-2 hover:underline"
         >
-          View
+          {t("success.view")}
         </Link>
 
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Dismiss"
-          className="-mr-1 -mt-1 inline-flex size-6 shrink-0 items-center justify-center rounded text-success-fg/60 transition-colors hover:bg-success-fg/10 hover:text-success-fg"
+          aria-label={t("success.dismiss")}
+          className="-me-1 -mt-1 inline-flex size-6 shrink-0 items-center justify-center rounded text-success-fg/60 transition-colors hover:bg-success-fg/10 hover:text-success-fg"
         >
           <X className="size-3.5" aria-hidden="true" />
         </button>
@@ -686,6 +724,10 @@ export function CreatePurchaseScreen({
   supplierNewHref,
   purchaseDetailBasePath,
 }: CreatePurchaseScreenProps) {
+  const t = useTranslations("purchases");
+  const commonT = useTranslations("common");
+  const salesT = useTranslations("sales");
+
   const [supplierId, setSupplierId] = useState("");
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<PurchaseLine[]>([]);
@@ -766,7 +808,7 @@ export function CreatePurchaseScreen({
     } catch {
       return {
         ok: false,
-        message: "Could not complete the purchase. Please try again.",
+        message: t("errors.completeFailed"),
       };
     }
   }, null);
@@ -904,8 +946,8 @@ export function CreatePurchaseScreen({
               {filteredProducts.length === 0 ? (
                 <EmptyState
                   size="sm"
-                  title="No products found"
-                  description="Try a different name or SKU."
+                  title={salesT("noProductsFound")}
+                  description={salesT("tryDifferentSearch")}
                 />
               ) : (
                 <ul className="divide-y divide-outline-variant">
@@ -926,18 +968,18 @@ export function CreatePurchaseScreen({
             </div>
           </div>
 
-          <aside className="flex min-h-0 flex-col border-l border-outline-variant bg-surface-lowest">
+          <aside className="flex min-h-0 flex-col border-s border-outline-variant bg-surface-lowest">
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-outline-variant px-4 py-3">
               <div className="min-w-0">
                 <h2 className="text-headline-sm text-on-surface">
-                  Current Purchase
+                  {t("currentPurchase.title")}
                 </h2>
                 <p className="truncate text-body-sm text-on-surface-variant">
                   <span className="tabular-nums">{itemCount}</span>{" "}
-                  {itemCount === 1 ? "unit" : "units"}
+                  {t("currentPurchase.units", { count: itemCount })}
                   {" · "}
                   <span className="tabular-nums">{cart.length}</span>{" "}
-                  {cart.length === 1 ? "line" : "lines"}
+                  {t("currentPurchase.lines", { count: cart.length })}
                 </p>
               </div>
               {cart.length > 0 && (
@@ -947,7 +989,7 @@ export function CreatePurchaseScreen({
                   onClick={clearCart}
                   disabled={isPending}
                 >
-                  Clear
+                  {t("actions.clear")}
                 </Button>
               )}
             </div>
@@ -994,8 +1036,8 @@ export function CreatePurchaseScreen({
             {filteredProducts.length === 0 ? (
               <EmptyState
                 size="sm"
-                title="No products found"
-                description="Try a different name or SKU."
+                title={salesT("noProductsFound")}
+                description={salesT("tryDifferentSearch")}
               />
             ) : (
               <ul className="divide-y divide-outline-variant">
@@ -1030,7 +1072,7 @@ export function CreatePurchaseScreen({
                     {cart.length}
                   </span>
                   <span className="text-body-md font-medium">
-                    View Purchase
+                    {t("actions.viewPurchase")}
                   </span>
                 </span>
                 <span className="text-body-lg font-semibold tabular-nums">
@@ -1057,12 +1099,12 @@ export function CreatePurchaseScreen({
           <div className="flex h-14 shrink-0 items-center justify-between border-b border-outline-variant px-4">
             <div className="min-w-0">
               <h2 className="text-headline-sm text-on-surface">
-                Current Purchase
+                {t("currentPurchase.title")}
               </h2>
               <p className="truncate text-body-sm text-on-surface-variant">
                 {supplierSelected ? (
                   <>
-                    From{" "}
+                    {t("currentPurchase.from")}{" "}
                     <span className="text-on-surface">
                       {suppliers.find((s) => s.id === supplierId)?.name}
                     </span>
@@ -1070,11 +1112,11 @@ export function CreatePurchaseScreen({
                   </>
                 ) : (
                   <span className="text-warning-fg">
-                    No supplier selected ·{" "}
+                    {t("currentPurchase.noSupplier")}{" "}
                   </span>
                 )}
                 <span className="tabular-nums">{itemCount}</span>{" "}
-                {itemCount === 1 ? "unit" : "units"}
+                {t("currentPurchase.units", { count: itemCount })}
               </p>
             </div>
             <div className="flex items-center gap-1">
@@ -1085,13 +1127,13 @@ export function CreatePurchaseScreen({
                   onClick={clearCart}
                   disabled={isPending}
                 >
-                  Clear
+                  {t("actions.clear")}
                 </Button>
               )}
               <button
                 type="button"
                 onClick={closeCart}
-                aria-label="Close"
+                aria-label={commonT("close")}
                 className="inline-flex size-9 items-center justify-center rounded-md text-on-surface-variant hover:bg-slate-100 hover:text-on-surface"
               >
                 <X className="size-5" aria-hidden="true" />

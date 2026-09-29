@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ChevronRight } from "lucide-react";
-// import "temporal-polyfill/full/global";
 
 import { getProductById } from "@/actions/product.actions";
 import { PageHeader } from "@/components/UI/page-header";
@@ -38,7 +38,7 @@ function DetailRow({
       </dt>
       <dd
         className={cn(
-          "min-w-0 text-right text-body-md text-on-surface",
+          "min-w-0 text-end text-body-md text-on-surface",
           mono && "font-mono text-body-sm",
         )}
       >
@@ -68,7 +68,7 @@ function HistoryLink({ href, label }: { href: string; label: string }) {
     >
       <span>{label}</span>
       <ChevronRight
-        className="size-3.5 text-on-surface-variant"
+        className="size-3.5 text-on-surface-variant rtl:rotate-180"
         aria-hidden="true"
       />
     </Link>
@@ -83,6 +83,11 @@ export default async function ManagerProductDetailPage({
   params,
 }: PageProps<"/stores/[storeId]/manager/products/[productId]">) {
   const { storeId, productId: id } = await params;
+
+  const t = await getTranslations("products.detail");
+  const tProducts = await getTranslations("products");
+  const tCommon = await getTranslations("common");
+  const tSalesDetail = await getTranslations("sales.detail");
 
   const result = await getProductById(storeId, id);
 
@@ -118,7 +123,7 @@ export default async function ManagerProductDetailPage({
           </span>
         }
         breadcrumbs={[
-          { label: "Products", href: base },
+          { label: tProducts("title"), href: base },
           { label: product.name },
         ]}
         backHref={base}
@@ -127,29 +132,29 @@ export default async function ManagerProductDetailPage({
             href={`${base}/${product.id}/edit`}
             className={buttonVariants({ variant: "primary", size: "sm" })}
           >
-            Edit Product
+            {tProducts("editTitle")}
           </Link>
         }
       />
 
       {/* ─── At-a-glance metrics ────────────────────────────────────── */}
       <section
-        aria-label="Key metrics"
+        aria-label={t("keyMetrics")}
         className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4"
       >
         <StatCard
-          label="Selling Price"
+          label={tProducts("fields.sellingPrice.label")}
           value={formatCurrency(product.sellingPrice)}
         />
         <StatCard
-          label="Cost Price"
+          label={tProducts("fields.costPrice.label")}
           value={formatCurrency(product.averageCost)}
-          hint="Average cost"
+          hint={t("averageCost")}
         />
         <StatCard
-          label="Current Stock"
+          label={tProducts("fields.currentStock.label")}
           value={product.stockQuantity}
-          hint={`Min: ${product.minimumStock}`}
+          hint={t("minimumStockHint", { value: product.minimumStock })}
           tone={
             stockStatus === "OUT_OF_STOCK"
               ? "danger"
@@ -159,7 +164,7 @@ export default async function ManagerProductDetailPage({
           }
         />
         <StatCard
-          label="Margin"
+          label={t("margin")}
           value={formatCurrency(marginAmount)}
           hint={`${marginPercent.toFixed(1)}%`}
           tone={marginAmount >= 0 ? "success" : "danger"}
@@ -172,30 +177,32 @@ export default async function ManagerProductDetailPage({
         <div className="space-y-4 lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Product Information</CardTitle>
+              <CardTitle>{t("productInformation")}</CardTitle>
             </CardHeader>
             <CardBody>
               <DetailList>
-                <DetailRow label="Name">{product.name}</DetailRow>
-                <DetailRow label="SKU" mono>
+                <DetailRow label={tCommon("name")}>{product.name}</DetailRow>
+                <DetailRow label={tProducts("fields.sku.label")} mono>
                   {product.sku}
                 </DetailRow>
-                <DetailRow label="Barcode" mono>
+                <DetailRow label={tProducts("fields.barcode.label")} mono>
                   {product.barcode ?? (
-                    <span className="text-outline">Not set</span>
+                    <span className="text-outline">{tCommon("notSet")}</span>
                   )}
                 </DetailRow>
-                <DetailRow label="Unit">{product.unit}</DetailRow>
+                <DetailRow label={tProducts("fields.unit.label")}>
+                  {product.unit}
+                </DetailRow>
               </DetailList>
 
               <div className="mt-4 border-t border-outline-variant pt-4">
                 <p className="text-label-sm uppercase text-on-surface-variant">
-                  Description
+                  {tProducts("fields.description.label")}
                 </p>
                 <p className="mt-1.5 text-body-md text-on-surface">
                   {product.description ?? (
                     <span className="text-outline">
-                      No description provided.
+                      {t("noDescription")}
                     </span>
                   )}
                 </p>
@@ -205,17 +212,17 @@ export default async function ManagerProductDetailPage({
 
           <Card>
             <CardHeader>
-              <CardTitle>Pricing</CardTitle>
+              <CardTitle>{tProducts("pricing")}</CardTitle>
             </CardHeader>
             <CardBody>
               <DetailList>
-                <DetailRow label="Selling Price">
+                <DetailRow label={tProducts("fields.sellingPrice.label")}>
                   {formatCurrency(product.sellingPrice)}
                 </DetailRow>
-                <DetailRow label="Cost Price">
+                <DetailRow label={tProducts("fields.costPrice.label")}>
                   {formatCurrency(product.averageCost)}
                 </DetailRow>
-                <DetailRow label="Margin per Unit">
+                <DetailRow label={t("marginPerUnit")}>
                   <span
                     className={cn(
                       "tabular-nums font-medium",
@@ -237,21 +244,21 @@ export default async function ManagerProductDetailPage({
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Stock</CardTitle>
+              <CardTitle>{tCommon("stock")}</CardTitle>
             </CardHeader>
             <CardBody>
               <DetailList>
-                <DetailRow label="Current">
+                <DetailRow label={t("current")}>
                   <span className="tabular-nums">
                     {product.stockQuantity}
                   </span>
                 </DetailRow>
-                <DetailRow label="Minimum">
+                <DetailRow label={t("minimum")}>
                   <span className="tabular-nums">
                     {product.minimumStock}
                   </span>
                 </DetailRow>
-                <DetailRow label="Status">
+                <DetailRow label={tCommon("status")}>
                   <StatusBadge status={stockStatus} />
                 </DetailRow>
               </DetailList>
@@ -260,22 +267,22 @@ export default async function ManagerProductDetailPage({
 
           <Card>
             <CardHeader>
-              <CardTitle>Record</CardTitle>
+              <CardTitle>{tSalesDetail("record")}</CardTitle>
             </CardHeader>
             <CardBody>
               <DetailList>
-                <DetailRow label="Product ID" mono>
+                <DetailRow label={t("productId")} mono>
                   <span className="truncate" title={product.id}>
                     {product.id.slice(0, 8)}…
                   </span>
                 </DetailRow>
-                <DetailRow label="Created">
+                <DetailRow label={tSalesDetail("created")}>
                   {formatDate(product.createdAt)}
                 </DetailRow>
-                <DetailRow label="Updated">
+                <DetailRow label={tSalesDetail("updated")}>
                   {formatDate(product.updatedAt)}
                 </DetailRow>
-                <DetailRow label="Visibility">
+                <DetailRow label={t("visibility")}>
                   <StatusBadge
                     status={product.isActive ? "ACTIVE" : "INACTIVE"}
                   />
@@ -286,16 +293,16 @@ export default async function ManagerProductDetailPage({
 
           <Card>
             <CardHeader>
-              <CardTitle>History</CardTitle>
+              <CardTitle>{t("history")}</CardTitle>
             </CardHeader>
             <CardBody className="space-y-2">
               <HistoryLink
                 href={`/stores/${storeId}/manager/sales?productId=${product.id}`}
-                label="Sales history"
+                label={t("salesHistory")}
               />
               <HistoryLink
                 href={`/stores/${storeId}/manager/purchases?productId=${product.id}`}
-                label="Purchase history"
+                label={t("purchaseHistory")}
               />
             </CardBody>
           </Card>

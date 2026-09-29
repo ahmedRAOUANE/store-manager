@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ChevronRight } from "lucide-react";
-// import "temporal-polyfill/full/global";
 
 import { getPurchaseById } from "@/actions/purchase.actions";
 import { getAllProducts } from "@/actions/product.actions";
@@ -42,7 +42,22 @@ type PurchaseDetail = Omit<GetPurchase, "items"> & {
 /*  Line items — desktop table + mobile list                                  */
 /* ========================================================================== */
 
-function LineItems({ items }: { items: PurchaseItemWithProduct[] }) {
+interface LineItemsLabels {
+    product: string;
+    qty: string;
+    unitCost: string;
+    discount: string;
+    tax: string;
+    lineTotal: string;
+}
+
+function LineItems({
+    items,
+    labels,
+}: {
+    items: PurchaseItemWithProduct[];
+    labels: LineItemsLabels;
+}) {
     const hasLineDiscount = items.some((i) => i.discountAmount > 0);
     const hasLineTax = items.some((i) => i.taxAmount > 0);
 
@@ -53,27 +68,27 @@ function LineItems({ items }: { items: PurchaseItemWithProduct[] }) {
                 <table className="w-full border-collapse">
                     <thead>
                         <tr className="border-b border-outline-variant">
-                            <th className="px-3 py-2.5 text-left text-label-sm uppercase text-on-surface-variant">
-                                Product
+                            <th className="px-3 py-2.5 text-start text-label-sm uppercase text-on-surface-variant">
+                                {labels.product}
                             </th>
-                            <th className="w-16 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                Qty
+                            <th className="w-16 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                {labels.qty}
                             </th>
-                            <th className="w-28 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                Unit Cost
+                            <th className="w-28 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                {labels.unitCost}
                             </th>
                             {hasLineDiscount && (
-                                <th className="w-24 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                    Discount
+                                <th className="w-24 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                    {labels.discount}
                                 </th>
                             )}
                             {hasLineTax && (
-                                <th className="w-20 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                    Tax
+                                <th className="w-20 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                    {labels.tax}
                                 </th>
                             )}
-                            <th className="w-28 px-3 py-2.5 text-right text-label-sm uppercase text-on-surface-variant">
-                                Line Total
+                            <th className="w-28 px-3 py-2.5 text-end text-label-sm uppercase text-on-surface-variant">
+                                {labels.lineTotal}
                             </th>
                         </tr>
                     </thead>
@@ -90,31 +105,31 @@ function LineItems({ items }: { items: PurchaseItemWithProduct[] }) {
                                     >
                                         {item.productName}
                                     </Link>
-                                    <span className="ml-2 font-mono text-body-sm text-on-surface-variant">
+                                    <span className="ms-2 font-mono text-body-sm text-on-surface-variant">
                                         {item.productSku}
                                     </span>
                                 </td>
-                                <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                     {item.quantity}
                                 </td>
-                                <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                     {formatCurrency(item.unitCost)}
                                 </td>
                                 {hasLineDiscount && (
-                                    <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                    <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                         {item.discountAmount > 0
                                             ? `−${formatCurrency(item.discountAmount)}`
                                             : "—"}
                                     </td>
                                 )}
                                 {hasLineTax && (
-                                    <td className="px-3 py-2.5 text-right text-body-md tabular-nums text-on-surface-variant">
+                                    <td className="px-3 py-2.5 text-end text-body-md tabular-nums text-on-surface-variant">
                                         {item.taxAmount > 0
                                             ? formatCurrency(item.taxAmount)
                                             : "—"}
                                     </td>
                                 )}
-                                <td className="px-3 py-2.5 text-right text-body-md font-medium tabular-nums text-on-surface">
+                                <td className="px-3 py-2.5 text-end text-body-md font-medium tabular-nums text-on-surface">
                                     {formatCurrency(item.totalAmount)}
                                 </td>
                             </tr>
@@ -154,11 +169,26 @@ function LineItems({ items }: { items: PurchaseItemWithProduct[] }) {
 /*  Totals block                                                              */
 /* ========================================================================== */
 
-function TotalsBlock({ purchase }: { purchase: PurchaseDetail }) {
+interface TotalsLabels {
+    subtotal: string;
+    discount: string;
+    tax: string;
+    shipping: string;
+    other: string;
+    total: string;
+}
+
+function TotalsBlock({
+    purchase,
+    labels,
+}: {
+    purchase: PurchaseDetail;
+    labels: TotalsLabels;
+}) {
     return (
-        <dl className="ml-auto w-full max-w-xs space-y-1.5 text-body-md">
+        <dl className="ms-auto w-full max-w-xs space-y-1.5 text-body-md">
             <div className="flex items-center justify-between">
-                <dt className="text-on-surface-variant">Subtotal</dt>
+                <dt className="text-on-surface-variant">{labels.subtotal}</dt>
                 <dd className="tabular-nums text-on-surface">
                     {formatCurrency(purchase.subtotal)}
                 </dd>
@@ -166,7 +196,7 @@ function TotalsBlock({ purchase }: { purchase: PurchaseDetail }) {
 
             {purchase.discountAmount > 0 && (
                 <div className="flex items-center justify-between">
-                    <dt className="text-on-surface-variant">Discount</dt>
+                    <dt className="text-on-surface-variant">{labels.discount}</dt>
                     <dd className="tabular-nums text-warning-fg">
                         −{formatCurrency(purchase.discountAmount)}
                     </dd>
@@ -175,7 +205,7 @@ function TotalsBlock({ purchase }: { purchase: PurchaseDetail }) {
 
             {purchase.taxAmount > 0 && (
                 <div className="flex items-center justify-between">
-                    <dt className="text-on-surface-variant">Tax</dt>
+                    <dt className="text-on-surface-variant">{labels.tax}</dt>
                     <dd className="tabular-nums text-on-surface">
                         {formatCurrency(purchase.taxAmount)}
                     </dd>
@@ -184,7 +214,7 @@ function TotalsBlock({ purchase }: { purchase: PurchaseDetail }) {
 
             {purchase.shippingCost > 0 && (
                 <div className="flex items-center justify-between">
-                    <dt className="text-on-surface-variant">Shipping</dt>
+                    <dt className="text-on-surface-variant">{labels.shipping}</dt>
                     <dd className="tabular-nums text-on-surface">
                         {formatCurrency(purchase.shippingCost)}
                     </dd>
@@ -193,7 +223,7 @@ function TotalsBlock({ purchase }: { purchase: PurchaseDetail }) {
 
             {purchase.otherCost > 0 && (
                 <div className="flex items-center justify-between">
-                    <dt className="text-on-surface-variant">Other</dt>
+                    <dt className="text-on-surface-variant">{labels.other}</dt>
                     <dd className="tabular-nums text-on-surface">
                         {formatCurrency(purchase.otherCost)}
                     </dd>
@@ -201,7 +231,7 @@ function TotalsBlock({ purchase }: { purchase: PurchaseDetail }) {
             )}
 
             <div className="flex items-center justify-between border-t border-outline-variant pt-2">
-                <dt className="text-title-md text-on-surface">Total</dt>
+                <dt className="text-title-md text-on-surface">{labels.total}</dt>
                 <dd className="text-title-md tabular-nums text-on-surface">
                     {formatCurrency(purchase.totalAmount)}
                 </dd>
@@ -230,7 +260,7 @@ function DetailRow({
             </dt>
             <dd
                 className={cn(
-                    "min-w-0 text-right text-body-md text-on-surface",
+                    "min-w-0 text-end text-body-md text-on-surface",
                     mono && "font-mono text-body-sm",
                 )}
             >
@@ -250,6 +280,11 @@ export default async function ManagerPurchaseDetailPage({
     const { storeId, purchaseId } = await params;
 
     const base = `/stores/${storeId}/manager/purchases`;
+
+    const t = await getTranslations("purchases.detail");
+    const tPurchases = await getTranslations("purchases");
+    const tSales = await getTranslations("sales.detail");
+    const tCommon = await getTranslations("common");
 
     /* ---------- Fetch the purchase ---------- */
 
@@ -304,13 +339,35 @@ export default async function ManagerPurchaseDetailPage({
     const itemCount = detail.items.length;
     const totalUnits = detail.items.reduce((sum, i) => sum + i.quantity, 0);
 
+    /* ---------- Translated label bundles for helper components ---------- */
+
+    const lineItemsLabels: LineItemsLabels = {
+        product: tSales("product"),
+        qty: tSales("quantity"),
+        unitCost: tPurchases("line.unitCost"),
+        discount: tSales("discount"),
+        tax: tSales("tax"),
+        lineTotal: tSales("lineTotal"),
+    };
+
+    const totalsLabels: TotalsLabels = {
+        subtotal: tSales("subtotal"),
+        discount: tSales("discount"),
+        tax: tSales("tax"),
+        shipping: tPurchases("totals.shipping"),
+        other: tPurchases("totals.other"),
+        total: tSales("total"),
+    };
+
     /* ---------- Render ---------- */
+
+    const title = detail.invoiceNumber ?? t("fallbackTitle");
 
     return (
         <div className="space-y-6">
             {/* ─── Header ─────────────────────────────────────────────────── */}
             <PageHeader
-                title={detail.invoiceNumber ?? "Purchase"}
+                title={title}
                 description={
                     <span className="inline-flex flex-wrap items-center gap-2">
                         <Link
@@ -326,35 +383,35 @@ export default async function ManagerPurchaseDetailPage({
                     </span>
                 }
                 breadcrumbs={[
-                    { label: "Purchases", href: base },
-                    { label: detail.invoiceNumber ?? "Purchase" },
+                    { label: tPurchases("title"), href: base },
+                    { label: title },
                 ]}
                 backHref={base}
             />
 
             {/* ─── Headline metrics ───────────────────────────────────────── */}
             <section
-                aria-label="Purchase summary"
+                aria-label={t("summary")}
                 className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4"
             >
                 <StatCard
-                    label="Total"
+                    label={tSales("total")}
                     value={formatCurrency(detail.totalAmount)}
                 />
                 <StatCard
-                    label="Amount Paid"
+                    label={tSales("amountPaid")}
                     value={formatCurrency(detail.amountPaid)}
                     tone="success"
                 />
                 <StatCard
-                    label="Amount Due"
+                    label={tSales("amountDue")}
                     value={formatCurrency(detail.amountDue)}
                     tone={detail.amountDue > 0 ? "danger" : "default"}
                 />
                 <StatCard
-                    label="Items"
+                    label={tSales("items")}
                     value={itemCount}
-                    hint={`${totalUnits} units`}
+                    hint={`${totalUnits} ${tPurchases("currentPurchase.units", { count: totalUnits })}`}
                 />
             </section>
 
@@ -364,13 +421,19 @@ export default async function ManagerPurchaseDetailPage({
                 <div className="space-y-4 lg:col-span-2">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Items</CardTitle>
+                            <CardTitle>{tSales("items")}</CardTitle>
                         </CardHeader>
                         <CardBody flush>
-                            <LineItems items={detail.items} />
+                            <LineItems
+                                items={detail.items}
+                                labels={lineItemsLabels}
+                            />
 
                             <div className="border-t border-outline-variant px-3.5 py-4">
-                                <TotalsBlock purchase={detail} />
+                                <TotalsBlock
+                                    purchase={detail}
+                                    labels={totalsLabels}
+                                />
                             </div>
                         </CardBody>
                     </Card>
@@ -378,7 +441,7 @@ export default async function ManagerPurchaseDetailPage({
                     {detail.notes && (
                         <Card>
                             <CardHeader>
-                                <CardTitle>Notes</CardTitle>
+                                <CardTitle>{tSales("notes")}</CardTitle>
                             </CardHeader>
                             <CardBody>
                                 <p className="whitespace-pre-wrap text-body-md text-on-surface">
@@ -393,7 +456,7 @@ export default async function ManagerPurchaseDetailPage({
                 <div className="space-y-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Supplier</CardTitle>
+                            <CardTitle>{tPurchases("supplierBar.supplier")}</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <div className="space-y-3">
@@ -421,9 +484,9 @@ export default async function ManagerPurchaseDetailPage({
                                         "hover:border-outline hover:bg-slate-50",
                                     )}
                                 >
-                                    <span>View supplier</span>
+                                    <span>{t("viewSupplier")}</span>
                                     <ChevronRight
-                                        className="size-3.5 text-on-surface-variant"
+                                        className="size-3.5 text-on-surface-variant rtl:rotate-180"
                                         aria-hidden="true"
                                     />
                                 </Link>
@@ -433,24 +496,24 @@ export default async function ManagerPurchaseDetailPage({
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Payment</CardTitle>
+                            <CardTitle>{tSales("payment")}</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <dl className="divide-y divide-outline-variant">
-                                <DetailRow label="Status">
+                                <DetailRow label={tCommon("status")}>
                                     <StatusBadge status={paymentStatus} />
                                 </DetailRow>
-                                <DetailRow label="Total">
+                                <DetailRow label={tSales("total")}>
                                     <span className="tabular-nums">
                                         {formatCurrency(detail.totalAmount)}
                                     </span>
                                 </DetailRow>
-                                <DetailRow label="Paid">
+                                <DetailRow label={tSales("paid")}>
                                     <span className="tabular-nums text-success-fg">
                                         {formatCurrency(detail.amountPaid)}
                                     </span>
                                 </DetailRow>
-                                <DetailRow label="Due">
+                                <DetailRow label={tSales("due")}>
                                     {detail.amountDue > 0 ? (
                                         <span className="tabular-nums font-medium text-danger-fg">
                                             {formatCurrency(detail.amountDue)}
@@ -465,22 +528,22 @@ export default async function ManagerPurchaseDetailPage({
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Record</CardTitle>
+                            <CardTitle>{tSales("record")}</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <dl className="divide-y divide-outline-variant">
                                 {detail.invoiceNumber && (
-                                    <DetailRow label="Invoice" mono>
+                                    <DetailRow label={tSales("invoice")} mono>
                                         {detail.invoiceNumber}
                                     </DetailRow>
                                 )}
-                                <DetailRow label="Created">
+                                <DetailRow label={tSales("created")}>
                                     {formatDateTime(detail.createdAt)}
                                 </DetailRow>
-                                <DetailRow label="Updated">
+                                <DetailRow label={tSales("updated")}>
                                     {formatDateTime(detail.updatedAt)}
                                 </DetailRow>
-                                <DetailRow label="Purchase ID" mono>
+                                <DetailRow label={t("purchaseId")} mono>
                                     <span className="truncate" title={detail.id}>
                                         {detail.id.slice(0, 8)}…
                                     </span>

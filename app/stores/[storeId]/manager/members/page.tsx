@@ -1,5 +1,5 @@
 import Link from "next/link";
-// import "temporal-polyfill/full/global";
+import { getTranslations } from "next-intl/server";
 
 import {
     getAllMembers,
@@ -41,7 +41,10 @@ interface MemberRow {
     createdAt: Temporal.Instant;
 }
 
-function toMemberRow(m: GetMembershipWithUser): MemberRow {
+function toMemberRow(
+    m: GetMembershipWithUser,
+    unnamed: string,
+): MemberRow {
     const fullName = [m.user.firstName, m.user.lastName]
         .filter(Boolean)
         .join(" ")
@@ -51,7 +54,7 @@ function toMemberRow(m: GetMembershipWithUser): MemberRow {
         id: m.id,
         userId: m.userId,
         storeId: m.storeId,
-        userName: fullName || m.user.email || "Unnamed",
+        userName: fullName || m.user.email || unnamed,
         userEmail: m.user.email ?? "—",
         role: m.role as RoleValue,
         status: m.status,
@@ -72,9 +75,7 @@ interface MemberQuery {
 function parseQuery(
     raw: Record<string, string | string[] | undefined>,
 ): MemberQuery {
-    const status = typeof raw.status === "string"
-        ? raw.status
-        : "";
+    const status = typeof raw.status === "string" ? raw.status : "";
 
     return {
         status:
@@ -82,131 +83,6 @@ function parseQuery(
                 ? status
                 : "active",
     };
-}
-
-/* ========================================================================== */
-/*  Pending columns                                                           */
-/* ========================================================================== */
-
-const pendingColumns: Column<MemberRow>[] = [
-    {
-        key: "name",
-        header: "User",
-        mobile: "primary",
-        cell: (m) => (
-            <span className="font-medium">
-                {m.userName}
-            </span>
-        ),
-    },
-    {
-        key: "email",
-        header: "Email",
-        mobile: "secondary",
-        cell: (m) => (
-            <span className="text-on-surface-variant">
-                {m.userEmail}
-            </span>
-        ),
-    },
-    {
-        key: "requested",
-        header: "Requested",
-        mobile: "meta",
-        width: "w-32",
-        cell: (m) => (
-            <span className="text-on-surface-variant">
-                {formatDate(m.createdAt)}
-            </span>
-        ),
-    },
-];
-
-/* ========================================================================== */
-/*  Member columns                                                            */
-/* ========================================================================== */
-
-function buildMemberColumns(
-    currentUserId: string,
-    currentUserRole: RoleValue,
-): Column<MemberRow>[] {
-    const allowedRoles = getAllowedRoles(currentUserRole);
-
-    return [
-        {
-            key: "name",
-            header: "Member",
-            mobile: "primary",
-            cell: (m) => (
-                <span className="font-medium">
-                    {m.userName}
-                </span>
-            ),
-        },
-
-        {
-            key: "email",
-            header: "Email",
-            mobile: "secondary",
-            cell: (m) => (
-                <span className="text-on-surface-variant">
-                    {m.userEmail}
-                </span>
-            ),
-        },
-
-        {
-            key: "role",
-            header: "Role",
-            width: "w-36",
-            cell: (m) => {
-                const disabledReason =
-                    getRoleDisabledReason(
-                        currentUserId,
-                        currentUserRole,
-                        m.userId,
-                        m.role,
-                    );
-
-                return (
-                    <RoleSelect
-                        storeId={m.storeId}
-                        membershipId={m.id}
-                        currentRole={m.role}
-                        allowedRoles={allowedRoles}
-                        disabled={
-                            disabledReason !== null
-                        }
-                        disabledReason={
-                            disabledReason ?? undefined
-                        }
-                    />
-                );
-            },
-        },
-
-        {
-            key: "status",
-            header: "Status",
-            width: "w-28",
-            cell: (m) => (
-                <StatusBadge
-                    status={m.status as StatusKey}
-                />
-            ),
-        },
-
-        {
-            key: "joined",
-            header: "Joined",
-            width: "w-32",
-            cell: (m) => (
-                <span className="text-on-surface-variant">
-                    {formatDate(m.createdAt)}
-                </span>
-            ),
-        },
-    ];
 }
 
 /* ========================================================================== */
@@ -222,23 +98,26 @@ export default async function ManagerMembersPage({
 
     const query = parseQuery(sp);
 
-    const base =
-        `/stores/${ storeId }/manager/members`;
+    const base = `/stores/${storeId}/manager/members`;
+
+    const t = await getTranslations("members");
+    const tCommon = await getTranslations("common");
+    const tActions = await getTranslations("actions");
+    const tStatus = await getTranslations("status");
 
     /* ---------- Fetch members + current membership in parallel ---------- */
 
-    const [membersResult, currentResult] =
-        await Promise.all([
-            getAllMembers(storeId),
-            getCurrentMembership(storeId),
-        ]);
+    const [membersResult, currentResult] = await Promise.all([
+        getAllMembers(storeId),
+        getCurrentMembership(storeId),
+    ]);
 
     /* ---------- Members error ---------- */
 
     if (membersResult instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load members"
+                title={t("errors.loadFailed")}
                 description={membersResult.message}
                 action={
                     <Link
@@ -248,7 +127,7 @@ export default async function ManagerMembersPage({
                             size: "md",
                         })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />
@@ -260,7 +139,7 @@ export default async function ManagerMembersPage({
     if (currentResult instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't verify your access"
+                title={t("errors.verifyFailed")}
                 description={currentResult.message}
                 action={
                     <Link
@@ -270,7 +149,7 @@ export default async function ManagerMembersPage({
                             size: "md",
                         })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />
@@ -279,13 +158,14 @@ export default async function ManagerMembersPage({
 
     /* ---------- Normalise rows ---------- */
 
-    const allRows = membersResult.map(toMemberRow);
+    const unnamedFallback = t("unnamed");
+    const allRows = membersResult.map((m) =>
+        toMemberRow(m, unnamedFallback),
+    );
 
     /* ---------- Pending requests ---------- */
 
-    const pending = allRows.filter(
-        (m) => m.status === "PENDING",
-    );
+    const pending = allRows.filter((m) => m.status === "PENDING");
 
     /* ---------- Filter members ---------- */
 
@@ -310,24 +190,116 @@ export default async function ManagerMembersPage({
     /* ---------- Current user's role ---------- */
 
     const currentUserId = currentResult.userId;
+    const currentUserRole = currentResult.role as RoleValue;
 
-    const currentUserRole =
-        currentResult.role as RoleValue;
+    /* ---------- Pending columns ---------- */
 
-    /* ---------- Build member columns ---------- */
+    const pendingColumns: Column<MemberRow>[] = [
+        {
+            key: "name",
+            header: t("columns.user"),
+            mobile: "primary",
+            cell: (m) => (
+                <span className="font-medium">{m.userName}</span>
+            ),
+        },
+        {
+            key: "email",
+            header: tCommon("email"),
+            mobile: "secondary",
+            cell: (m) => (
+                <span className="text-on-surface-variant">
+                    {m.userEmail}
+                </span>
+            ),
+        },
+        {
+            key: "requested",
+            header: t("columns.requested"),
+            mobile: "meta",
+            width: "w-32",
+            cell: (m) => (
+                <span className="text-on-surface-variant">
+                    {formatDate(m.createdAt)}
+                </span>
+            ),
+        },
+    ];
 
-    const memberColumns = buildMemberColumns(
-        currentUserId,
-        currentUserRole,
-    );
+    /* ---------- Member columns ---------- */
+
+    const allowedRoles = getAllowedRoles(currentUserRole);
+
+    const memberColumns: Column<MemberRow>[] = [
+        {
+            key: "name",
+            header: t("columns.member"),
+            mobile: "primary",
+            cell: (m) => (
+                <span className="font-medium">{m.userName}</span>
+            ),
+        },
+        {
+            key: "email",
+            header: tCommon("email"),
+            mobile: "secondary",
+            cell: (m) => (
+                <span className="text-on-surface-variant">
+                    {m.userEmail}
+                </span>
+            ),
+        },
+        {
+            key: "role",
+            header: t("role"),
+            width: "w-36",
+            cell: (m) => {
+                const disabledReason = getRoleDisabledReason(
+                    currentUserId,
+                    currentUserRole,
+                    m.userId,
+                    m.role,
+                );
+
+                return (
+                    <RoleSelect
+                        storeId={m.storeId}
+                        membershipId={m.id}
+                        currentRole={m.role}
+                        allowedRoles={allowedRoles}
+                        disabled={disabledReason !== null}
+                        disabledReason={disabledReason ?? undefined}
+                    />
+                );
+            },
+        },
+        {
+            key: "status",
+            header: tCommon("status"),
+            width: "w-28",
+            cell: (m) => (
+                <StatusBadge status={m.status as StatusKey} />
+            ),
+        },
+        {
+            key: "joined",
+            header: t("columns.joined"),
+            width: "w-32",
+            cell: (m) => (
+                <span className="text-on-surface-variant">
+                    {formatDate(m.createdAt)}
+                </span>
+            ),
+        },
+    ];
 
     /* ---------- Render ---------- */
 
     return (
         <div className="space-y-4">
             <PageHeader
-                title="Members"
-                description="Everyone who can access this store."
+                title={t("title")}
+                description={t("description")}
             />
 
             {/* ─── Pending requests ─────────────────────────────────────── */}
@@ -336,18 +308,12 @@ export default async function ManagerMembersPage({
                 <Card>
                     <CardHeader>
                         <div>
-                            <CardTitle>
-                                Pending Requests
-                            </CardTitle>
+                            <CardTitle>{t("pending.title")}</CardTitle>
 
                             <p className="mt-0.5 text-body-sm text-on-surface-variant">
-                                <span className="tabular-nums">
-                                    {pendingCount}
-                                </span>{" "}
-                                {pendingCount === 1
-                                    ? "person is"
-                                    : "people are"}{" "}
-                                waiting to join.
+                                {t("pending.description", {
+                                    count: pendingCount,
+                                })}
                             </p>
                         </div>
                     </CardHeader>
@@ -374,17 +340,12 @@ export default async function ManagerMembersPage({
             <Card>
                 <CardHeader>
                     <div>
-                        <CardTitle>
-                            Members
-                        </CardTitle>
+                        <CardTitle>{t("title")}</CardTitle>
 
                         <p className="mt-0.5 text-body-sm text-on-surface-variant">
-                            <span className="tabular-nums">
-                                {filteredMembers.length}
-                            </span>{" "}
-                            {filteredMembers.length === 1
-                                ? "member"
-                                : "members"}
+                            {t("count", {
+                                count: filteredMembers.length,
+                            })}
                         </p>
                     </div>
 
@@ -399,11 +360,11 @@ export default async function ManagerMembersPage({
                                 size: "sm",
                             })}
                         >
-                            Active
+                            {tStatus("active")}
                         </Link>
 
                         <Link
-                            href={`${ base }?status=rejected`}
+                            href={`${base}?status=rejected`}
                             className={buttonVariants({
                                 variant:
                                     query.status === "rejected"
@@ -412,11 +373,11 @@ export default async function ManagerMembersPage({
                                 size: "sm",
                             })}
                         >
-                            Rejected
+                            {tStatus("rejected")}
                         </Link>
 
                         <Link
-                            href={`${ base }?status=all`}
+                            href={`${base}?status=all`}
                             className={buttonVariants({
                                 variant:
                                     query.status === "all"
@@ -425,7 +386,7 @@ export default async function ManagerMembersPage({
                                 size: "sm",
                             })}
                         >
-                            All
+                            {tCommon("all")}
                         </Link>
                     </div>
                 </CardHeader>
@@ -440,15 +401,15 @@ export default async function ManagerMembersPage({
                                 size="sm"
                                 title={
                                     query.status === "rejected"
-                                        ? "No rejected requests"
+                                        ? t("empty.rejectedTitle")
                                         : query.status === "all"
-                                            ? "No past members"
-                                            : "No members yet"
+                                            ? t("empty.allTitle")
+                                            : t("empty.activeTitle")
                                 }
                                 description={
                                     query.status === "active"
-                                        ? "When someone requests to join this store, they'll appear here."
-                                        : "Nothing to show in this view."
+                                        ? t("empty.activeDescription")
+                                        : t("empty.defaultDescription")
                                 }
                             />
                         }

@@ -2,6 +2,7 @@ import { ErrorState } from "@/components/UI/state";
 import { LanguageSelector } from "@/components/user/language-selectore";
 import { AppError } from "@/errors/base.error";
 import { getCurrentUser } from "@/utils/auth";
+import { cn } from "@/utils/jsx-classes";
 import {
     Bell,
     Check,
@@ -11,12 +12,16 @@ import {
     ShieldCheck,
     User,
 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export default async function ProfilePage() {
     const user = await getCurrentUser()
 
+    const t = await getTranslations("profile");
+    const statusT = await getTranslations("status");
+
     if(user instanceof AppError) {
-        return <ErrorState title="couldn't get the user profile" />
+        return <ErrorState title={t("loadError")} />
     }
 
     return (
@@ -24,14 +29,14 @@ export default async function ProfilePage() {
             <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
                 {/* Page header */}
                 <div className="mb-8">
-                    <p className="label-caps text-secondary">Account</p>
+                    <p className="label-caps text-secondary">{t("account")}</p>
 
                     <h1 className="mt-2 text-headline-lg sm:text-display-lg">
-                        Profile
+                        {t("title")}
                     </h1>
 
                     <p className="mt-2 max-w-2xl text-body-md text-on-surface-variant">
-                        Manage your personal information, account details, and preferences.
+                        {t("description")}
                     </p>
                 </div>
 
@@ -39,9 +44,9 @@ export default async function ProfilePage() {
                     {/* Profile overview */}
                     <section className="overflow-hidden rounded-lg border border-outline-variant bg-surface-lowest">
                         <div className="border-b border-outline-variant bg-surface-low px-5 py-4 sm:px-6">
-                            <h2 className="text-headline-sm">Profile overview</h2>
+                            <h2 className="text-headline-sm">{t("overview.title")}</h2>
                             <p className="mt-1 text-body-sm text-on-surface-variant">
-                                Your personal account information.
+                                {t("overview.description")}
                             </p>
                         </div>
 
@@ -49,7 +54,7 @@ export default async function ProfilePage() {
                             <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
                                 {/* Avatar */}
                                 <div className="flex size-20 shrink-0 items-center justify-center rounded-full bg-primary text-2xl font-semibold text-on-primary">
-                                    JD
+                                    {`${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase()}
                                 </div>
 
                                 <div className="min-w-0 flex-1">
@@ -60,7 +65,7 @@ export default async function ProfilePage() {
 
                                         <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-bg px-2.5 py-1 text-label-sm text-success-fg">
                                             <span className="size-1.5 rounded-full bg-success" />
-                                            Active
+                                            {statusT("active")}
                                         </span>
                                     </div>
 
@@ -78,7 +83,7 @@ export default async function ProfilePage() {
                                     disabled
                                     className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-outline-variant bg-surface-low px-4 text-sm font-medium text-on-surface-variant opacity-60"
                                 >
-                                    Edit profile
+                                    {t("editProfile")}
                                 </button>
                             </div>
                         </div>
@@ -87,35 +92,35 @@ export default async function ProfilePage() {
                     {/* Personal information */}
                     <section className="rounded-lg border border-outline-variant bg-surface-lowest">
                         <div className="border-b border-outline-variant px-5 py-4 sm:px-6">
-                            <h2 className="text-headline-sm">Personal information</h2>
+                            <h2 className="text-headline-sm">{t("personalInfo.title")}</h2>
                             <p className="mt-1 text-body-sm text-on-surface-variant">
-                                Information associated with your account.
+                                {t("personalInfo.description")}
                             </p>
                         </div>
 
                         <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
                             <ProfileField
                                 icon={<User className="size-4" />}
-                                label="First name"
-                                value={user.firstName || "not set"}
+                                label={t("fields.firstName")}
+                                value={user.firstName || t("notSet")}
                             />
 
                             <ProfileField
                                 icon={<User className="size-4" />}
-                                label="Last name"
-                                value={user.lastName || "not set"}
+                                label={t("fields.lastName")}
+                                value={user.lastName || t("notSet")}
                             />
 
                             <ProfileField
                                 icon={<Mail className="size-4" />}
-                                label="Email address"
+                                label={t("fields.email")}
                                 value={user.email || ""}
                             />
 
                             <ProfileField
                                 icon={<Bell className="size-4" />}
-                                label="Notifications"
-                                value="Enabled"
+                                label={t("fields.notifications")}
+                                value={t("enabled")}
                             />
                         </div>
                     </section>
@@ -123,32 +128,32 @@ export default async function ProfilePage() {
                     {/* Account */}
                     <section className="rounded-lg border border-outline-variant bg-surface-lowest">
                         <div className="border-b border-outline-variant px-5 py-4 sm:px-6">
-                            <h2 className="text-headline-sm">Account</h2>
+                            <h2 className="text-headline-sm">{t("accountSection.title")}</h2>
                             <p className="mt-1 text-body-sm text-on-surface-variant">
-                                Account and access information.
+                                {t("accountSection.description")}
                             </p>
                         </div>
 
                         <div className="divide-y divide-outline-variant">
                             <ProfileAction
                                 icon={<ShieldCheck className="size-5" />}
-                                title="Account status"
-                                description="Your account is active and available to use."
-                                value="Active"
+                                title={t("accountStatus.title")}
+                                description={t("accountStatus.description")}
+                                value={statusT("active")}
                                 status
                             />
 
                             <ProfileAction
                                 icon={<Lock className="size-5" />}
-                                title="Password"
-                                description="Keep your account secure with a strong password."
-                                action="Change password"
+                                title={t("password.title")}
+                                description={t("password.description")}
+                                action={t("password.action")}
                             />
 
                             <ProfileAction
                                 icon={<Mail className="size-5" />}
-                                title="Email address"
-                                description="Your email is used for account communication."
+                                title={t("email.title")}
+                                description={t("email.description")}
                                 value={user.email || ""}
                             />
                         </div>
@@ -157,22 +162,22 @@ export default async function ProfilePage() {
                     {/* Preferences */}
                     <section className="rounded-lg border border-outline-variant bg-surface-lowest">
                         <div className="border-b border-outline-variant px-5 py-4 sm:px-6">
-                            <h2 className="text-headline-sm">Preferences</h2>
+                            <h2 className="text-headline-sm">{t("preferences.title")}</h2>
                             <p className="mt-1 text-body-sm text-on-surface-variant">
-                                Customize how your account behaves.
+                                {t("preferences.description")}
                             </p>
                         </div>
 
                         <div className="divide-y divide-outline-variant">
                             <PreferenceRow
-                                title="Notifications"
-                                description="Receive updates about your stores and account."
+                                title={t("notifications.title")}
+                                description={t("notifications.description")}
                                 enabled
                             />
 
                             <PreferenceRow
-                                title="Email notifications"
-                                description="Receive important account and store updates by email."
+                                title={t("emailNotifications.title")}
+                                description={t("emailNotifications.description")}
                                 enabled
                             />
 
@@ -189,13 +194,11 @@ export default async function ProfilePage() {
 
                             <div>
                                 <h2 className="text-title-md text-info-fg">
-                                    More profile settings are coming
+                                    {t("comingSoon.title")}
                                 </h2>
 
                                 <p className="mt-1 text-body-sm text-info-fg/80">
-                                    Profile editing, notification preferences, password changes,
-                                    and other account settings will be available here as the
-                                    account system grows.
+                                    {t("comingSoon.description")}
                                 </p>
                             </div>
                         </div>
@@ -278,14 +281,14 @@ function ProfileAction({
                     className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-secondary opacity-60"
                 >
                     {action}
-                    <ChevronRight className="size-4" />
+                    <ChevronRight className="size-4 rtl:rotate-180" />
                 </button>
             )}
         </div>
     );
 }
 
-function PreferenceRow({
+async function PreferenceRow({
     title,
     description,
     enabled,
@@ -294,6 +297,8 @@ function PreferenceRow({
     description: string;
     enabled: boolean;
 }) {
+    const t = await getTranslations("profile");
+
     return (
         <div className="flex items-center gap-4 px-5 py-4 sm:px-6">
             <div className="min-w-0 flex-1">
@@ -307,13 +312,18 @@ function PreferenceRow({
             <button
                 type="button"
                 disabled
-                aria-label={`${title} ${enabled ? "enabled" : "disabled"}`}
-                className={`relative h-6 w-11 shrink-0 rounded-full opacity-60 ${enabled ? "bg-secondary" : "bg-outline-variant"
+                aria-label={`${title} ${enabled ? t("enabled") : t("disabled")
                     }`}
+                className={cn(
+                    "relative h-6 w-11 shrink-0 rounded-full opacity-60",
+                    enabled ? "bg-secondary" : "bg-outline-variant",
+                )}
             >
                 <span
-                    className={`absolute top-1 size-4 rounded-full bg-white transition ${enabled ? "left-6" : "left-1"
-                        }`}
+                    className={cn(
+                        "absolute top-1 size-4 rounded-full bg-white transition",
+                        enabled ? "inset-e-1" : "inset-s-1",
+                    )}
                 />
             </button>
         </div>

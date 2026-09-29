@@ -24,6 +24,7 @@ import {
     updateProduct,
 } from "@/actions/product.actions";
 import type { GetProduct } from "@/zod/product.schema";
+import { useTranslations } from "next-intl";
 
 /* ========================================================================== */
 /* Types                                                                      */
@@ -91,6 +92,9 @@ function parseString(
 /* ========================================================================== */
 
 export function ProductForm(props: ProductFormProps) {
+    const t = useTranslations("products");
+    const commonT = useTranslations("common");
+    
     const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -152,7 +156,7 @@ export function ProductForm(props: ProductFormProps) {
 
                     return {
                         error: null,
-                        success: "Product updated successfully.",
+                        success: t("notifications.updated"),
                     };
                 }
 
@@ -164,11 +168,11 @@ export function ProductForm(props: ProductFormProps) {
 
                 return {
                     error: null,
-                    success: "Product created successfully.",
+                    success: t("notifications.created"),
                 };
             } catch {
                 return {
-                    error: "Could not save the product. Please try again.",
+                    error: t("errors.saveFailed"),
                     success: null,
                 };
             }
@@ -201,10 +205,10 @@ export function ProductForm(props: ProductFormProps) {
     return (
         <>
             <PageHeader
-                title={mode === "edit" ? "Edit Product" : "Add Product"}
+                title={mode === "edit" ? t("editTitle") : t("createTitle")}
                 breadcrumbs={[
                     {
-                        label: "Products",
+                        label: t("title"),
                         href: basePath,
                     },
                     ...(mode === "edit"
@@ -214,20 +218,20 @@ export function ProductForm(props: ProductFormProps) {
                                 href: backHref,
                             },
                             {
-                                label: "Edit",
+                                label: t("edit"),
                             },
                         ]
                         : [
                             {
-                                label: "New",
+                                label: t("new"),
                             },
                         ]),
                 ]}
                 backHref={backHref}
                 description={
                     mode === "edit"
-                        ? "Update the details for this product."
-                        : "Fill in the details below. Fields marked with * are required."
+                        ? t("editDescription")
+                        : t("createDescription")
                 }
             />
 
@@ -239,7 +243,7 @@ export function ProductForm(props: ProductFormProps) {
                 <div
                     role="status"
                     aria-live="polite"
-                    className="fixed right-4 top-4 z-50 w-[calc(100%-2rem)] max-w-sm rounded-lg border border-success-border bg-success-bg px-4 py-3 shadow-lg"
+                    className="fixed inset-e-4 top-4 z-50 w-[calc(100%-2rem)] max-w-sm rounded-lg border border-success-border bg-success-bg px-4 py-3 shadow-lg"
                 >
                     <div className="flex items-start gap-3">
                         <span
@@ -251,7 +255,7 @@ export function ProductForm(props: ProductFormProps) {
 
                         <div>
                             <p className="text-body-sm font-medium text-success-fg">
-                                Success
+                                {t("notifications.success")}
                             </p>
 
                             <p className="mt-0.5 text-body-sm text-success-fg">
@@ -266,7 +270,7 @@ export function ProductForm(props: ProductFormProps) {
                 <div
                     role="alert"
                     aria-live="assertive"
-                    className="fixed right-4 top-4 z-50 w-[calc(100%-2rem)] max-w-sm rounded-lg border border-danger-border bg-danger-bg px-4 py-3 shadow-lg"
+                    className="fixed inset-e-4 top-4 z-50 w-[calc(100%-2rem)] max-w-sm rounded-lg border border-danger-border bg-danger-bg px-4 py-3 shadow-lg"
                 >
                     <div className="flex items-start gap-3">
                         <span
@@ -278,7 +282,7 @@ export function ProductForm(props: ProductFormProps) {
 
                         <div>
                             <p className="text-body-sm font-medium text-danger-fg">
-                                Something went wrong
+                                {t("notifications.error")}
                             </p>
 
                             <p className="mt-0.5 text-body-sm text-danger-fg">
@@ -299,13 +303,13 @@ export function ProductForm(props: ProductFormProps) {
                     {/* ─── Basic Information ─────────────────────────────── */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Basic Information</CardTitle>
+                            <CardTitle>{t("basicInformation")}</CardTitle>
                         </CardHeader>
 
                         <CardBody>
                             <div className="grid gap-4 md:grid-cols-2">
                                 <FormField
-                                    label="Product Name"
+                                    label={t("fields.name.label")}
                                     htmlFor="product-name"
                                     required
                                     className="md:col-span-2"
@@ -316,7 +320,7 @@ export function ProductForm(props: ProductFormProps) {
                                         defaultValue={
                                             product?.name ?? ""
                                         }
-                                        placeholder="e.g. Organic Hass Avocado"
+                                        placeholder={t("fields.name.placeholder")}
                                         required
                                         maxLength={120}
                                     />
@@ -324,9 +328,9 @@ export function ProductForm(props: ProductFormProps) {
 
                                 {mode === "edit" && (
                                     <FormField
-                                        label="SKU"
+                                        label={t("fields.sku.label")}
                                         htmlFor="product-sku"
-                                        description="SKU cannot be changed after a product is created."
+                                        description={t("fields.sku.description")}
                                     >
                                         <Input
                                             id="product-sku"
@@ -338,9 +342,9 @@ export function ProductForm(props: ProductFormProps) {
                                 )}
 
                                 <FormField
-                                    label="Unit"
+                                    label={t("fields.unit.label")}
                                     htmlFor="product-unit"
-                                    description="How the product is sold, e.g. each, kg, loaf."
+                                    description={t("fields.unit.description")}
                                 >
                                     <Input
                                         id="product-unit"
@@ -348,15 +352,15 @@ export function ProductForm(props: ProductFormProps) {
                                         defaultValue={
                                             product?.unit ?? ""
                                         }
-                                        placeholder="each"
+                                        placeholder={t("fields.unit.placeholder")}
                                         maxLength={20}
                                     />
                                 </FormField>
 
                                 <FormField
-                                    label="Barcode"
+                                    label={t("fields.barcode.label")}
                                     htmlFor="product-barcode"
-                                    description="Optional. Scan or paste the EAN/UPC."
+                                    description={t("fields.barcode.description")}
                                     className={
                                         mode === "edit"
                                             ? undefined
@@ -369,7 +373,7 @@ export function ProductForm(props: ProductFormProps) {
                                         defaultValue={
                                             product?.barcode ?? ""
                                         }
-                                        placeholder="8901234567890"
+                                        placeholder={t("fields.barcode.placeholder")}
                                         className="font-mono"
                                         maxLength={32}
                                     />
@@ -381,13 +385,13 @@ export function ProductForm(props: ProductFormProps) {
                     {/* ─── Pricing ───────────────────────────────────────── */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Pricing</CardTitle>
+                            <CardTitle>{t("pricing")}</CardTitle>
                         </CardHeader>
 
                         <CardBody>
                             <div className="grid gap-4 md:grid-cols-2">
                                 <FormField
-                                    label="Selling Price"
+                                    label={t("fields.sellingPrice.label")}
                                     htmlFor="product-selling-price"
                                     required
                                 >
@@ -408,9 +412,9 @@ export function ProductForm(props: ProductFormProps) {
 
                                 {mode === "edit" && (
                                     <FormField
-                                        label="Cost Price"
+                                        label={t("fields.costPrice.label")}
                                         htmlFor="product-cost-price"
-                                        description="Derived from purchase history. Not editable here."
+                                        description={t("fields.costPrice.description")}
                                     >
                                         <Input
                                             id="product-cost-price"
@@ -428,16 +432,16 @@ export function ProductForm(props: ProductFormProps) {
                     {/* ─── Inventory ─────────────────────────────────────── */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Inventory</CardTitle>
+                            <CardTitle>{t("inventory")}</CardTitle>
                         </CardHeader>
 
                         <CardBody>
                             <div className="grid gap-4 md:grid-cols-2">
                                 {mode === "edit" && (
                                     <FormField
-                                        label="Current Stock"
+                                        label={t("fields.currentStock.label")}
                                         htmlFor="product-stock"
-                                        description="Updated by purchases and sales. Not editable here."
+                                        description={t("fields.currentStock.description")}
                                     >
                                         <Input
                                             id="product-stock"
@@ -450,9 +454,9 @@ export function ProductForm(props: ProductFormProps) {
                                 )}
 
                                 <FormField
-                                    label="Minimum Stock"
+                                    label={t("fields.minimumStock.label")}
                                     htmlFor="product-minimum-stock"
-                                    description="Alerts you when stock drops to or below this level."
+                                    description={t("fields.minimumStock.description")}
                                 >
                                     <Input
                                         id="product-minimum-stock"
@@ -469,9 +473,9 @@ export function ProductForm(props: ProductFormProps) {
                                 </FormField>
 
                                 <FormField
-                                    label="Status"
+                                    label={t("fields.status.label")}
                                     htmlFor="product-status"
-                                    description="Inactive products are hidden from the sale screen."
+                                    description={t("fields.status.description")}
                                 >
                                     <Select
                                         id="product-status"
@@ -485,10 +489,10 @@ export function ProductForm(props: ProductFormProps) {
                                         }
                                     >
                                         <option value="active">
-                                            Active
+                                            {t("status.active")}
                                         </option>
                                         <option value="inactive">
-                                            Inactive
+                                            {t("status.inactive")}
                                         </option>
                                     </Select>
                                 </FormField>
@@ -499,14 +503,14 @@ export function ProductForm(props: ProductFormProps) {
                     {/* ─── Description ───────────────────────────────────── */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Description</CardTitle>
+                            <CardTitle>{t("description")}</CardTitle>
                         </CardHeader>
 
                         <CardBody>
                             <FormField
-                                label="Description"
+                                label={t("fields.description.label")}
                                 htmlFor="product-description"
-                                description="Optional. Shown on the product detail page and sale screen."
+                                description={t("fields.description.description")}
                             >
                                 <Textarea
                                     id="product-description"
@@ -514,7 +518,7 @@ export function ProductForm(props: ProductFormProps) {
                                     defaultValue={
                                         product?.description ?? ""
                                     }
-                                    placeholder="Add any notes about this product…"
+                                    placeholder={t("fields.description.placeholder")}
                                     rows={4}
                                     maxLength={1000}
                                 />
@@ -532,7 +536,7 @@ export function ProductForm(props: ProductFormProps) {
                                     size: "md",
                                 })}
                             >
-                                Cancel
+                                {commonT("cancel")}
                             </Link>
                         }
                         primary={
@@ -544,10 +548,10 @@ export function ProductForm(props: ProductFormProps) {
                                 disabled={isPending}
                             >
                                 {isPending
-                                    ? "Saving…"
+                                    ? t("saving")
                                     : mode === "edit"
-                                        ? "Save Changes"
-                                        : "Create Product"}
+                                        ? t("saveChanges")
+                                        : t("create")}
                             </Button>
                         }
                     />

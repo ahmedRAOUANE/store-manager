@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SidebarContent, type SidebarContentProps } from "./app-sidebar";
 import { cn } from "@/utils/jsx-classes";
+import { useTranslations } from "next-intl";
 
 export type MobileNavProps = Omit<SidebarContentProps, "onNavigate">;
 
@@ -16,6 +17,8 @@ function afterPaint(callback: () => void) {
 }
 
 export function MobileNav(props: MobileNavProps) {
+    const t = useTranslations("accessibility");
+
     const dialogRef = useRef<HTMLDialogElement>(null);
     const closeTimer = useRef<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +38,9 @@ export function MobileNav(props: MobileNavProps) {
         dialog.showModal();
 
         // The <dialog> is in the top layer now, but the panel is still at
-        // `-translate-x-full`. Flip the state on the *next* paint so the
+        // The panel starts off-screen in the appropriate direction for the
+        // document direction. Flip the state on the next paint so the browser
+        // has a start value to transition from instead of snapping.
         // browser has a start value to transition from instead of snapping.
         afterPaint(() => setIsOpen(true));
     }, [cancelCloseTimer]);
@@ -78,7 +83,7 @@ export function MobileNav(props: MobileNavProps) {
             <button
                 type="button"
                 onClick={open}
-                aria-label="Open navigation"
+                aria-label={t("openNavigation")}
                 className={cn(
                     "inline-flex size-9 items-center justify-center rounded-md md:hidden",
                     "text-on-surface-variant transition-colors",
@@ -111,9 +116,11 @@ export function MobileNav(props: MobileNavProps) {
                         "border-r border-outline-variant bg-surface-lowest shadow-overlay",
                         "transition-transform duration-250 ease-out",
                         "motion-reduce:transition-none",
-                        isOpen ? "translate-x-0" : "-translate-x-full",
+                        isOpen
+                            ? "translate-x-0"
+                            : "-translate-x-full rtl:translate-x-full",
                     )}
-                    aria-label="Navigation"
+                    aria-label={t("navigation")}
                 >
                     <SidebarContent {...props} onNavigate={close} />
                 </aside>

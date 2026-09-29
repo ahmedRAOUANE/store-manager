@@ -1,5 +1,5 @@
 import Link from "next/link";
-// import "temporal-polyfill/full/global";
+import { getTranslations } from "next-intl/server";
 import { Eye } from "lucide-react";
 
 import { getAllPurchases } from "@/actions/purchase.actions";
@@ -133,110 +133,22 @@ function applyQuery(
 }
 
 /* ========================================================================== */
-/*  Columns                                                                   */
-/* ========================================================================== */
-
-const columns: Column<PurchaseRow>[] = [
-    {
-        key: "invoice",
-        header: "Invoice",
-        mobile: "primary",
-        cell: (p) => (
-            <Link
-                href={`/stores/${p.storeId}/owner/purchases/${p.id}`}
-                className="font-mono text-body-sm font-medium text-on-surface hover:text-info"
-            >
-                {p.invoiceNumber ?? "—"}
-            </Link>
-        ),
-    },
-    {
-        key: "supplier",
-        header: "Supplier",
-        mobile: "secondary",
-        width: "w-44",
-        cell: (p) => (
-            <Link
-                href={`/stores/${p.storeId}/owner/suppliers/${p.supplierId}`}
-                className="text-on-surface-variant hover:text-info"
-            >
-                {p.supplierName}
-            </Link>
-        ),
-    },
-    {
-        key: "date",
-        header: "Date",
-        width: "w-32",
-        cell: (p) => (
-            <span className="text-on-surface-variant">
-                {formatDate(p.createdAt)}
-            </span>
-        ),
-    },
-    {
-        key: "total",
-        header: "Total",
-        align: "right",
-        width: "w-28",
-        cell: (p) => (
-            <span className="tabular-nums font-medium">
-                {formatCurrency(p.totalAmount)}
-            </span>
-        ),
-    },
-    {
-        key: "paid",
-        header: "Paid",
-        align: "right",
-        width: "w-28",
-        cell: (p) => (
-            <span className="tabular-nums text-on-surface-variant">
-                {formatCurrency(p.amountPaid)}
-            </span>
-        ),
-    },
-    {
-        key: "due",
-        header: "Due",
-        align: "right",
-        width: "w-28",
-        cell: (p) => {
-            if (p.amountDue <= 0) {
-                return <span className="text-on-surface-variant">—</span>;
-            }
-            return (
-                <span className="font-medium tabular-nums text-danger-fg">
-                    {formatCurrency(p.amountDue)}
-                </span>
-            );
-        },
-    },
-    {
-        key: "status",
-        header: "Status",
-        width: "w-28",
-        cell: (p) => (
-            <StatusBadge status={getPaymentStatus(p.amountPaid, p.amountDue)} />
-        ),
-    },
-];
-
-/* ========================================================================== */
 /*  Row actions                                                               */
 /* ========================================================================== */
 
 function PurchaseRowActions({
     storeId,
     purchaseId,
+    viewLabel,
 }: {
     storeId: string;
     purchaseId: string;
+    viewLabel: string;
 }) {
     return (
         <Link
             href={`/stores/${storeId}/owner/purchases/${purchaseId}`}
-            aria-label="View purchase"
+            aria-label={viewLabel}
             className="inline-flex size-8 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-slate-100 hover:text-on-surface"
         >
             <Eye className="size-4" aria-hidden="true" />
@@ -258,6 +170,11 @@ export default async function PurchasesPage({
 
     const base = `/stores/${storeId}/owner/purchases`;
 
+    const t = await getTranslations("purchases");
+    const tCommon = await getTranslations("common");
+    const tSales = await getTranslations("sales");
+    const tActions = await getTranslations("actions");
+
     /* ---------- Fetch ---------- */
 
     const [purchasesResult, suppliersResult] = await Promise.all([
@@ -268,14 +185,14 @@ export default async function PurchasesPage({
     if (purchasesResult instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load purchases"
+                title={t("errors.loadFailed")}
                 description={purchasesResult.message}
                 action={
                     <Link
                         href={base}
                         className={buttonVariants({ variant: "secondary", size: "md" })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />
@@ -300,6 +217,94 @@ export default async function PurchasesPage({
     }));
 
     const { rows, total, totalPages } = applyQuery(purchases, query);
+
+    /* ---------- Columns ---------- */
+
+    const columns: Column<PurchaseRow>[] = [
+        {
+            key: "invoice",
+            header: tSales("table.invoice"),
+            mobile: "primary",
+            cell: (p) => (
+                <Link
+                    href={`/stores/${p.storeId}/owner/purchases/${p.id}`}
+                    className="font-mono text-body-sm font-medium text-on-surface hover:text-info"
+                >
+                    {p.invoiceNumber ?? "—"}
+                </Link>
+            ),
+        },
+        {
+            key: "supplier",
+            header: t("supplierBar.supplier"),
+            mobile: "secondary",
+            width: "w-44",
+            cell: (p) => (
+                <Link
+                    href={`/stores/${p.storeId}/owner/suppliers/${p.supplierId}`}
+                    className="text-on-surface-variant hover:text-info"
+                >
+                    {p.supplierName}
+                </Link>
+            ),
+        },
+        {
+            key: "date",
+            header: tCommon("date"),
+            width: "w-32",
+            cell: (p) => (
+                <span className="text-on-surface-variant">
+                    {formatDate(p.createdAt)}
+                </span>
+            ),
+        },
+        {
+            key: "total",
+            header: tCommon("total"),
+            align: "right",
+            width: "w-28",
+            cell: (p) => (
+                <span className="tabular-nums font-medium">
+                    {formatCurrency(p.totalAmount)}
+                </span>
+            ),
+        },
+        {
+            key: "paid",
+            header: tSales("table.paid"),
+            align: "right",
+            width: "w-28",
+            cell: (p) => (
+                <span className="tabular-nums text-on-surface-variant">
+                    {formatCurrency(p.amountPaid)}
+                </span>
+            ),
+        },
+        {
+            key: "due",
+            header: tSales("table.due"),
+            align: "right",
+            width: "w-28",
+            cell: (p) => {
+                if (p.amountDue <= 0) {
+                    return <span className="text-on-surface-variant">—</span>;
+                }
+                return (
+                    <span className="font-medium tabular-nums text-danger-fg">
+                        {formatCurrency(p.amountDue)}
+                    </span>
+                );
+            },
+        },
+        {
+            key: "status",
+            header: tCommon("status"),
+            width: "w-28",
+            cell: (p) => (
+                <StatusBadge status={getPaymentStatus(p.amountPaid, p.amountDue)} />
+            ),
+        },
+    ];
 
     /* ---------- Derived ---------- */
 
@@ -329,14 +334,14 @@ export default async function PurchasesPage({
     return (
         <div className="space-y-4">
             <PageHeader
-                title="Purchases"
-                description="Stock purchased from your suppliers."
+                title={t("title")}
+                description={t("description")}
                 actions={
                     <Link
                         href={`${base}/new`}
                         className={buttonVariants({ variant: "primary", size: "sm" })}
                     >
-                        New Purchase
+                        {t("newPurchase")}
                     </Link>
                 }
             />
@@ -354,38 +359,38 @@ export default async function PurchasesPage({
                         {
                             type: "search",
                             key: "q",
-                            placeholder: "Search by invoice number…",
-                            label: "Search purchases",
+                            placeholder: tSales("filters.searchPlaceholder"),
+                            label: t("filters.searchLabel"),
                         },
                         {
                             type: "select",
                             key: "supplier",
-                            label: "Supplier",
+                            label: t("supplierBar.supplier"),
                             options: [
-                                { value: "all", label: "All suppliers" },
+                                { value: "all", label: t("filters.allSuppliers") },
                                 ...supplierOptions,
                             ],
                         },
                         {
                             type: "select",
                             key: "payment",
-                            label: "Payment",
+                            label: tSales("filters.payment"),
                             options: [
-                                { value: "all", label: "All payments" },
-                                { value: "paid", label: "Paid" },
-                                { value: "partial", label: "Partial" },
-                                { value: "unpaid", label: "Unpaid" },
+                                { value: "all", label: tSales("filters.allPayments") },
+                                { value: "paid", label: tSales("filters.paid") },
+                                { value: "partial", label: tSales("filters.partial") },
+                                { value: "unpaid", label: tSales("filters.unpaid") },
                             ],
                         },
                         {
                             type: "select",
                             key: "date",
-                            label: "Date",
+                            label: tSales("filters.date"),
                             options: [
-                                { value: "all", label: "All time" },
-                                { value: "today", label: "Today" },
-                                { value: "week", label: "Last 7 days" },
-                                { value: "month", label: "This month" },
+                                { value: "all", label: tSales("filters.allTime") },
+                                { value: "today", label: tSales("filters.today") },
+                                { value: "week", label: tSales("filters.last7Days") },
+                                { value: "month", label: tSales("filters.thisMonth") },
                             ],
                         },
                     ]}
@@ -397,20 +402,24 @@ export default async function PurchasesPage({
                 data={rows}
                 getRowKey={(p) => p.id}
                 rowActions={(p) => (
-                    <PurchaseRowActions storeId={storeId} purchaseId={p.id} />
+                    <PurchaseRowActions
+                        storeId={storeId}
+                        purchaseId={p.id}
+                        viewLabel={t("aria.viewPurchase")}
+                    />
                 )}
                 empty={
                     hasAnyPurchases && isFiltering ? (
                         <EmptyState
                             size="sm"
-                            title="No purchases match your filters"
-                            description="Try adjusting your search or clearing the filters."
+                            title={t("empty.filteredTitle")}
+                            description={tSales("empty.filteredDescription")}
                         />
                     ) : (
                         <EmptyState
                             size="sm"
-                            title="No purchases yet"
-                            description="Purchases you record from suppliers will appear here."
+                            title={t("empty.title")}
+                            description={t("empty.description")}
                             action={
                                 <Link
                                     href={`${base}/new`}
@@ -419,7 +428,7 @@ export default async function PurchasesPage({
                                         size: "sm",
                                     })}
                                 >
-                                    New Purchase
+                                    {t("newPurchase")}
                                 </Link>
                             }
                         />
@@ -437,12 +446,11 @@ export default async function PurchasesPage({
 
             {hasFilteredResults && (
                 <p className="text-body-sm text-on-surface-variant">
-                    Showing{" "}
-                    <span className="tabular-nums">
-                        {(query.page - 1) * PAGE_SIZE + 1}–
-                        {Math.min(query.page * PAGE_SIZE, total)}
-                    </span>{" "}
-                    of <span className="tabular-nums">{total}</span> purchases
+                    {t("showingResults", {
+                        from: (query.page - 1) * PAGE_SIZE + 1,
+                        to: Math.min(query.page * PAGE_SIZE, total),
+                        total,
+                    })}
                 </p>
             )}
         </div>

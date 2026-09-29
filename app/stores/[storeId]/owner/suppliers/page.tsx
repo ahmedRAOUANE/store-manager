@@ -1,5 +1,5 @@
 import Link from "next/link";
-// import "temporal-polyfill/full/global";
+import { getTranslations } from "next-intl/server";
 import { Eye, Pencil } from "lucide-react";
 
 import { getAllSuppliers } from "@/actions/supplier.actions";
@@ -87,76 +87,19 @@ function applyQuery(
 }
 
 /* ========================================================================== */
-/*  Columns                                                                   */
-/* ========================================================================== */
-
-const columns: Column<SupplierRow>[] = [
-    {
-        key: "name",
-        header: "Supplier",
-        mobile: "primary",
-        cell: (s) => (
-            <Link
-                href={`/stores/${s.storeId}/owner/suppliers/${s.id}`}
-                className="font-medium text-on-surface hover:text-info"
-            >
-                {s.name}
-            </Link>
-        ),
-    },
-    {
-        key: "phone",
-        header: "Phone",
-        mobile: "secondary",
-        width: "w-44",
-        cell: (s) =>
-            s.phone ? (
-                <span className="font-mono text-body-sm text-on-surface-variant">
-                    {s.phone}
-                </span>
-            ) : (
-                <span className="text-on-surface-variant">—</span>
-            ),
-    },
-    {
-        key: "email",
-        header: "Email",
-        width: "w-64",
-        cell: (s) =>
-            s.email ? (
-                <span className="truncate text-on-surface-variant">{s.email}</span>
-            ) : (
-                <span className="text-on-surface-variant">—</span>
-            ),
-    },
-    {
-        key: "outstanding",
-        header: "Outstanding",
-        align: "right",
-        width: "w-32",
-        cell: (s) => {
-            if (s.outstandingAmount <= 0) {
-                return <span className="text-on-surface-variant">—</span>;
-            }
-            return (
-                <span className="font-medium tabular-nums text-danger-fg">
-                    {formatCurrency(s.outstandingAmount)}
-                </span>
-            );
-        },
-    },
-];
-
-/* ========================================================================== */
 /*  Row actions                                                               */
 /* ========================================================================== */
 
 function SupplierRowActions({
     storeId,
     supplierId,
+    viewLabel,
+    editLabel,
 }: {
     storeId: string;
     supplierId: string;
+    viewLabel: string;
+    editLabel: string;
 }) {
     const base = `/stores/${storeId}/owner/suppliers/${supplierId}`;
 
@@ -168,10 +111,10 @@ function SupplierRowActions({
 
     return (
         <div className="flex items-center justify-end gap-0.5">
-            <Link href={base} aria-label="View supplier" className={iconBtn}>
+            <Link href={base} aria-label={viewLabel} className={iconBtn}>
                 <Eye className="size-4" aria-hidden="true" />
             </Link>
-            <Link href={`${base}/edit`} aria-label="Edit supplier" className={iconBtn}>
+            <Link href={`${base}/edit`} aria-label={editLabel} className={iconBtn}>
                 <Pencil className="size-4" aria-hidden="true" />
             </Link>
         </div>
@@ -192,6 +135,11 @@ export default async function SuppliersPage({
 
     const base = `/stores/${storeId}/owner/suppliers`;
 
+    const t = await getTranslations("suppliers");
+    const tCommon = await getTranslations("common");
+    const tPurchases = await getTranslations("purchases");
+    const tActions = await getTranslations("actions");
+
     /* ---------- Fetch ---------- */
 
     const [suppliersResult, purchasesResult] = await Promise.all([
@@ -202,14 +150,14 @@ export default async function SuppliersPage({
     if (suppliersResult instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load suppliers"
+                title={t("errors.loadFailed")}
                 description={suppliersResult.message}
                 action={
                     <Link
                         href={base}
                         className={buttonVariants({ variant: "secondary", size: "md" })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />
@@ -241,6 +189,65 @@ export default async function SuppliersPage({
 
     const { rows, total, totalPages } = applyQuery(suppliers, query);
 
+    /* ---------- Columns ---------- */
+
+    const columns: Column<SupplierRow>[] = [
+        {
+            key: "name",
+            header: tPurchases("supplierBar.supplier"),
+            mobile: "primary",
+            cell: (s) => (
+                <Link
+                    href={`/stores/${s.storeId}/owner/suppliers/${s.id}`}
+                    className="font-medium text-on-surface hover:text-info"
+                >
+                    {s.name}
+                </Link>
+            ),
+        },
+        {
+            key: "phone",
+            header: tCommon("phone"),
+            mobile: "secondary",
+            width: "w-44",
+            cell: (s) =>
+                s.phone ? (
+                    <span className="font-mono text-body-sm text-on-surface-variant">
+                        {s.phone}
+                    </span>
+                ) : (
+                    <span className="text-on-surface-variant">—</span>
+                ),
+        },
+        {
+            key: "email",
+            header: tCommon("email"),
+            width: "w-64",
+            cell: (s) =>
+                s.email ? (
+                    <span className="truncate text-on-surface-variant">{s.email}</span>
+                ) : (
+                    <span className="text-on-surface-variant">—</span>
+                ),
+        },
+        {
+            key: "outstanding",
+            header: t("columns.outstanding"),
+            align: "right",
+            width: "w-32",
+            cell: (s) => {
+                if (s.outstandingAmount <= 0) {
+                    return <span className="text-on-surface-variant">—</span>;
+                }
+                return (
+                    <span className="font-medium tabular-nums text-danger-fg">
+                        {formatCurrency(s.outstandingAmount)}
+                    </span>
+                );
+            },
+        },
+    ];
+
     /* ---------- Derived ---------- */
 
     const buildHref = (page: number) => {
@@ -265,24 +272,21 @@ export default async function SuppliersPage({
     return (
         <div className="space-y-4">
             <PageHeader
-                title="Suppliers"
+                title={t("title")}
                 description={
-                    totalOutstanding > 0 ? (
-                        <>
-                            {formatCurrency(totalOutstanding)} outstanding across{" "}
-                            {supplierCount}{" "}
-                            {supplierCount === 1 ? "supplier" : "suppliers"}.
-                        </>
-                    ) : (
-                        "All supplier accounts are settled."
-                    )
+                    totalOutstanding > 0
+                        ? t("description.outstanding", {
+                            amount: formatCurrency(totalOutstanding),
+                            count: supplierCount,
+                        })
+                        : t("description.settled")
                 }
                 actions={
                     <Link
                         href={`${base}/new`}
                         className={buttonVariants({ variant: "primary", size: "sm" })}
                     >
-                        Add Supplier
+                        {t("createTitle")}
                     </Link>
                 }
             />
@@ -295,8 +299,8 @@ export default async function SuppliersPage({
                         {
                             type: "search",
                             key: "q",
-                            placeholder: "Search by name, email, or phone…",
-                            label: "Search suppliers",
+                            placeholder: t("filters.searchPlaceholder"),
+                            label: t("filters.searchLabel"),
                         },
                     ]}
                 />
@@ -307,20 +311,25 @@ export default async function SuppliersPage({
                 data={rows}
                 getRowKey={(s) => s.id}
                 rowActions={(s) => (
-                    <SupplierRowActions storeId={storeId} supplierId={s.id} />
+                    <SupplierRowActions
+                        storeId={storeId}
+                        supplierId={s.id}
+                        viewLabel={t("aria.viewSupplier")}
+                        editLabel={t("aria.editSupplier")}
+                    />
                 )}
                 empty={
                     hasAnySuppliers && isFiltering ? (
                         <EmptyState
                             size="sm"
-                            title="No suppliers match your search"
-                            description="Try a different name, email, or phone."
+                            title={t("empty.filteredTitle")}
+                            description={t("empty.filteredDescription")}
                         />
                     ) : (
                         <EmptyState
                             size="sm"
-                            title="No suppliers yet"
-                            description="Add your first supplier to start recording purchases."
+                            title={t("empty.title")}
+                            description={t("empty.description")}
                             action={
                                 <Link
                                     href={`${base}/new`}
@@ -329,7 +338,7 @@ export default async function SuppliersPage({
                                         size: "sm",
                                     })}
                                 >
-                                    Add Supplier
+                                    {t("createTitle")}
                                 </Link>
                             }
                         />
@@ -347,13 +356,11 @@ export default async function SuppliersPage({
 
             {hasFilteredResults && (
                 <p className="text-body-sm text-on-surface-variant">
-                    Showing{" "}
-                    <span className="tabular-nums">
-                        {(query.page - 1) * PAGE_SIZE + 1}–
-                        {Math.min(query.page * PAGE_SIZE, total)}
-                    </span>{" "}
-                    of <span className="tabular-nums">{total}</span>{" "}
-                    {total === 1 ? "supplier" : "suppliers"}
+                    {t("showingResults", {
+                        from: (query.page - 1) * PAGE_SIZE + 1,
+                        to: Math.min(query.page * PAGE_SIZE, total),
+                        total,
+                    })}
                 </p>
             )}
         </div>

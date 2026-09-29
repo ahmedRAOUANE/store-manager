@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/utils/jsx-classes";
+import { useTranslations } from "next-intl";
+import { ChevronDown, Search, X } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -63,6 +65,7 @@ export function FilterBar({
     className,
 }: FilterBarProps) {
     const router = useRouter();
+    const t = useTranslations("filters");
 
     /**
      * Push a URL with one filter key updated.
@@ -116,6 +119,8 @@ export function FilterBar({
                                 defaultValue={values[field.key] ?? ""}
                                 placeholder={field.placeholder}
                                 label={field.label}
+                                searchLabel={t("search")}
+                                clearLabel={t("clearSearch")}
                                 onChange={(v) => push(field.key, v)}
                             />
                         );
@@ -143,7 +148,7 @@ export function FilterBar({
                             "hover:bg-slate-100 hover:text-on-surface",
                         )}
                     >
-                        Clear filters
+                        {t("clear")}
                     </button>
                 )}
             </div>
@@ -161,6 +166,8 @@ interface FilterSearchProps {
     defaultValue: string;
     placeholder?: string;
     label?: string;
+    searchLabel: string;
+    clearLabel: string;
     onChange: (value: string) => void;
 }
 
@@ -168,6 +175,8 @@ function FilterSearch({
     defaultValue,
     placeholder,
     label,
+    searchLabel,
+    clearLabel,
     onChange,
 }: FilterSearchProps) {
     const [value, setValue] = useState(defaultValue);
@@ -191,23 +200,17 @@ function FilterSearch({
 
     return (
         <div className="relative w-full sm:w-64">
-            <label className="sr-only" htmlFor={`filter-search-${placeholder ?? "q"}`}>
-                {label ?? placeholder ?? "Search"}
+            <label
+                className="sr-only"
+                htmlFor={`filter-search-${placeholder ?? "q"}`}
+            >
+                {label ?? placeholder ?? searchLabel}
             </label>
 
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <Search
                 aria-hidden="true"
-                className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant"
-            >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-            </svg>
+                className="pointer-events-none absolute start-s-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant"
+            />
 
             <input
                 id={`filter-search-${placeholder ?? "q"}`}
@@ -221,11 +224,11 @@ function FilterSearch({
                         onChange("");
                     }
                 }}
-                placeholder={placeholder ?? "Search…"}
+                placeholder={placeholder ?? `${searchLabel}…`}
                 autoComplete="off"
                 spellCheck={false}
                 className={cn(
-                    "h-9 w-full rounded-md border border-outline-variant bg-surface-lowest pl-8 pr-8 text-body-md text-on-surface",
+                    "h-9 w-full rounded-md border border-outline-variant bg-surface-lowest ps-8 pe-8 text-body-md text-on-surface",
                     "placeholder:text-outline",
                     "focus:border-info focus:outline-none focus:ring-1 focus:ring-info",
                 )}
@@ -238,21 +241,17 @@ function FilterSearch({
                         setValue("");
                         onChange("");
                     }}
-                    aria-label="Clear search"
+                    aria-label={clearLabel}
                     className={cn(
-                        "absolute right-1.5 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded",
+                        "absolute inset-e-1.5 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded",
                         "text-on-surface-variant transition-colors",
                         "hover:bg-slate-100 hover:text-on-surface",
                     )}
                 >
-                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="size-3.5">
-                        <path
-                            d="m4 4 8 8M12 4l-8 8"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                        />
-                    </svg>
+                    <X
+                        aria-hidden="true"
+                        className="size-3.5"
+                    />
                 </button>
             )}
         </div>
@@ -285,7 +284,7 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
                 onChange={(e) => onChange(e.target.value)}
                 className={cn(
                     "h-9 cursor-pointer appearance-none rounded-md border border-outline-variant bg-surface-lowest",
-                    "pl-3 pr-8 text-body-md text-on-surface",
+                    "ps-3 pe-8 text-body-md text-on-surface",
                     "focus:border-info focus:outline-none focus:ring-1 focus:ring-info",
                 )}
             >
@@ -296,20 +295,10 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
                 ))}
             </select>
 
-            <svg
-                viewBox="0 0 16 16"
-                fill="none"
+            <ChevronDown
                 aria-hidden="true"
-                className="pointer-events-none absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 text-on-surface-variant"
-            >
-                <path
-                    d="m4 6 4 4 4-4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+                className="pointer-events-none absolute inset-e-2.5 top-1/2 size-3.5 -translate-y-1/2 text-on-surface-variant"
+            />
         </div>
     );
 }

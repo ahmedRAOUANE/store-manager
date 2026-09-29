@@ -4,6 +4,7 @@ import type {
     SelectHTMLAttributes,
 } from "react";
 import { cn } from "@/utils/jsx-classes";
+import { ChevronDown } from "lucide-react";
 
 /* ========================================================================== */
 /*  Shared field chrome                                                       */
@@ -72,7 +73,7 @@ export function FormField({
                 {required && (
                     <span
                         aria-hidden="true"
-                        className="ml-0.5 text-danger"
+                        className="ms-0.5 text-danger"
                     >
                         *
                     </span>
@@ -123,8 +124,8 @@ export function Input({
         CONTROL_BASE,
         invalid ? CONTROL_INVALID : CONTROL_IDLE,
         "h-9",
-        leadingIcon ? "pl-9" : "pl-3",
-        trailingSlot ? "pr-9" : "pr-3",
+        leadingIcon ? "ps-9" : "ps-3",
+        trailingSlot ? "pe-9" : "pe-3",
         className,
     );
 
@@ -146,7 +147,7 @@ export function Input({
             {leadingIcon && (
                 <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant [&>svg]:size-4"
+                    className="pointer-events-none absolute s-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant [&>svg]:size-4"
                 >
                     {leadingIcon}
                 </span>
@@ -158,7 +159,7 @@ export function Input({
                 {...props}
             />
             {trailingSlot && (
-                <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-on-surface-variant">
+                <span className="absolute e-1.5 top-1/2 -translate-y-1/2 text-on-surface-variant">
                     {trailingSlot}
                 </span>
             )}
@@ -216,7 +217,7 @@ export function Select({
                 className={cn(
                     CONTROL_BASE,
                     invalid ? CONTROL_INVALID : CONTROL_IDLE,
-                    "h-9 cursor-pointer appearance-none pl-3 pr-9",
+                    "h-9 cursor-pointer appearance-none ps-3 pr-9",
                     className,
                 )}
                 {...props}
@@ -224,20 +225,10 @@ export function Select({
                 {children}
             </select>
 
-            <svg
-                viewBox="0 0 16 16"
-                fill="none"
+            <ChevronDown
                 aria-hidden="true"
-                className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-on-surface-variant"
-            >
-                <path
-                    d="m4 6 4 4 4-4"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+                className="pointer-events-none absolute inset-e-3 top-1/2 size-3.5 -translate-y-1/2 text-on-surface-variant"
+            />
         </div>
     );
 }

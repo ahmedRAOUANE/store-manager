@@ -6,6 +6,7 @@ import { UserMenu } from "@/components/layout/user-menu";
 import { AppError } from "@/errors/base.error";
 import { getCurrentStoreContext } from "@/utils/auth";
 import { Bell, Search } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 
@@ -31,6 +32,7 @@ export default async function ManagerLayout({ children, params }: LayoutProps<"/
 
     const sidebarItems = buildStoreNavItems(storeId, "MANAGER");
 
+    const t = await getTranslations("userMenu")
 
     return (
         <div className="h-screen grid grid-cols-1 md:grid-cols-4 grid-rows-10">
@@ -74,7 +76,7 @@ export default async function ManagerLayout({ children, params }: LayoutProps<"/
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
                                 links={[
-                                    { label: "View Profile", link: `/user/${user.id}/profile` }
+                                    { label: t("viewProfile"), link: `/user/${user.id}/profile` }
                                 ]}
                             />
                         </>

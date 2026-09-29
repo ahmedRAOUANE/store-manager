@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { ArrowLeft } from "lucide-react";
 
 import {
     activateStore,
@@ -12,11 +14,31 @@ export default async function AdminStoreDetailsPage({
 }: PageProps<"/admin/[adminId]/stores/[storeId]">) {
     const { adminId, storeId } = await params;
 
+    const t = await getTranslations("admin.storeDetail");
+    const tStores = await getTranslations("stores");
+    const tCommon = await getTranslations("common");
+    const tStatus = await getTranslations("status");
+
     const store = await getStoreById(storeId);
 
     if (!store || store instanceof Error) {
         notFound();
     }
+
+    /* ---------- Translated labels for helper components ---------- */
+
+    const statusLabels: StoreStatusLabels = {
+        PENDING: tStatus("pending"),
+        ACTIVE: tStatus("active"),
+        SUSPENDED: tStatus("suspended"),
+    };
+
+    const statusActionLabels: StoreStatusActionLabels = {
+        activate: t("actions.activate"),
+        suspend: t("actions.suspend"),
+    };
+
+    const statusDescriptionKey = getStatusDescriptionKey(store.status);
 
     return (
         <div className="mx-auto max-w-5xl space-y-8">
@@ -25,9 +47,13 @@ export default async function AdminStoreDetailsPage({
                 <div>
                     <Link
                         href={`/admin/${adminId}/stores`}
-                        className="text-sm font-medium text-(--secondary) hover:underline"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-(--secondary) hover:underline"
                     >
-                        ← Back to stores
+                        <ArrowLeft
+                            className="size-3.5 rtl:rotate-180"
+                            aria-hidden="true"
+                        />
+                        {t("backToStores")}
                     </Link>
 
                     <h1 className="mt-4 text-2xl font-semibold text-(--on-surface)">
@@ -41,47 +67,29 @@ export default async function AdminStoreDetailsPage({
                     )}
                 </div>
 
-                <StoreStatus status={store.status} />
+                <StoreStatus status={store.status} labels={statusLabels} />
             </div>
 
             {/* Main information */}
             <section className="rounded-xl border border-gray-200 bg-white">
                 <div className="border-b border-gray-200 px-6 py-4">
                     <h2 className="font-semibold text-(--on-surface)">
-                        Store Information
+                        {t("storeInformation")}
                     </h2>
                 </div>
 
                 <div className="grid gap-6 p-6 sm:grid-cols-2">
-                    <InfoItem
-                        label="Store name"
-                        value={store.name}
-                    />
+                    <InfoItem label={tStores("name")} value={store.name} />
 
-                    <InfoItem
-                        label="Email"
-                        value={store.email}
-                    />
+                    <InfoItem label={tCommon("email")} value={store.email} />
 
-                    <InfoItem
-                        label="Phone"
-                        value={store.phone}
-                    />
+                    <InfoItem label={tCommon("phone")} value={store.phone} />
 
-                    <InfoItem
-                        label="Address"
-                        value={store.address}
-                    />
+                    <InfoItem label={tCommon("address")} value={store.address} />
 
-                    <InfoItem
-                        label="Currency"
-                        value={store.currency}
-                    />
+                    <InfoItem label={tStores("currency")} value={store.currency} />
 
-                    <InfoItem
-                        label="Timezone"
-                        value={store.timezone}
-                    />
+                    <InfoItem label={tStores("timezone")} value={store.timezone} />
                 </div>
             </section>
 
@@ -89,31 +97,35 @@ export default async function AdminStoreDetailsPage({
             <section className="rounded-xl border border-gray-200 bg-white">
                 <div className="border-b border-gray-200 px-6 py-4">
                     <h2 className="font-semibold text-(--on-surface)">
-                        Store Management
+                        {t("storeManagement")}
                     </h2>
                 </div>
 
                 <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p className="font-medium text-(--on-surface)">
-                            Store status
+                            {t("storeStatus")}
                         </p>
 
                         <p className="mt-1 text-sm text-gray-500">
-                            {getStatusDescription(store.status)}
+                            {t(`statusDescriptions.${statusDescriptionKey}`)}
                         </p>
                     </div>
 
                     <StoreStatusAction
-                        // adminId={adminId}
                         storeId={store.id}
                         status={store.status}
+                        labels={statusActionLabels}
                     />
                 </div>
             </section>
         </div>
     );
 }
+
+/* ========================================================================== */
+/*  InfoItem                                                                  */
+/* ========================================================================== */
 
 function InfoItem({
     label,
@@ -135,21 +147,27 @@ function InfoItem({
     );
 }
 
+/* ========================================================================== */
+/*  StoreStatus                                                               */
+/* ========================================================================== */
+
+interface StoreStatusLabels {
+    PENDING: string;
+    ACTIVE: string;
+    SUSPENDED: string;
+}
+
 function StoreStatus({
     status,
+    labels,
 }: {
     status: "PENDING" | "ACTIVE" | "SUSPENDED";
+    labels: StoreStatusLabels;
 }) {
     const styles = {
         PENDING: "bg-yellow-50 text-yellow-700",
         ACTIVE: "bg-green-50 text-green-700",
         SUSPENDED: "bg-red-50 text-red-700",
-    };
-
-    const labels = {
-        PENDING: "Pending",
-        ACTIVE: "Active",
-        SUSPENDED: "Suspended",
     };
 
     return (
@@ -161,47 +179,56 @@ function StoreStatus({
     );
 }
 
-function getStatusDescription(
+/* ========================================================================== */
+/*  Status description key                                                    */
+/* ========================================================================== */
+
+function getStatusDescriptionKey(
     status: "PENDING" | "ACTIVE" | "SUSPENDED",
-) {
+): "pending" | "active" | "suspended" {
     switch (status) {
         case "PENDING":
-            return "This store is waiting for admin approval.";
-
+            return "pending";
         case "ACTIVE":
-            return "This store is currently active and available to its members.";
-
+            return "active";
         case "SUSPENDED":
-            return "This store is currently suspended.";
+            return "suspended";
     }
 }
 
+/* ========================================================================== */
+/*  StoreStatusAction                                                         */
+/* ========================================================================== */
+
+interface StoreStatusActionLabels {
+    activate: string;
+    suspend: string;
+}
+
 function StoreStatusAction({
-    // adminId,
     storeId,
     status,
+    labels,
 }: {
-    // adminId?: string;
     storeId: string;
     status: "PENDING" | "ACTIVE" | "SUSPENDED";
+    labels: StoreStatusActionLabels;
 }) {
     if (status === "PENDING") {
         return (
-            <form action={async () => {
-                "use server";
-                await activateStore(storeId)
-            }}>
-                <input
-                    type="hidden"
-                    name="storeId"
-                    value={storeId}
-                />
+            <form
+                action={async () => {
+                    "use server";
+                    await activateStore(storeId);
+                }}
+            >
+                <input type="hidden" name="storeId" value={storeId} />
 
                 <button
                     type="submit"
                     className="rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-background hover:opacity-90"
                 >
-                    Activate Store
+                    {labels.activate}
                 </button>
             </form>
         );
@@ -209,42 +236,38 @@ function StoreStatusAction({
 
     if (status === "ACTIVE") {
         return (
-            <form action={async () => {
-                "use server";
-                await suspendStore(storeId)
-            }}>
-                <input
-                    type="hidden"
-                    name="storeId"
-                    value={storeId}
-                />
+            <form
+                action={async () => {
+                    "use server";
+                    await suspendStore(storeId);
+                }}
+            >
+                <input type="hidden" name="storeId" value={storeId} />
 
                 <button
                     type="submit"
                     className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
                 >
-                    Suspend Store
+                    {labels.suspend}
                 </button>
             </form>
         );
     }
 
     return (
-        <form action={async () => {
-            "use server";
-            await activateStore(storeId)
-        }}>
-            <input
-                type="hidden"
-                name="storeId"
-                value={storeId}
-            />
+        <form
+            action={async () => {
+                "use server";
+                await activateStore(storeId);
+            }}
+        >
+            <input type="hidden" name="storeId" value={storeId} />
 
             <button
                 type="submit"
                 className="rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-white hover:opacity-90"
             >
-                Activate Store
+                {labels.activate}
             </button>
         </form>
     );

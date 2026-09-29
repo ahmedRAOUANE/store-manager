@@ -8,6 +8,7 @@ import { AppError } from "@/errors/base.error";
 import { getCurrentUser } from "@/utils/auth";
 import { isUuid } from "@/utils/uuid";
 import { Bell, Search } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 export default async function UserLayout({ children, params }: LayoutProps<"/user/[userId]">) {
@@ -26,16 +27,25 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
         redirect("/dashboard");
     }
 
+    const t = await getTranslations("navigation");
+    const accessibilityT = await getTranslations("accessibility");
+    const actionsT = await getTranslations("actions");
+
     const membershipsResult = await getAllMemberships()
 
     const sidebarItems = buildUserNavItems(userId);
-    const adminDashboard = user.globalRole === "ADMIN" ? { label: "View admin dashboard", link: `/admin/${userId}/dashboard` } : null;
-    const membershipLinks: { link: string; label: string }[] = membershipsResult.ok && membershipsResult.memberships
-        ? membershipsResult.memberships.map(m => ({
-            link: `/stores/${m.storeId}/${m.role}/dashboard`,
-            label: `${m.store.name}`
-        }))
-        : [];
+    const adminDashboard = 
+        user.globalRole === "ADMIN" 
+            ? { label: t("adminDashboard"), link: `/admin/${userId}/dashboard` } 
+            : null;
+
+    const membershipLinks: { link: string; label: string }[] = 
+        membershipsResult.ok && membershipsResult.memberships
+            ? membershipsResult.memberships.map(m => ({
+                link: `/stores/${m.storeId}/${m.role.toLowerCase()}/dashboard`,
+                label: `${m.store.name}`
+            }))
+            : [];
 
     return (
         <div className="h-screen grid grid-cols-1 md:grid-cols-4 grid-rows-10">
@@ -49,7 +59,7 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
                         <div className="flex items-center gap-3">
                             <MobileNav title={user.firstName || ""} items={sidebarItems} />
                             <h1 className="truncate text-sm font-semibold text-on-surface">
-                                Dashboard
+                                {t("dashboard")}
                             </h1>
                         </div>
                     }
@@ -59,7 +69,7 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
                             <button
                                 type="button"
                                 className="hidden sm:inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label="Search"
+                                aria-label={actionsT("search")}
                             >
                                 <Search className="size-4" />
                             </button>
@@ -68,10 +78,10 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
                             <button
                                 type="button"
                                 className="relative inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label="Notifications"
+                                aria-label={accessibilityT("notifications")}
                             >
                                 <Bell className="size-4" />
-                                <span className="absolute right-2 top-2 size-1.5 rounded-full bg-primary" />
+                                <span className="absolute inset-e-2 top-2 size-1.5 rounded-full bg-primary" />
                             </button>
 
                             {/* User menu */}

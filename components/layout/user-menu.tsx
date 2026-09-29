@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SidebarAvatar } from "./app-sidebar";
 import { cn } from "@/utils/jsx-classes";
+import { useTranslations } from "next-intl";
 
 export interface UserMenuProps {
     name: string;
@@ -13,7 +14,7 @@ export interface UserMenuProps {
     profileHref?: string;
     signOutHref?: string;
 
-    links?: {link: string, label: string}[]
+    links?: { link: string, label: string }[]
 }
 
 export function UserMenu({
@@ -24,6 +25,8 @@ export function UserMenu({
     signOutHref,
     links,
 }: UserMenuProps) {
+    const t = useTranslations("userMenu");
+
     const [open, setOpen] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
@@ -58,7 +61,7 @@ export function UserMenu({
                 onClick={() => setOpen((v) => !v)}
                 aria-haspopup="menu"
                 aria-expanded={open}
-                aria-label="Open user menu"
+                aria-label={t("openMenu")}
                 className={cn(
                     "flex items-center rounded-md p-0.5 transition-colors",
                     "hover:bg-slate-100",
@@ -70,8 +73,8 @@ export function UserMenu({
             {open && (
                 <div
                     role="menu"
-                    aria-label="User menu"
-                    className="absolute right-0 top-full z-30 mt-1.5 w-60 overflow-hidden rounded-lg border border-outline-variant bg-surface-lowest shadow-overlay"
+                    aria-label={t("menuLabel")}
+                    className="absolute inset-e-0 top-full z-30 mt-1.5 w-60 overflow-hidden rounded-lg border border-outline-variant bg-surface-lowest shadow-overlay"
                 >
                     <div className="border-b border-outline-variant px-3 py-2.5">
                         <p className="truncate text-title-md text-on-surface">{name}</p>
@@ -88,7 +91,7 @@ export function UserMenu({
                                 onClick={() => setOpen(false)}
                                 className="block rounded-md px-2.5 py-1.5 text-body-md text-on-surface-variant transition-colors hover:bg-slate-100 hover:text-on-surface"
                             >
-                                Profile
+                                {t("profile")}
                             </Link>
                         )}
                         {signOutHref && (
@@ -98,11 +101,11 @@ export function UserMenu({
                                 onClick={() => setOpen(false)}
                                 className="block rounded-md px-2.5 py-1.5 text-body-md text-on-surface-variant transition-colors hover:bg-slate-100 hover:text-on-surface"
                             >
-                                Sign out
+                                {t("signOut")}
                             </Link>
                         )}
                         {
-                            (links&&links.length>0) && links.map((l, idx) => (
+                            (links && links.length > 0) && links.map((l, idx) => (
                                 <Link
                                     key={idx}
                                     href={l.link}

@@ -1,9 +1,16 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { getAdminDashboard } from "@/actions/admin.actions";
 
-export default async function AdminDashboardPage({params}: PageProps<"/admin/[adminId]/dashboard">) {
-    const {adminId} = await params;
+export default async function AdminDashboardPage({
+    params,
+}: PageProps<"/admin/[adminId]/dashboard">) {
+    const { adminId } = await params;
+
+    const t = await getTranslations("admin");
+    const tStatus = await getTranslations("status");
+    const tActions = await getTranslations("actions");
 
     const result = await getAdminDashboard();
 
@@ -12,10 +19,10 @@ export default async function AdminDashboardPage({params}: PageProps<"/admin/[ad
             <div className="flex min-h-full items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-lg font-semibold text-(--on-surface)">
-                        Unable to load dashboard
+                        {t("errors.loadFailed")}
                     </h1>
                     <p className="mt-1 text-sm text-gray-500">
-                        Something went wrong while loading the admin dashboard.
+                        {t("errors.loadFailedDescription")}
                     </p>
                 </div>
             </div>
@@ -29,32 +36,32 @@ export default async function AdminDashboardPage({params}: PageProps<"/admin/[ad
             {/* Header */}
             <div>
                 <h1 className="text-2xl font-semibold text-(--on-surface)">
-                    Admin Dashboard
+                    {t("dashboardTitle")}
                 </h1>
                 <p className="mt-1 text-sm text-gray-500">
-                    Overview of your users and stores.
+                    {t("dashboardDescription")}
                 </p>
             </div>
 
             {/* Overview */}
             <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <DashboardCard
-                    label="Total Users"
+                    label={t("stats.totalUsers")}
                     value={users.total}
                 />
 
                 <DashboardCard
-                    label="Total Stores"
+                    label={t("stats.totalStores")}
                     value={stores.total}
                 />
 
                 <DashboardCard
-                    label="Pending Stores"
+                    label={t("stats.pendingStores")}
                     value={stores.pending}
                 />
 
                 <DashboardCard
-                    label="Active Stores"
+                    label={t("stats.activeStores")}
                     value={stores.active}
                 />
             </section>
@@ -63,26 +70,26 @@ export default async function AdminDashboardPage({params}: PageProps<"/admin/[ad
             <section>
                 <div className="mb-4">
                     <h2 className="text-lg font-semibold text-(--on-surface)">
-                        Store Overview
+                        {t("storeOverview.title")}
                     </h2>
                     <p className="text-sm text-gray-500">
-                        Current status of all stores.
+                        {t("storeOverview.description")}
                     </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-3">
                     <StatusCard
-                        label="Pending"
+                        label={tStatus("pending")}
                         value={stores.pending}
                     />
 
                     <StatusCard
-                        label="Active"
+                        label={tStatus("active")}
                         value={stores.active}
                     />
 
                     <StatusCard
-                        label="Suspended"
+                        label={tStatus("suspended")}
                         value={stores.suspended}
                     />
                 </div>
@@ -93,10 +100,10 @@ export default async function AdminDashboardPage({params}: PageProps<"/admin/[ad
                 <div className="mb-4 flex items-center justify-between">
                     <div>
                         <h2 className="text-lg font-semibold text-(--on-surface)">
-                            Recent Store Requests
+                            {t("recentRequests.title")}
                         </h2>
                         <p className="text-sm text-gray-500">
-                            The latest stores waiting for review.
+                            {t("recentRequests.description")}
                         </p>
                     </div>
 
@@ -104,14 +111,14 @@ export default async function AdminDashboardPage({params}: PageProps<"/admin/[ad
                         href={`/admin/${adminId}/stores`}
                         className="text-sm font-medium text-(--secondary) hover:underline"
                     >
-                        View all
+                        {tActions("viewAll")}
                     </Link>
                 </div>
 
                 {recentStoreRequests.length === 0 ? (
                     <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
                         <p className="text-sm text-gray-500">
-                            No pending store requests.
+                            {t("recentRequests.empty")}
                         </p>
                     </div>
                 ) : (
@@ -128,13 +135,14 @@ export default async function AdminDashboardPage({params}: PageProps<"/admin/[ad
                                             {store.name}
                                         </p>
                                         <p className="mt-1 text-xs text-gray-500">
-                                            Requested{" "}
-                                            {store.createdAt.toLocaleString()}
+                                            {t("recentRequests.requestedOn", {
+                                                date: store.createdAt.toLocaleString(),
+                                            })}
                                         </p>
                                     </div>
 
                                     <span className="shrink-0 rounded-full bg-yellow-50 px-3 py-1 text-xs font-medium text-yellow-700">
-                                        Pending
+                                        {tStatus("pending")}
                                     </span>
                                 </Link>
                             ))}

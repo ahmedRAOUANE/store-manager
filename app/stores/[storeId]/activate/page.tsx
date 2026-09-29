@@ -1,12 +1,16 @@
 import { AppError } from "@/errors/base.error";
 import { getCurrentStoreContext } from "@/utils/auth";
 import { isUuid } from "@/utils/uuid";
+import { TriangleAlert } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 export default async function ActivateStorePage({
     params,
 }: PageProps<"/stores/[storeId]/activate">) {
     const { storeId } = await params;
+
+    const t = await getTranslations("stores.activation");
 
     if (!isUuid(storeId)) {
         redirect("/dashboard");
@@ -38,37 +42,27 @@ export default async function ActivateStorePage({
                         : "bg-yellow-100"
                         }`}
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
+                    <TriangleAlert
                         className={`h-8 w-8 ${isSuspended
-                            ? "text-red-600"
-                            : "text-yellow-600"
+                                ? "text-red-600"
+                                : "text-yellow-600"
                             }`}
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M12 9v3.75m9.303 3.376L13.697 4.5a1.95 1.95 0 0 0-3.394 0l-7.606 11.626A1.95 1.95 0 0 0 4.303 19.5h15.394a1.95 1.95 0 0 0 1.606-2.374ZM12 17.25h.008v.008H12v-.008Z"
-                        />
-                    </svg>
+                        aria-hidden="true"
+                    />
                 </div>
 
                 {/* Heading */}
                 <h1 className="text-2xl font-semibold tracking-tight">
                     {isSuspended
-                        ? "Your store has been suspended"
-                        : "Activate your store"}
+                        ? t("suspendedTitle")
+                        : t("pendingTitle")}
                 </h1>
 
                 {/* Description */}
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">
                     {isSuspended
-                        ? "Your store has been temporarily suspended and is currently unavailable."
-                        : "Your store has been created successfully, but it still needs to be activated before you can start using it."}
+                        ? t("suspendedDescription")
+                        : t("pendingDescription")}
                 </p>
 
                 {/* Status */}
@@ -83,23 +77,23 @@ export default async function ActivateStorePage({
 
                         <span className="text-sm font-medium">
                             {isSuspended
-                                ? "Store suspended"
-                                : "Store activation pending"}
+                                ? t("suspendedStatus")
+                                : t("pendingStatus")}
                         </span>
                     </div>
 
                     <p className="mt-2 text-xs text-muted-foreground">
                         {isSuspended
-                            ? "Please contact an administrator for more information."
-                            : "An administrator needs to activate your store."}
+                            ? t("suspendedStatusDescription")
+                            : t("pendingStatusDescription")}
                     </p>
                 </div>
 
                 {/* Help text */}
                 <p className="mt-6 text-xs text-muted-foreground">
                     {isSuspended
-                        ? "Once the suspension is lifted, your store will become available again and you will be able to access your store dashboard."
-                        : "Once your store is activated, you will be able to access your store dashboard and start managing your products, sales, purchases, and members."}
+                        ? t("suspendedHelp")
+                        : t("pendingHelp")}
                 </p>
             </div>
         </main>

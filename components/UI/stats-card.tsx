@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Card } from "./card";
 import { cn } from "@/utils/jsx-classes";
+import { ArrowUp } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Tone for the value                                                        */
@@ -33,27 +34,6 @@ export interface StatDelta {
     invert?: boolean;
 }
 
-function DeltaArrow({ up }: { up: boolean }) {
-    return (
-        <svg
-            aria-hidden="true"
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            className={cn(up ? "rotate-0" : "rotate-180")}
-        >
-            <path
-                d="M6 2.5 10 7H2l4-4.5Z"
-                fill="currentColor"
-                stroke="currentColor"
-                strokeWidth="1"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
 function StatDeltaPill({ value, label, invert = false }: StatDelta) {
     const up = value >= 0;
     const positive = invert ? !up : up;
@@ -67,7 +47,13 @@ function StatDeltaPill({ value, label, invert = false }: StatDelta) {
                     positive ? "text-success-fg" : "text-danger-fg",
                 )}
             >
-                <DeltaArrow up={up} />
+                <ArrowUp
+                    aria-hidden="true"
+                    className={cn(
+                        "size-3",
+                        !up && "rotate-180",
+                    )}
+                />
                 {formatted}
             </span>
             {label && <span className="text-on-surface-variant">{label}</span>}

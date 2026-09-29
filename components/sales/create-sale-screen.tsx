@@ -10,6 +10,7 @@ import { cn } from "@/utils/jsx-classes";
 import { GetForSaleProducts } from "@/zod/product.schema";
 import { createSale } from "@/actions/sales.actions";
 import { Minus, Plus, Search, ShoppingCart, Trash2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 /* ========================================================================== */
 /*  Types                                                                     */
@@ -70,11 +71,13 @@ function ProductSearchInput({
     onChange: (v: string) => void;
     autoFocus?: boolean;
 }) {
+    const t = useTranslations("sales");
+
     return (
         <div className="relative">
             <span
                 aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant"
+                className="pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant"
             >
                 <Search />
             </span>
@@ -82,12 +85,12 @@ function ProductSearchInput({
                 type="search"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="Search by name or SKU…"
+                placeholder={t("searchProducts")}
                 autoFocus={autoFocus}
                 autoComplete="off"
                 spellCheck={false}
                 className={cn(
-                    "h-10 w-full rounded-md border border-outline-variant bg-surface-lowest pl-9 pr-3",
+                    "h-10 w-full rounded-md border border-outline-variant bg-surface-lowest ps-9 pe-3",
                     "text-body-md text-on-surface placeholder:text-outline",
                     "focus:border-info focus:outline-none focus:ring-1 focus:ring-info",
                 )}
@@ -96,10 +99,10 @@ function ProductSearchInput({
                 <button
                     type="button"
                     onClick={() => onChange("")}
-                    aria-label="Clear search"
-                    className="absolute right-2 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded text-on-surface-variant hover:bg-slate-100 hover:text-on-surface"
+                    aria-label={t("clearSearch")}
+                    className="absolute inset-e-2 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded text-on-surface-variant hover:bg-slate-100 hover:text-on-surface"
                 >
-                    <span className="size-3.5">
+                    <span className="size-3.5" aria-hidden="true">
                         <X />
                     </span>
                 </button>
@@ -123,6 +126,8 @@ function ProductRow({
     onAdd: () => void;
     currency: string;
 }) {
+    const t = useTranslations("sales");
+
     const out = product.stockQuantity <= 0;
     const maxed = inCartQuantity >= product.stockQuantity;
     const disabled = out || maxed;
@@ -133,7 +138,7 @@ function ProductRow({
             onClick={onAdd}
             disabled={disabled}
             className={cn(
-                "flex w-full items-center justify-between gap-3 px-4 py-3 text-left",
+                "flex w-full items-center justify-between gap-3 px-4 py-3 text-start",
                 "transition-colors",
                 disabled
                     ? "cursor-not-allowed opacity-55"
@@ -163,12 +168,12 @@ function ProductRow({
                                 : "text-on-surface-variant",
                     )}
                 >
-                    {out ? "Out of stock" : `${product.stockQuantity} ${product.unit}`}
+                    {out ? t("outOfStock") : `${product.stockQuantity} ${product.unit}`}
                 </span>
             </div>
 
             {inCartQuantity > 0 && (
-                <span className="ml-1 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-info text-label-sm text-on-primary tabular-nums">
+                <span className="ms-1 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-info text-label-sm text-on-primary tabular-nums">
                     {inCartQuantity}
                 </span>
             )}
@@ -191,6 +196,8 @@ function CartLineRow({
     onRemove: () => void;
     currency: string;
 }) {
+    const t = useTranslations("sales");
+
     const lineTotal = line.unitPrice * line.quantity;
     const atMax = line.quantity >= line.availableStock;
 
@@ -214,10 +221,10 @@ function CartLineRow({
                 <button
                     type="button"
                     onClick={onRemove}
-                    aria-label={`Remove ${line.name}`}
+                    aria-label={t("removeItem", { name: line.name })}
                     className="inline-flex size-7 shrink-0 items-center justify-center rounded text-on-surface-variant hover:bg-slate-100 hover:text-danger-fg"
                 >
-                    <span className="size-4">
+                    <span className="size-4" aria-hidden="true">
                         <Trash2 />
                     </span>
                 </button>
@@ -229,10 +236,10 @@ function CartLineRow({
                         type="button"
                         onClick={() => onQtyChange(line.quantity - 1)}
                         disabled={line.quantity <= 1}
-                        aria-label="Decrease quantity"
+                        aria-label={t("decreaseQuantity")}
                         className={stepperBtn}
                     >
-                        <span className="size-3.5">
+                        <span className="size-3.5" aria-hidden="true">
                             <Minus />
                         </span>
                     </button>
@@ -246,7 +253,7 @@ function CartLineRow({
                         }}
                         min={1}
                         max={line.availableStock}
-                        aria-label={`Quantity for ${line.name}`}
+                        aria-label={t("quantityFor", { name: line.name })}
                         className="h-8 w-14 rounded-md border border-outline-variant bg-surface-lowest text-center text-body-md tabular-nums text-on-surface focus:border-info focus:outline-none focus:ring-1 focus:ring-info"
                     />
 
@@ -254,16 +261,18 @@ function CartLineRow({
                         type="button"
                         onClick={() => onQtyChange(line.quantity + 1)}
                         disabled={atMax}
-                        aria-label="Increase quantity"
+                        aria-label={t("increaseQuantity")}
                         className={stepperBtn}
                     >
-                        <span className="size-3.5">
+                        <span className="size-3.5" aria-hidden="true">
                             <Plus />
                         </span>
                     </button>
 
                     {atMax && (
-                        <span className="ml-1 text-body-sm text-warning-fg">Max</span>
+                        <span className="ms-1 text-body-sm text-warning-fg">
+                            {t("max")}
+                        </span>
                     )}
                 </div>
 
@@ -290,13 +299,15 @@ function CartItems({
     onRemove: (productId: string) => void;
     currency: string;
 }) {
+    const t = useTranslations("sales");
+
     if (cart.length === 0) {
         return (
             <EmptyState
                 size="sm"
                 icon={<ShoppingCart />}
-                title="Cart is empty"
-                description="Tap products to add them to the sale."
+                title={t("cartEmpty")}
+                description={t("cartEmptyDescription")}
             />
         );
     }
@@ -352,6 +363,7 @@ function CartFooter({
     pending: boolean;
     error: string | null;
 }) {
+    const t = useTranslations("sales");
     const empty = cart.length === 0;
     const disabled = empty || pending;
 
@@ -362,7 +374,9 @@ function CartFooter({
         >
             <dl className="space-y-1.5 text-body-md">
                 <div className="flex items-center justify-between">
-                    <dt className="text-on-surface-variant">Subtotal</dt>
+                    <dt className="text-on-surface-variant">
+                        {t("subtotal")}
+                    </dt>
                     <dd className="tabular-nums text-on-surface">
                         {formatCurrency(totals.subtotal, currency)}
                     </dd>
@@ -370,7 +384,9 @@ function CartFooter({
 
                 {/* Discount — editable */}
                 <div className="flex items-center justify-between gap-3">
-                    <dt className="shrink-0 text-on-surface-variant">Discount</dt>
+                    <dt className="shrink-0 text-on-surface-variant">
+                        {t("discount")}
+                    </dt>
                     <dd className="w-28">
                         <Input
                             type="number"
@@ -381,8 +397,8 @@ function CartFooter({
                             onChange={(e) => setDiscountAmount(e.target.value)}
                             placeholder="0.00"
                             disabled={empty}
-                            aria-label="Discount amount"
-                            className="h-8 text-right tabular-nums"
+                            aria-label={t("discountAmount")}
+                            className="h-8 text-end tabular-nums"
                             leadingIcon={
                                 <span className="text-body-sm text-on-surface-variant">$</span>
                             }
@@ -392,7 +408,9 @@ function CartFooter({
 
                 {totals.tax > 0 && (
                     <div className="flex items-center justify-between">
-                        <dt className="text-on-surface-variant">Tax</dt>
+                        <dt className="text-on-surface-variant">
+                            {t("tax")}
+                        </dt>
                         <dd className="tabular-nums text-on-surface">
                             {formatCurrency(totals.tax, currency)}
                         </dd>
@@ -400,7 +418,9 @@ function CartFooter({
                 )}
 
                 <div className="flex items-center justify-between border-t border-outline-variant pt-2">
-                    <dt className="text-title-md text-on-surface">Total</dt>
+                    <dt className="text-title-md text-on-surface">
+                        {t("total")}
+                    </dt>
                     <dd className="text-title-md tabular-nums text-on-surface">
                         {formatCurrency(totals.total, currency)}
                     </dd>
@@ -408,7 +428,9 @@ function CartFooter({
 
                 {/* Amount paid — editable with an "exact" shortcut */}
                 <div className="flex items-center justify-between gap-3 pt-1.5">
-                    <dt className="shrink-0 text-on-surface-variant">Paid</dt>
+                    <dt className="shrink-0 text-on-surface-variant">
+                        {t("paid")}
+                    </dt>
                     <dd className="flex w-full items-center justify-end gap-1.5">
                         <Input
                             type="number"
@@ -419,8 +441,8 @@ function CartFooter({
                             onChange={(e) => setAmountPaid(e.target.value)}
                             placeholder="0.00"
                             disabled={empty}
-                            aria-label="Amount paid"
-                            className="h-8 text-right tabular-nums"
+                            aria-label={t("amountPaid")}
+                            className="h-8 text-end tabular-nums"
                             leadingIcon={
                                 <span className="text-body-sm text-on-surface-variant">$</span>
                             }
@@ -431,14 +453,16 @@ function CartFooter({
                             disabled={empty}
                             className="h-8 shrink-0 rounded-md px-2 text-body-sm font-medium text-info-fg transition-colors hover:bg-info-bg disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            Exact
+                            {t("exact")}
                         </button>
                     </dd>
                 </div>
 
                 {totals.change > 0 && (
                     <div className="flex items-center justify-between">
-                        <dt className="text-on-surface-variant">Change</dt>
+                        <dt className="text-on-surface-variant">
+                            {t("change")}
+                        </dt>
                         <dd className="tabular-nums font-medium text-success-fg">
                             {formatCurrency(totals.change, currency)}
                         </dd>
@@ -447,7 +471,9 @@ function CartFooter({
 
                 {totals.due > 0 && (
                     <div className="flex items-center justify-between">
-                        <dt className="text-on-surface-variant">Due</dt>
+                        <dt className="text-on-surface-variant">
+                            {t("due")}
+                        </dt>
                         <dd className="tabular-nums font-medium text-danger-fg">
                             {formatCurrency(totals.due, currency)}
                         </dd>
@@ -472,7 +498,7 @@ function CartFooter({
                 disabled={disabled}
                 loading={pending}
             >
-                {pending ? "Completing…" : "Complete Sale"}
+                {pending ? t("completing") : t("completeSale")}
             </Button>
         </form>
     );
@@ -489,6 +515,8 @@ export function CreateSaleScreen({
     products,
     createSaleAction,
 }: CreateSaleScreenProps) {
+    const t = useTranslations("sales");
+
     const [search, setSearch] = useState("");
     const [cart, setCart] = useState<CartLine[]>([]);
     const [discountAmount, setDiscountAmount] = useState("");
@@ -538,22 +566,6 @@ export function CreateSaleScreen({
 
     /* ---------- Server Action binding ---------- */
 
-    /**
-     * `useActionState` gives us three things in one hook:
-     *   - `error`     — the last error message (or null)
-     *   - `formAction` — reference to attach to `<form action={…}>`
-     *   - `isPending` — true while the action is in flight
-     *
-     * The wrapper reads from component state (`cart`, `discountAmount`,
-     * `amountPaid`) rather than from FormData, because the cart is a
-     * client-side object graph that can't be serialized as plain inputs.
-     *
-     * On success the Server Action is expected to `redirect()` to the new
-     * sale's detail page. If your `createSale` doesn't redirect yet, either
-     * add `redirect(...)` at the end of the action, or add a success branch
-     * here that calls `router.push(...)`.
-     */
-
     const [state, formAction, isPending] = useActionState<
         CreateSaleResult | null,
         FormData
@@ -576,7 +588,7 @@ export function CreateSaleScreen({
         } catch {
             return {
                 ok: false,
-                message: "Could not complete the sale. Please try again.",
+                message: t("saveError"),
             };
         }
     }, null);
@@ -679,8 +691,8 @@ export function CreateSaleScreen({
                             {filteredProducts.length === 0 ? (
                                 <EmptyState
                                     size="sm"
-                                    title="No products found"
-                                    description="Try a different name or SKU."
+                                    title={t("noProductsFound")}
+                                    description={t("tryDifferentSearch")}
                                 />
                             ) : (
                                 <ul className="divide-y divide-outline-variant">
@@ -702,15 +714,14 @@ export function CreateSaleScreen({
                     </div>
 
                     {/* Right — cart */}
-                    <aside className="flex min-h-0 flex-col border-l border-outline-variant bg-surface-lowest">
+                    <aside className="flex min-h-0 flex-col border-s border-outline-variant bg-surface-lowest">
                         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-outline-variant px-4 py-3">
                             <div>
                                 <h2 className="text-headline-sm text-on-surface">
-                                    Current Sale
+                                    {t("currentSale")}
                                 </h2>
                                 <p className="text-body-sm text-on-surface-variant">
-                                    <span className="tabular-nums">{itemCount}</span>{" "}
-                                    {itemCount === 1 ? "item" : "items"}
+                                    {t("itemCount", { count: itemCount })}
                                 </p>
                             </div>
                             {cart.length > 0 && (
@@ -720,7 +731,7 @@ export function CreateSaleScreen({
                                     onClick={clearCart}
                                     disabled={isPending}
                                 >
-                                    Clear
+                                    {t("clear")}
                                 </Button>
                             )}
                         </div>
@@ -759,8 +770,8 @@ export function CreateSaleScreen({
                         {filteredProducts.length === 0 ? (
                             <EmptyState
                                 size="sm"
-                                title="No products found"
-                                description="Try a different name or SKU."
+                                title={t("noProductsFound")}
+                                description={t("tryDifferentSearch")}
                             />
                         ) : (
                             <ul className="divide-y divide-outline-variant">
@@ -794,7 +805,9 @@ export function CreateSaleScreen({
                                     <span className="inline-flex size-5 items-center justify-center rounded-full bg-white/15 text-label-sm tabular-nums">
                                         {itemCount}
                                     </span>
-                                    <span className="text-body-md font-medium">View Cart</span>
+                                    <span className="text-body-md font-medium">
+                                        {t("viewCart")}
+                                    </span>
                                 </span>
                                 <span className="text-body-lg font-semibold tabular-nums">
                                     {formatCurrency(totals.total, currency)}
@@ -820,11 +833,10 @@ export function CreateSaleScreen({
                     <div className="flex h-14 shrink-0 items-center justify-between border-b border-outline-variant px-4">
                         <div>
                             <h2 className="text-headline-sm text-on-surface">
-                                Current Sale
+                                {t("currentSale")}
                             </h2>
                             <p className="text-body-sm text-on-surface-variant">
-                                <span className="tabular-nums">{itemCount}</span>{" "}
-                                {itemCount === 1 ? "item" : "items"}
+                                {t("itemCount", { count: itemCount })}
                             </p>
                         </div>
                         <div className="flex items-center gap-1">
@@ -835,16 +847,16 @@ export function CreateSaleScreen({
                                     onClick={clearCart}
                                     disabled={isPending}
                                 >
-                                    Clear
+                                    {t("clear")}
                                 </Button>
                             )}
                             <button
                                 type="button"
                                 onClick={closeCart}
-                                aria-label="Close cart"
+                                aria-label={t("closeCart")}
                                 className="inline-flex size-9 items-center justify-center rounded-md text-on-surface-variant hover:bg-slate-100 hover:text-on-surface"
                             >
-                                <span className="size-5">
+                                <span className="size-5" aria-hidden="true">
                                     <X />
                                 </span>
                             </button>

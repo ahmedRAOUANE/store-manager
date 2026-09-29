@@ -1,3 +1,7 @@
+import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
+import { Bell, Search } from "lucide-react";
+
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { buildAdminNavItems } from "@/components/layout/nav-items";
@@ -6,11 +10,12 @@ import { UserMenu } from "@/components/layout/user-menu";
 import { AppError } from "@/errors/base.error";
 import { getCurrentUser } from "@/utils/auth";
 import { isUuid } from "@/utils/uuid";
-import { Bell, Search } from "lucide-react";
-import { redirect } from "next/navigation";
 
-export default async function AdminLayout({ children, params }: LayoutProps<"/admin/[adminId]">) {
-    const {adminId} = await params;
+export default async function AdminLayout({
+    children,
+    params,
+}: LayoutProps<"/admin/[adminId]">) {
+    const { adminId } = await params;
 
     if (!isUuid(adminId)) {
         redirect("/");
@@ -21,10 +26,15 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/ad
     if (!user || user instanceof AppError) {
         redirect("/");
     }
-    
+
     if (user.globalRole !== "ADMIN" || adminId !== user.id) {
         redirect(`/dashboard`);
     }
+
+    const tAdmin = await getTranslations("admin");
+    const tCommon = await getTranslations("common");
+    const tUserMenu = await getTranslations("userMenu");
+    const tAccessibility = await getTranslations("accessibility");
 
     const sidebarItems = buildAdminNavItems(adminId);
 
@@ -40,7 +50,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/ad
                         <div className="flex items-center gap-3">
                             <MobileNav title={user.firstName || ""} items={sidebarItems} />
                             <h1 className="truncate text-sm font-semibold text-on-surface">
-                                Dashboard
+                                {tAdmin("dashboard")}
                             </h1>
                         </div>
                     }
@@ -50,19 +60,19 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/ad
                             <button
                                 type="button"
                                 className="hidden sm:inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label="Search"
+                                aria-label={tCommon("search")}
                             >
-                                <Search className="size-4" />
+                                <Search className="size-4" aria-hidden="true" />
                             </button>
 
                             {/* Notifications */}
                             <button
                                 type="button"
                                 className="relative inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label="Notifications"
+                                aria-label={tAccessibility("notifications")}
                             >
-                                <Bell className="size-4" />
-                                <span className="absolute right-2 top-2 size-1.5 rounded-full bg-primary" />
+                                <Bell className="size-4" aria-hidden="true" />
+                                <span className="absolute inset-e-2 top-2 size-1.5 rounded-full bg-primary" />
                             </button>
 
                             {/* User menu */}
@@ -70,7 +80,10 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/ad
                                 name={`${user.firstName}`}
                                 email={user.email || ""}
                                 links={[
-                                    { label: "View Profile", link: `/user/${adminId}/profile`}
+                                    {
+                                        label: tUserMenu("viewProfile"),
+                                        link: `/user/${adminId}/profile`,
+                                    },
                                 ]}
                             />
                         </>
@@ -82,5 +95,5 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/ad
                 {children}
             </main>
         </div>
-    )
+    );
 }

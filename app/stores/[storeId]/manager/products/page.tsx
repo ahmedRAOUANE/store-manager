@@ -1,5 +1,5 @@
 import Link from "next/link";
-// import "temporal-polyfill/full/global";
+import { getTranslations } from "next-intl/server";
 import { Eye, Pencil } from "lucide-react";
 
 import { getAllProducts } from "@/actions/product.actions";
@@ -47,7 +47,6 @@ function parseQuery(
 
 /* -------------------------------------------------------------------------- */
 /*  In-memory filter + paginate                                               */
-/*  Fine for small catalogs; promote to a query when it grows.                */
 /* -------------------------------------------------------------------------- */
 
 function applyQuery(
@@ -94,90 +93,19 @@ function applyQuery(
 }
 
 /* ========================================================================== */
-/*  Columns                                                                   */
-/* ========================================================================== */
-
-const columns: Column<GetProduct>[] = [
-    {
-        key: "name",
-        header: "Product",
-        mobile: "primary",
-        cell: (p) => (
-            <Link
-                href={`/stores/${p.storeId}/manager/products/${p.id}`}
-                className="font-medium text-on-surface hover:text-info"
-            >
-                {p.name}
-            </Link>
-        ),
-    },
-    {
-        key: "sku",
-        header: "SKU",
-        mobile: "secondary",
-        cell: (p) => (
-            <span className="font-mono text-body-sm text-on-surface-variant">
-                {p.sku}
-            </span>
-        ),
-    },
-    {
-        key: "price",
-        header: "Price",
-        align: "right",
-        width: "w-32",
-        cell: (p) => (
-            <span className="tabular-nums">{formatCurrency(p.sellingPrice)}</span>
-        ),
-    },
-    {
-        key: "stock",
-        header: "Stock",
-        align: "right",
-        width: "w-24",
-        cell: (p) => {
-            if (!p.isActive) {
-                return (
-                    <span className="tabular-nums text-on-surface-variant">
-                        {p.stockQuantity}
-                    </span>
-                );
-            }
-            const stock = getStockStatus(p.stockQuantity, p.minimumStock, true);
-            return (
-                <span
-                    className={cn(
-                        "tabular-nums",
-                        stock === "OUT_OF_STOCK" && "font-medium text-danger-fg",
-                        stock === "LOW_STOCK" && "font-medium text-warning-fg",
-                        stock === "IN_STOCK" && "text-on-surface",
-                    )}
-                >
-                    {p.stockQuantity}
-                </span>
-            );
-        },
-    },
-    {
-        key: "status",
-        header: "Status",
-        width: "w-28",
-        cell: (p) => (
-            <StatusBadge status={p.isActive ? "ACTIVE" : "INACTIVE"} />
-        ),
-    },
-];
-
-/* ========================================================================== */
 /*  Row actions                                                               */
 /* ========================================================================== */
 
 function RowActions({
     storeId,
     productId,
+    viewLabel,
+    editLabel,
 }: {
     storeId: string;
     productId: string;
+    viewLabel: string;
+    editLabel: string;
 }) {
     const base = `/stores/${storeId}/manager/products/${productId}`;
 
@@ -189,10 +117,10 @@ function RowActions({
 
     return (
         <div className="flex items-center justify-end gap-0.5">
-            <Link href={base} aria-label="View product" className={iconBtn}>
+            <Link href={base} aria-label={viewLabel} className={iconBtn}>
                 <Eye className="size-4" aria-hidden="true" />
             </Link>
-            <Link href={`${base}/edit`} aria-label="Edit product" className={iconBtn}>
+            <Link href={`${base}/edit`} aria-label={editLabel} className={iconBtn}>
                 <Pencil className="size-4" aria-hidden="true" />
             </Link>
         </div>
@@ -213,6 +141,12 @@ export default async function ManagerProductsPage({
 
     const base = `/stores/${storeId}/manager/products`;
 
+    const t = await getTranslations("products");
+    const tCommon = await getTranslations("common");
+    const tSales = await getTranslations("sales");
+    const tStatus = await getTranslations("status");
+    const tActions = await getTranslations("actions");
+
     /* ---------- Fetch ---------- */
 
     const result = await getAllProducts(storeId);
@@ -220,7 +154,7 @@ export default async function ManagerProductsPage({
     if (result instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load products"
+                title={t("errors.loadFailed")}
                 description={result.message}
                 action={
                     <Link
@@ -230,7 +164,7 @@ export default async function ManagerProductsPage({
                             size: "md",
                         })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />
@@ -239,6 +173,79 @@ export default async function ManagerProductsPage({
 
     const products = result;
     const { rows, total, totalPages } = applyQuery(products, query);
+
+    /* ---------- Columns ---------- */
+
+    const columns: Column<GetProduct>[] = [
+        {
+            key: "name",
+            header: tSales("detail.product"),
+            mobile: "primary",
+            cell: (p) => (
+                <Link
+                    href={`/stores/${p.storeId}/manager/products/${p.id}`}
+                    className="font-medium text-on-surface hover:text-info"
+                >
+                    {p.name}
+                </Link>
+            ),
+        },
+        {
+            key: "sku",
+            header: t("fields.sku.label"),
+            mobile: "secondary",
+            cell: (p) => (
+                <span className="font-mono text-body-sm text-on-surface-variant">
+                    {p.sku}
+                </span>
+            ),
+        },
+        {
+            key: "price",
+            header: tCommon("price"),
+            align: "right",
+            width: "w-32",
+            cell: (p) => (
+                <span className="tabular-nums">{formatCurrency(p.sellingPrice)}</span>
+            ),
+        },
+        {
+            key: "stock",
+            header: tCommon("stock"),
+            align: "right",
+            width: "w-24",
+            cell: (p) => {
+                if (!p.isActive) {
+                    return (
+                        <span className="tabular-nums text-on-surface-variant">
+                            {p.stockQuantity}
+                        </span>
+                    );
+                }
+                const stock = getStockStatus(p.stockQuantity, p.minimumStock, true);
+                return (
+                    <span
+                        className={cn(
+                            "tabular-nums",
+                            stock === "OUT_OF_STOCK" && "font-medium text-danger-fg",
+                            stock === "LOW_STOCK" && "font-medium text-warning-fg",
+                            stock === "IN_STOCK" && "text-on-surface",
+                        )}
+                    >
+                        {p.stockQuantity}
+                    </span>
+                );
+            },
+        },
+        {
+            key: "status",
+            header: tCommon("status"),
+            width: "w-28",
+            cell: (p) => (
+                <StatusBadge status={p.isActive ? "ACTIVE" : "INACTIVE"} />
+            ),
+        },
+    ];
 
     /* ---------- Derived ---------- */
 
@@ -261,14 +268,14 @@ export default async function ManagerProductsPage({
     return (
         <div className="space-y-4">
             <PageHeader
-                title="Products"
-                description="Manage your store's catalog and stock."
+                title={t("title")}
+                description={t("pageDescription")}
                 actions={
                     <Link
                         href={`${base}/new`}
                         className={buttonVariants({ variant: "primary", size: "sm" })}
                     >
-                        Add Product
+                        {t("createTitle")}
                     </Link>
                 }
             />
@@ -285,28 +292,28 @@ export default async function ManagerProductsPage({
                         {
                             type: "search",
                             key: "q",
-                            placeholder: "Search by name or SKU…",
-                            label: "Search products",
+                            placeholder: tSales("searchProducts"),
+                            label: t("filters.searchLabel"),
                         },
                         {
                             type: "select",
                             key: "status",
-                            label: "Status",
+                            label: tCommon("status"),
                             options: [
-                                { value: "all", label: "All statuses" },
-                                { value: "active", label: "Active" },
-                                { value: "inactive", label: "Inactive" },
+                                { value: "all", label: t("filters.allStatuses") },
+                                { value: "active", label: t("status.active") },
+                                { value: "inactive", label: t("status.inactive") },
                             ],
                         },
                         {
                             type: "select",
                             key: "stock",
-                            label: "Stock",
+                            label: tCommon("stock"),
                             options: [
-                                { value: "all", label: "All stock" },
-                                { value: "in_stock", label: "In Stock" },
-                                { value: "low_stock", label: "Low Stock" },
-                                { value: "out_of_stock", label: "Out of Stock" },
+                                { value: "all", label: t("filters.allStock") },
+                                { value: "in_stock", label: tStatus("inStock") },
+                                { value: "low_stock", label: tStatus("lowStock") },
+                                { value: "out_of_stock", label: tStatus("outOfStock") },
                             ],
                         },
                     ]}
@@ -317,19 +324,26 @@ export default async function ManagerProductsPage({
                 columns={columns}
                 data={rows}
                 getRowKey={(p) => p.id}
-                rowActions={(p) => <RowActions storeId={storeId} productId={p.id} />}
+                rowActions={(p) => (
+                    <RowActions
+                        storeId={storeId}
+                        productId={p.id}
+                        viewLabel={t("aria.viewProduct")}
+                        editLabel={t("aria.editProduct")}
+                    />
+                )}
                 empty={
                     hasAnyProducts && isFiltering ? (
                         <EmptyState
                             size="sm"
-                            title="No products match your filters"
-                            description="Try adjusting your search or clearing the filters."
+                            title={t("empty.filteredTitle")}
+                            description={tSales("empty.filteredDescription")}
                         />
                     ) : (
                         <EmptyState
                             size="sm"
-                            title="No products yet"
-                            description="Add your first product to start managing your inventory."
+                            title={t("empty.title")}
+                            description={t("empty.description")}
                             action={
                                 <Link
                                     href={`${base}/new`}
@@ -338,7 +352,7 @@ export default async function ManagerProductsPage({
                                         size: "sm",
                                     })}
                                 >
-                                    Add Product
+                                    {t("createTitle")}
                                 </Link>
                             }
                         />
@@ -356,12 +370,11 @@ export default async function ManagerProductsPage({
 
             {hasFilteredResults && (
                 <p className="text-body-sm text-on-surface-variant">
-                    Showing{" "}
-                    <span className="tabular-nums">
-                        {(query.page - 1) * PAGE_SIZE + 1}–
-                        {Math.min(query.page * PAGE_SIZE, total)}
-                    </span>{" "}
-                    of <span className="tabular-nums">{total}</span> products
+                    {t("showingResults", {
+                        from: (query.page - 1) * PAGE_SIZE + 1,
+                        to: Math.min(query.page * PAGE_SIZE, total),
+                        total,
+                    })}
                 </p>
             )}
         </div>

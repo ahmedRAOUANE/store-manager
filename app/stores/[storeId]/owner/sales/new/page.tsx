@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { getAllProducts } from "@/actions/product.actions";
 import { createSale } from "@/actions/sales.actions";
@@ -19,6 +20,10 @@ export default async function NewSalePage({
 }: PageProps<"/stores/[storeId]/owner/sales/new">) {
     const { storeId } = await params;
 
+    const tSales = await getTranslations("sales");
+    const tProducts = await getTranslations("products");
+    const tActions = await getTranslations("actions");
+
     const result = await getAllProducts(storeId);
 
     /* ---------- Failure: could not load products ---------- */
@@ -26,14 +31,14 @@ export default async function NewSalePage({
     if (result instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load products"
-                description="Something went wrong while fetching your catalog. Please try again."
+                title={tProducts("errors.loadFailed")}
+                description={tSales("errors.loadCatalogFailed")}
                 action={
                     <Link
                         href={`/stores/${storeId}/owner/sales/new`}
                         className={buttonVariants({ variant: "secondary", size: "md" })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />
@@ -45,14 +50,14 @@ export default async function NewSalePage({
     if (result.length === 0) {
         return (
             <EmptyState
-                title="No products yet"
-                description="Add products to your catalog before recording a sale."
+                title={tProducts("empty.title")}
+                description={tSales("empty.noProductsDescription")}
                 action={
                     <Link
                         href={`/stores/${storeId}/owner/products/new`}
                         className={buttonVariants({ variant: "primary", size: "md" })}
                     >
-                        Add Product
+                        {tProducts("createTitle")}
                     </Link>
                 }
             />

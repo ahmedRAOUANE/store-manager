@@ -10,7 +10,8 @@ import {
     rejectMembershipRequest,
 } from "@/actions/storeManagement.actions";
 
-import { RoleValue, ASSIGNABLE_ROLES, ROLE_LABELS } from "@/utils/roles"
+import { RoleValue, ASSIGNABLE_ROLES } from "@/utils/roles"
+import { useTranslations } from "next-intl";
 
 /* ========================================================================== */
 /*  PendingRequestActions                                                     */
@@ -27,6 +28,9 @@ export function PendingRequestActions({
     membershipId,
     userName,
 }: PendingRequestActionsProps) {
+    const membersT = useTranslations("members");
+    const confirmationT = useTranslations("confirmation");
+
     const [rejectOpen, setRejectOpen] = useState(false);
     const [isPending, startTransition] = useTransition();
 
@@ -52,7 +56,7 @@ export function PendingRequestActions({
                     onClick={handleAccept}
                     disabled={isPending}
                 >
-                    Accept
+                    {membersT("accept")}
                 </Button>
 
                 <Button
@@ -62,16 +66,18 @@ export function PendingRequestActions({
                     onClick={() => setRejectOpen(true)}
                     disabled={isPending}
                 >
-                    Reject
+                    {membersT("reject")}
                 </Button>
             </div>
 
             <ConfirmDialog
                 open={rejectOpen}
                 onOpenChange={setRejectOpen}
-                title={`Reject ${userName}'s request?`}
-                description="They will not be added to the store. They can request to join again at any time."
-                confirmLabel="Reject request"
+                title={confirmationT("rejectMembershipTitle", {
+                    userName,
+                })}
+                description={confirmationT("rejectMembershipDescription")}
+                confirmLabel={confirmationT("rejectMembership")}
                 confirmVariant="destructive"
                 onConfirm={handleReject}
             />
@@ -114,6 +120,9 @@ export function RoleSelect({
     disabled = false,
     disabledReason,
 }: RoleSelectProps) {
+    const membersT = useTranslations("members");
+    const accessibilityT = useTranslations("accessibility");
+
     const [isPending, startTransition] = useTransition();
 
     const interactive = !disabled && !isPending;
@@ -154,7 +163,9 @@ export function RoleSelect({
             value={currentRole}
             disabled={!interactive}
             title={disabled ? disabledReason : undefined}
-            aria-label={`Change role (currently ${currentRole.toLowerCase()})`}
+            aria-label={accessibilityT("changeRole", {
+                role: membersT(`roles.${currentRole.toLowerCase()}`),
+            })}
             onChange={handleChange}
             className="h-8 w-32 text-body-sm"
         >
@@ -163,7 +174,7 @@ export function RoleSelect({
                     key={role}
                     value={role}
                 >
-                    {ROLE_LABELS[role]}
+                    {membersT(`roles.${role.toLowerCase()}`)}
                 </option>
             ))}
         </Select>

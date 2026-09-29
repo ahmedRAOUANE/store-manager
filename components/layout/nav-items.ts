@@ -16,9 +16,12 @@ export type NavIconKey =
     | "profile"
     | "stores";
 
+export type NavLabelNamespace = "navigation" | "admin";
+
 export interface NavItem {
     key: string;
-    label: string;
+    labelKey: string;
+    labelNamespace?: NavLabelNamespace;
     href: string;
     iconKey: NavIconKey;
     badge?: number;
@@ -49,13 +52,13 @@ export function buildStoreNavItems(
     const items: NavItem[] = [
         {
             key: "dashboard",
-            label: "Dashboard",
+            labelKey: "dashboard",
             href: `${base}/dashboard`,
             iconKey: "dashboard",
         },
         {
             key: "sales",
-            label: "Sales",
+            labelKey: "sales",
             href: `${base}/sales`,
             iconKey: "sales",
         },
@@ -66,25 +69,25 @@ export function buildStoreNavItems(
         items.push(
             {
                 key: "products",
-                label: "Products",
+                labelKey: "products",
                 href: `${base}/products`,
                 iconKey: "products",
             },
             {
                 key: "purchases",
-                label: "Purchases",
+                labelKey: "purchases",
                 href: `${base}/purchases`,
                 iconKey: "purchases",
             },
             {
                 key: "suppliers",
-                label: "Suppliers",
+                labelKey: "suppliers",
                 href: `${base}/suppliers`,
                 iconKey: "suppliers",
             },
             {
                 key: "members",
-                label: "Members",
+                labelKey: "members",
                 href: `${base}/members`,
                 iconKey: "members",
             },
@@ -94,7 +97,7 @@ export function buildStoreNavItems(
     /* Settings for everyone — but each role sees a different page - keep for next versions */
     // items.push({
     //     key: "settings",
-    //     label: "Settings",
+    //     labelKey: "settings",
     //     href: `${base}/settings`,
     //     iconKey: "settings",
     // });
@@ -108,9 +111,9 @@ export function buildStoreNavItems(
 
 export function buildAdminNavItems(adminId: string): NavItem[] {
     return [
-        { key: "dashboard", label: "Dashboard", href: `/admin/${adminId}/dashboard`, iconKey: "dashboard" },
-        { key: "users", label: "Users", href: `/admin/${adminId}/users`, iconKey: "users" },
-        { key: "stores", label: "Stores", href: `/admin/${adminId}/stores`, iconKey: "stores" },
+        { key: "dashboard", labelKey: "dashboard", href: `/admin/${adminId}/dashboard`, iconKey: "dashboard", labelNamespace: "admin", },
+        { key: "users", labelKey: "users", href: `/admin/${adminId}/users`, iconKey: "users", labelNamespace: "admin", },
+        { key: "stores", labelKey: "storesTitle", href: `/admin/${adminId}/stores`, iconKey: "stores", labelNamespace: "admin", },
     ];
 }
 
@@ -120,9 +123,9 @@ export function buildAdminNavItems(adminId: string): NavItem[] {
 
 export function buildUserNavItems(userId: string): NavItem[] {
     return [
-        { key: "profile", label: "Profile", href: `/user/${userId}/profile`, iconKey: "profile" },
-        { key: "stores", label: "Stores", href: `/user/${userId}/stores`, iconKey: "stores" },
-        // { key: "memberships", label: "Memberships", href: `/user/${userId}/memberships`, iconKey: "users" },
-        // { key: "settings", label: "Settings", href: `/user/${userId}/settings`, iconKey: "settings" },
+        { key: "profile", labelKey: "profile", href: `/user/${userId}/profile`, iconKey: "profile" },
+        { key: "stores", labelKey: "stores", href: `/user/${userId}/stores`, iconKey: "stores" },
+        // { key: "memberships", labelKey: "memberships", href: `/user/${userId}/memberships`, iconKey: "users" },
+        // { key: "settings", labelKey: "settings", href: `/user/${userId}/settings`, iconKey: "settings" },
     ];
 }

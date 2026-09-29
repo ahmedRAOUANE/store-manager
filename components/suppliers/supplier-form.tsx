@@ -23,6 +23,7 @@ import {
   updateSupplier,
 } from "@/actions/supplier.actions";
 import type { GetSupplier } from "@/zod/supplier.schema";
+import { useTranslations } from "next-intl";
 
 /* ========================================================================== */
 /*  Types                                                                     */
@@ -68,6 +69,9 @@ function parseString(value: FormDataEntryValue | null): string | undefined {
 /* ========================================================================== */
 
 export function SupplierForm(props: SupplierFormProps) {
+  const t = useTranslations("suppliers");
+  const commonT = useTranslations("common");
+
   const { storeId, basePath } = props;
   const supplier = props.mode === "edit" ? props.supplier : undefined;
 
@@ -76,7 +80,7 @@ export function SupplierForm(props: SupplierFormProps) {
   const [error, formAction, isPending] = useActionState<string | null, FormData>(
     async (_prev, formData) => {
       const name = parseString(formData.get("name"));
-      if (!name) return "Supplier name is required.";
+      if (!name) return t("validation.nameRequired");
 
       const payload = {
         name,
@@ -98,7 +102,7 @@ export function SupplierForm(props: SupplierFormProps) {
           redirect(`${basePath}/${result.id}`);
         } catch (err) {
           unstable_rethrow(err);
-          return "Could not save the supplier. Please try again.";
+          return t("errors.saveFailed");
         }
       }
 
@@ -114,7 +118,7 @@ export function SupplierForm(props: SupplierFormProps) {
         redirect(`${basePath}/${props.supplier.id}`);
       } catch (err) {
         unstable_rethrow(err);
-        return "Could not save the supplier. Please try again.";
+        return t("errors.saveFailed");
       }
     },
     null,
@@ -123,21 +127,25 @@ export function SupplierForm(props: SupplierFormProps) {
   return (
     <>
       <PageHeader
-        title={props.mode === "edit" ? "Edit Supplier" : "Add Supplier"}
+        title={
+          props.mode === "edit"
+            ? t("editTitle")
+            : t("createTitle")
+        }
         breadcrumbs={[
-          { label: "Suppliers", href: basePath },
+          { label: t("title"), href: basePath },
           ...(supplier
             ? [
               { label: supplier.name, href: backHref },
-              { label: "Edit" },
+              { label: t("edit") },
             ]
-            : [{ label: "New" }]),
+            : [{ label: t("new") }]),
         ]}
         backHref={backHref}
         description={
           props.mode === "edit"
-            ? "Update this supplier's details."
-            : "Record a supplier you buy stock from. Only the name is required."
+            ? t("editDescription")
+            : t("createDescription")
         }
       />
 
@@ -146,12 +154,12 @@ export function SupplierForm(props: SupplierFormProps) {
           {/* ─── Basic Information ─────────────────────────────── */}
           <Card>
             <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
+              <CardTitle>{t("basicInformation")}</CardTitle>
             </CardHeader>
             <CardBody>
               <div className="grid gap-4 md:grid-cols-2">
                 <FormField
-                  label="Supplier Name"
+                  label={t("fields.name.label")}
                   htmlFor="supplier-name"
                   required
                   className="md:col-span-2"
@@ -160,16 +168,16 @@ export function SupplierForm(props: SupplierFormProps) {
                     id="supplier-name"
                     name="name"
                     defaultValue={supplier?.name ?? ""}
-                    placeholder="e.g. Green Leaf Farms"
+                    placeholder={t("fields.name.placeholder")}
                     required
                     maxLength={120}
                   />
                 </FormField>
 
                 <FormField
-                  label="Phone"
+                  label={t("fields.phone.label")}
                   htmlFor="supplier-phone"
-                  description="Include the country code if the supplier is international."
+                  description={t("fields.phone.description")}
                 >
                   <Input
                     id="supplier-phone"
@@ -177,15 +185,15 @@ export function SupplierForm(props: SupplierFormProps) {
                     type="tel"
                     inputMode="tel"
                     defaultValue={supplier?.phone ?? ""}
-                    placeholder="+213 550 00 00 00"
+                    placeholder={t("fields.phone.placeholder")}
                     maxLength={32}
                   />
                 </FormField>
 
                 <FormField
-                  label="Email"
+                  label={t("fields.email.label")}
                   htmlFor="supplier-email"
-                  description="Used for purchase orders and correspondence."
+                  description={t("fields.email.description")}
                 >
                   <Input
                     id="supplier-email"
@@ -193,22 +201,22 @@ export function SupplierForm(props: SupplierFormProps) {
                     type="email"
                     inputMode="email"
                     defaultValue={supplier?.email ?? ""}
-                    placeholder="orders@example.com"
+                    placeholder={t("fields.email.placeholder")}
                     maxLength={160}
                   />
                 </FormField>
 
                 <FormField
-                  label="Tax Number"
+                  label={t("fields.taxNumber.label")}
                   htmlFor="supplier-tax-number"
-                  description="Optional. NIF, NIS, or local tax ID."
+                  description={t("fields.taxNumber.description")}
                   className="md:col-span-2"
                 >
                   <Input
                     id="supplier-tax-number"
                     name="taxNumber"
                     defaultValue={supplier?.taxNumber ?? ""}
-                    placeholder="e.g. 000000000000000"
+                    placeholder={t("fields.taxNumber.placeholder")}
                     maxLength={40}
                     className="font-mono"
                   />
@@ -220,35 +228,35 @@ export function SupplierForm(props: SupplierFormProps) {
           {/* ─── Address & Notes ────────────────────────────────── */}
           <Card>
             <CardHeader>
-              <CardTitle>Address &amp; Notes</CardTitle>
+              <CardTitle>{t("addressAndNotes")}</CardTitle>
             </CardHeader>
             <CardBody>
               <div className="space-y-4">
                 <FormField
-                  label="Address"
+                  label={t("fields.address.label")}
                   htmlFor="supplier-address"
-                  description="The supplier's business address, if known."
+                  description={t("fields.address.description")}
                 >
                   <Textarea
                     id="supplier-address"
                     name="address"
                     defaultValue={supplier?.address ?? ""}
-                    placeholder={"12 Rue Didouche Mourad\nAlger Centre, 16000"}
+                    placeholder={t("fields.address.placeholder")}
                     rows={3}
                     maxLength={300}
                   />
                 </FormField>
 
                 <FormField
-                  label="Notes"
+                  label={t("fields.notes.label")}
                   htmlFor="supplier-notes"
-                  description="Delivery schedule, payment terms, or anything worth remembering."
+                  description={t("fields.notes.description")}
                 >
                   <Textarea
                     id="supplier-notes"
                     name="notes"
                     defaultValue={supplier?.notes ?? ""}
-                    placeholder="e.g. Livraison deux fois par semaine (mar. & ven.)."
+                    placeholder={t("fields.notes.placeholder")}
                     rows={4}
                     maxLength={1000}
                   />
@@ -273,10 +281,10 @@ export function SupplierForm(props: SupplierFormProps) {
                 href={backHref}
                 className={buttonVariants({
                   variant: "ghost",
-                  size: "md",
+                  size: "md"
                 })}
               >
-                Cancel
+                {commonT("cancel")}
               </Link>
             }
             primary={
@@ -286,12 +294,13 @@ export function SupplierForm(props: SupplierFormProps) {
                 size="md"
                 loading={isPending}
                 disabled={isPending}
+                className="text-white"
               >
                 {isPending
-                  ? "Saving…"
+                  ? t("saving")
                   : props.mode === "edit"
-                    ? "Save Changes"
-                    : "Create Supplier"}
+                    ? t("saveChanges")
+                    : t("create")}
               </Button>
             }
           />

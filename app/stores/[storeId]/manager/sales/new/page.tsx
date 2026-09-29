@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { getAllProducts } from "@/actions/product.actions";
 import { createSale } from "@/actions/sales.actions";
@@ -15,12 +16,15 @@ export default async function ManagerNewSalePage({
 }: PageProps<"/stores/[storeId]/manager/sales/new">) {
     const { storeId } = await params;
 
+    const tProducts = await getTranslations("products");
+    const tActions = await getTranslations("actions");
+
     const result = await getAllProducts(storeId);
 
     if (result instanceof AppError) {
         return (
             <ErrorState
-                title="Couldn't load products"
+                title={tProducts("errors.loadFailed")}
                 description={result.message}
                 action={
                     <Link
@@ -30,7 +34,7 @@ export default async function ManagerNewSalePage({
                             size: "md",
                         })}
                     >
-                        Try Again
+                        {tActions("tryAgain")}
                     </Link>
                 }
             />

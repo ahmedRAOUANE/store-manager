@@ -9,16 +9,20 @@ DONE:
 - Feature: brief description
 
 ONGOING:
-- working on the purchase server action...
+- update the UI for the new muti-lang support
+- fix any issues in the UI
 
 DONE/FIXED:
-- 
-
-TODO:
 - we currently now working on the dashboards
 - after the store creation is implemented make sure to redirect the user to activate page with search params that desides witch message will be shown
 - in store/[storeId]/manager/members a manager can promot/inpromot his own account 
     - this is a security issue, a user should not be able to change his own role
+- 
+
+TODO:
+- we are working now on adding translations on the store side
+-  - we finished the staff (layout, dashboard, sales, and sales/new)
+- next we should move on to stores/activate first and then finish the staff pages, and move on to the others
 
 WARNING:
 - the migration `20260911T0924_add_sales_and_sale_item` failed because the original store.currency DEFAULT value was 'USD'
@@ -57,10 +61,3 @@ Feature:
             - manually discovered shortages
             - initial stock entry
         so this featire is didicated to solve this problem
-
-
-next steps: we are currently here
-- start the db in docker
-- emit the contract
-- view the status
-- 
