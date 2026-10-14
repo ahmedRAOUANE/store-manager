@@ -1,4 +1,4 @@
-import { requestMembershipService, getAllStoreMembersService } from "@/services/storeMembership.services";
+import { requestMembershipService, getAllStoreMembersService } from "../services/storeMembership.services";
 import { describe, it } from "vitest";
 
 describe("membership tests", () => {
