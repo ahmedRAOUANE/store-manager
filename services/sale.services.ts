@@ -1,11 +1,12 @@
 import { db, models } from "@/prisma/db";
 import { CreateSaleInput, GetSaleSchema, GetsaleWithItemsSchema, UpdateSaleInput } from "@/zod/sale.schema";
-import { getSingleProductService, updateProductCalculatedFieldsService } from "./product.services";
+// import { getSingleProductService, updateProductCalculatedFieldsService } from "./product.services";
 import { AppError } from "@/errors/base.error";
 import { calculateSale, calculateSaleAmountDue, calculateSaleItemSubtotal, calculateSaleItemTotal, calculateSaleItemTotalCost } from "@/calculations/sales";
 import { DatabaseError } from "@/errors/db.error";
 import { ValidationError } from "@/errors/validation.error";
 import { isUuid } from "@/utils/uuid";
+import { mutateProductInventoryInTransaction } from "@/utils/inventoryMutation";
 
 // this is for store management to get the sales
 export const getSalesService = async (storeId: string) => {
@@ -155,66 +156,112 @@ export const createSaleService = async (
             }[] = [];
             const lineSubtotals: number[] = [];
 
+            // for (const item of sale.items) {
+            //     const product = await getSingleProductService(
+            //         storeId,
+            //         item.productId,
+            //         transaction
+            //     );
+
+            //     if (product instanceof AppError) {
+            //         throw product;
+            //     }
+
+            //     // The sale cannot exceed the available stock.
+            //     if (product.stockQuantity < item.quantity) {
+            //         throw new AppError(
+            //             `Insufficient stock for product: ${product.name}`
+            //         );
+            //     }
+
+            //     // Capture the product's current average cost.
+            //     const unitCost = product.averageCost;
+
+            //     const lineSubtotal =
+            //         calculateSaleItemSubtotal({
+            //             quantity: item.quantity,
+            //             unitPrice: item.unitPrice,
+            //         });
+
+            //     const totalAmount =
+            //         calculateSaleItemTotal({
+            //             lineSubtotal,
+            //             discountAmount: item.discountAmount,
+            //             taxAmount: item.taxAmount,
+            //         });
+
+            //     const totalCost =
+            //         calculateSaleItemTotalCost({
+            //             quantity: item.quantity,
+            //             unitCost,
+            //         });
+
+            //     lineSubtotals.push(lineSubtotal);
+
+            //     // Decrease inventory.
+            //     const updatedProduct =
+            //         await updateProductCalculatedFieldsService(
+            //             storeId,
+            //             product.id,
+            //             {
+            //                 stockQuantity:
+            //                     product.stockQuantity -
+            //                     item.quantity,
+            //                 averageCost:
+            //                     product.averageCost,
+            //             },
+            //             transaction
+            //         );
+
+            //     if (updatedProduct instanceof AppError) {
+            //         throw updatedProduct;
+            //     }
+
+            //     saleItemsData.push({
+            //         productId: item.productId,
+            //         quantity: item.quantity,
+            //         unitPrice: item.unitPrice,
+            //         discountAmount: item.discountAmount,
+            //         taxAmount: item.taxAmount,
+            //         lineSubtotal,
+            //         totalAmount,
+            //         unitCost,
+            //         totalCost,
+            //     });
+            // }
+
+
             for (const item of sale.items) {
-                const product = await getSingleProductService(
-                    storeId,
-                    item.productId,
-                    transaction
-                );
-
-                if (product instanceof AppError) {
-                    throw product;
-                }
-
-                // The sale cannot exceed the available stock.
-                if (product.stockQuantity < item.quantity) {
-                    throw new AppError(
-                        `Insufficient stock for product: ${product.name}`
-                    );
-                }
-
-                // Capture the product's current average cost.
-                const unitCost = product.averageCost;
-
-                const lineSubtotal =
-                    calculateSaleItemSubtotal({
-                        quantity: item.quantity,
-                        unitPrice: item.unitPrice,
+                // Lock the product row, validate available stock, and apply
+                // the decrement and any low-stock notification atomically.
+                const updatedProduct =
+                    await mutateProductInventoryInTransaction({
+                        tx: transaction,
+                        storeId,
+                        productId: item.productId,
+                        quantityChange: -item.quantity,
                     });
 
-                const totalAmount =
-                    calculateSaleItemTotal({
-                        lineSubtotal,
-                        discountAmount: item.discountAmount,
-                        taxAmount: item.taxAmount,
-                    });
+                // The helper returns the average cost read under the row lock.
+                const unitCost = updatedProduct.averageCost;
 
-                const totalCost =
-                    calculateSaleItemTotalCost({
-                        quantity: item.quantity,
-                        unitCost,
-                    });
+                const lineSubtotal = calculateSaleItemSubtotal({
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                });
+
+                const totalAmount = calculateSaleItemTotal({
+                    lineSubtotal,
+                    discountAmount: item.discountAmount,
+                    taxAmount: item.taxAmount,
+                });
+
+                const totalCost = calculateSaleItemTotalCost({
+                    quantity: item.quantity,
+                    unitCost,
+                });
 
                 lineSubtotals.push(lineSubtotal);
-
-                // Decrease inventory.
-                const updatedProduct =
-                    await updateProductCalculatedFieldsService(
-                        storeId,
-                        product.id,
-                        {
-                            stockQuantity:
-                                product.stockQuantity -
-                                item.quantity,
-                            averageCost:
-                                product.averageCost,
-                        },
-                        transaction
-                    );
-
-                if (updatedProduct instanceof AppError) {
-                    throw updatedProduct;
-                }
 
                 saleItemsData.push({
                     productId: item.productId,

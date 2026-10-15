@@ -37,6 +37,8 @@ export default defineConfig({
             { name: "membershipRequests"},
             { name: "admin"},
             { name: "locale"},
+            { name: "inventory"},
+            { name: "rollback"},
 
         ]
     }
