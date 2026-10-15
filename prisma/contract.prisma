@@ -56,6 +56,7 @@ model User {
   memberships StoreMembership[]
   purchases Purchase[]
   sales      Sale[]
+  notifications Notification[]
 
   @@index([email])
 }
@@ -84,6 +85,7 @@ model Store {
   purchases Purchase[]
   memberships StoreMembership[]
   sales Sale[]
+  notifications Notification[]
 
   @@index([status])
 }
@@ -333,3 +335,47 @@ model SaleItem {
   @@index([saleId])
   @@index([productId])
 }
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+
+enum NotificationType {
+  @@type("pg/text@1")
+  STORE_ACTIVATED
+  STORE_SUSPENDED
+  MEMBERSHIP_ACCEPTED
+  MEMBERSHIP_REJECTED
+  MEMBER_ROLE_CHANGED
+  MEMBERSHIP_INVALIDATED
+  PRODUCT_LOW_STOCK
+}
+
+model Notification {
+  id Uuid @id @default(uuid())
+
+  recipientId Uuid
+  recipient User @relation(
+    fields: [recipientId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  storeId Uuid?
+  store Store? @relation(
+    fields: [storeId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  type NotificationType
+  payload Json
+
+  readAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([recipientId, createdAt])
+  @@index([recipientId, readAt, createdAt])
+}
+

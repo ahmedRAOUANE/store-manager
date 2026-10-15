@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "notification": {
+      "model": "Notification",
+      "namespace": "public"
+    },
     "product": {
       "model": "Product",
       "namespace": "public"
@@ -79,6 +83,39 @@
               }
             ]
           },
+          "NotificationType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "STORE_ACTIVATED",
+                "value": "STORE_ACTIVATED"
+              },
+              {
+                "name": "STORE_SUSPENDED",
+                "value": "STORE_SUSPENDED"
+              },
+              {
+                "name": "MEMBERSHIP_ACCEPTED",
+                "value": "MEMBERSHIP_ACCEPTED"
+              },
+              {
+                "name": "MEMBERSHIP_REJECTED",
+                "value": "MEMBERSHIP_REJECTED"
+              },
+              {
+                "name": "MEMBER_ROLE_CHANGED",
+                "value": "MEMBER_ROLE_CHANGED"
+              },
+              {
+                "name": "MEMBERSHIP_INVALIDATED",
+                "value": "MEMBERSHIP_INVALIDATED"
+              },
+              {
+                "name": "PRODUCT_LOW_STOCK",
+                "value": "PRODUCT_LOW_STOCK"
+              }
+            ]
+          },
           "StoreRole": {
             "codecId": "pg/text@1",
             "members": [
@@ -115,6 +152,124 @@
           }
         },
         "models": {
+          "Notification": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "payload": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
+              "readAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "recipientId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "storeId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "NotificationType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "recipient": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "recipientId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "store": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "storeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Store",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "payload": {
+                  "column": "payload"
+                },
+                "readAt": {
+                  "column": "readAt"
+                },
+                "recipientId": {
+                  "column": "recipientId"
+                },
+                "storeId": {
+                  "column": "storeId"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "notification"
+            }
+          },
           "Product": {
             "fields": {
               "averageCost": {
@@ -1197,6 +1352,21 @@
                   "namespace": "public"
                 }
               },
+              "notifications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "storeId"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              },
               "products": {
                 "cardinality": "1:N",
                 "on": {
@@ -1659,6 +1829,21 @@
                   "namespace": "public"
                 }
               },
+              "notifications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "recipientId"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              },
               "purchases": {
                 "cardinality": "1:N",
                 "on": {
@@ -1736,6 +1921,141 @@
       "public": {
         "entries": {
           "table": {
+            "notification": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('STORE_ACTIVATED', 'STORE_SUSPENDED', 'MEMBERSHIP_ACCEPTED', 'MEMBERSHIP_REJECTED', 'MEMBER_ROLE_CHANGED', 'MEMBERSHIP_INVALIDATED', 'PRODUCT_LOW_STOCK')",
+                  "name": "notification_type_check_4dbfd761",
+                  "prefix": "notification_type_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "payload": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": false
+                },
+                "readAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "recipientId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "storeId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "NotificationType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "recipientId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "notification"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                },
+                {
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "storeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "notification"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "store"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "recipientId",
+                    "createdAt"
+                  ],
+                  "name": "notification_recipientId_createdAt_idx_4cb575bd",
+                  "prefix": "notification_recipientId_createdAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "recipientId"
+                  ],
+                  "name": "notification_recipientId_idx_c9527cf8",
+                  "prefix": "notification_recipientId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "recipientId",
+                    "readAt",
+                    "createdAt"
+                  ],
+                  "name": "notification_recipientId_readAt_createdAt_idx_d10a34e2",
+                  "prefix": "notification_recipientId_readAt_createdAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "storeId"
+                  ],
+                  "name": "notification_storeId_idx_c545737d",
+                  "prefix": "notification_storeId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "product": {
               "columns": {
                 "averageCost": {
@@ -3086,6 +3406,18 @@
                 "INVALIDATED"
               ]
             },
+            "NotificationType": {
+              "kind": "valueSet",
+              "values": [
+                "STORE_ACTIVATED",
+                "STORE_SUSPENDED",
+                "MEMBERSHIP_ACCEPTED",
+                "MEMBERSHIP_REJECTED",
+                "MEMBER_ROLE_CHANGED",
+                "MEMBERSHIP_INVALIDATED",
+                "PRODUCT_LOW_STOCK"
+              ]
+            },
             "StoreRole": {
               "kind": "valueSet",
               "values": [
@@ -3108,12 +3440,23 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "3e8430f20b705a90ac4ddb6011ea11dd03221512887f21e23be5b6bd026ece45"
+    "storageHash": "d4b38c049bb927a3c0f2d901e0be5cad24b1bfd59e95be5a7fa66bb35c6f4c61"
   },
   "execution": {
-    "executionHash": "e123ff5fce7ea428801cde18721f66296f16b2e15cba27d142a00a242a774c70",
+    "executionHash": "92ebe982489679d9201df9aed8c0085cd602b9f3c7dfb859d2ebc7555aed3dbf",
     "mutations": {
       "defaults": [
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "notification"
+          }
+        },
         {
           "onCreate": {
             "id": "uuidv4",

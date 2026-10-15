@@ -33,9 +33,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'3e8430f20b705a90ac4ddb6011ea11dd03221512887f21e23be5b6bd026ece45'>;
+  StorageHashBase<'d4b38c049bb927a3c0f2d901e0be5cad24b1bfd59e95be5a7fa66bb35c6f4c61'>;
 export type ExecutionHash =
-  ExecutionHashBase<'e123ff5fce7ea428801cde18721f66296f16b2e15cba27d142a00a242a774c70'>;
+  ExecutionHashBase<'92ebe982489679d9201df9aed8c0085cd602b9f3c7dfb859d2ebc7555aed3dbf'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -241,6 +241,22 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
+    readonly Notification: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly recipientId: CodecTypes['pg/uuid@1']['output'];
+      readonly storeId: CodecTypes['pg/uuid@1']['output'] | null;
+      readonly type:
+        | 'STORE_ACTIVATED'
+        | 'STORE_SUSPENDED'
+        | 'MEMBERSHIP_ACCEPTED'
+        | 'MEMBERSHIP_REJECTED'
+        | 'MEMBER_ROLE_CHANGED'
+        | 'MEMBERSHIP_INVALIDATED'
+        | 'PRODUCT_LOW_STOCK';
+      readonly payload: CodecTypes['pg/json@1']['output'];
+      readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
     readonly Product: {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly storeId: CodecTypes['pg/uuid@1']['output'];
@@ -372,6 +388,22 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
+    readonly Notification: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly recipientId: CodecTypes['pg/uuid@1']['input'];
+      readonly storeId: CodecTypes['pg/uuid@1']['input'] | null;
+      readonly type:
+        | 'STORE_ACTIVATED'
+        | 'STORE_SUSPENDED'
+        | 'MEMBERSHIP_ACCEPTED'
+        | 'MEMBERSHIP_REJECTED'
+        | 'MEMBER_ROLE_CHANGED'
+        | 'MEMBERSHIP_INVALIDATED'
+        | 'PRODUCT_LOW_STOCK';
+      readonly payload: CodecTypes['pg/json@1']['input'];
+      readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
     readonly Product: {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly storeId: CodecTypes['pg/uuid@1']['input'];
@@ -503,6 +535,22 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
+    readonly notification: {
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly payload: CodecTypes['pg/json@1']['output'];
+      readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly recipientId: CodecTypes['pg/uuid@1']['output'];
+      readonly storeId: CodecTypes['pg/uuid@1']['output'] | null;
+      readonly type:
+        | 'STORE_ACTIVATED'
+        | 'STORE_SUSPENDED'
+        | 'MEMBERSHIP_ACCEPTED'
+        | 'MEMBERSHIP_REJECTED'
+        | 'MEMBER_ROLE_CHANGED'
+        | 'MEMBERSHIP_INVALIDATED'
+        | 'PRODUCT_LOW_STOCK';
+    };
     readonly product: {
       readonly averageCost: CodecTypes['pg/float8@1']['output'];
       readonly barcode: CodecTypes['pg/text@1']['output'] | null;
@@ -634,6 +682,22 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
+    readonly notification: {
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly payload: CodecTypes['pg/json@1']['input'];
+      readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly recipientId: CodecTypes['pg/uuid@1']['input'];
+      readonly storeId: CodecTypes['pg/uuid@1']['input'] | null;
+      readonly type:
+        | 'STORE_ACTIVATED'
+        | 'STORE_SUSPENDED'
+        | 'MEMBERSHIP_ACCEPTED'
+        | 'MEMBERSHIP_REJECTED'
+        | 'MEMBER_ROLE_CHANGED'
+        | 'MEMBERSHIP_INVALIDATED'
+        | 'PRODUCT_LOW_STOCK';
+    };
     readonly product: {
       readonly averageCost: CodecTypes['pg/float8@1']['input'];
       readonly barcode: CodecTypes['pg/text@1']['input'] | null;
@@ -781,6 +845,100 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly notification: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly recipientId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly storeId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: true;
+                };
+                readonly type: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly payload: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: false;
+                };
+                readonly readAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'notification_recipientId_createdAt_idx_4cb575bd';
+                  readonly prefix: 'notification_recipientId_createdAt_idx';
+                  readonly columns: readonly ['recipientId', 'createdAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notification_recipientId_readAt_createdAt_idx_d10a34e2';
+                  readonly prefix: 'notification_recipientId_readAt_createdAt_idx';
+                  readonly columns: readonly ['recipientId', 'readAt', 'createdAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notification_recipientId_idx_c9527cf8';
+                  readonly prefix: 'notification_recipientId_idx';
+                  readonly columns: readonly ['recipientId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'notification_storeId_idx_c545737d';
+                  readonly prefix: 'notification_storeId_idx';
+                  readonly columns: readonly ['storeId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'notification';
+                    readonly columns: readonly ['recipientId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'user';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'notification';
+                    readonly columns: readonly ['storeId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'store';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly product: {
               columns: {
                 readonly id: {
@@ -1858,6 +2016,18 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['PENDING', 'ACTIVE', 'REJECTED', 'INVALIDATED'];
             };
+            readonly NotificationType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'STORE_ACTIVATED',
+                'STORE_SUSPENDED',
+                'MEMBERSHIP_ACCEPTED',
+                'MEMBERSHIP_REJECTED',
+                'MEMBER_ROLE_CHANGED',
+                'MEMBERSHIP_INVALIDATED',
+                'PRODUCT_LOW_STOCK',
+              ];
+            };
             readonly StoreRole: {
               readonly kind: 'valueSet';
               readonly values: readonly ['OWNER', 'MANAGER', 'STAFF'];
@@ -1892,11 +2062,87 @@ type ContractBase = Omit<
     };
     readonly sale: { readonly namespace: 'public' & NamespaceId; readonly model: 'Sale' };
     readonly saleItem: { readonly namespace: 'public' & NamespaceId; readonly model: 'SaleItem' };
+    readonly notification: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Notification';
+    };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly Notification: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly recipientId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly storeId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly payload: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
+              readonly readAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly recipient: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['recipientId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly store: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Store';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['storeId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'notification';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly recipientId: { readonly column: 'recipientId' };
+                readonly storeId: { readonly column: 'storeId' };
+                readonly type: { readonly column: 'type' };
+                readonly payload: { readonly column: 'payload' };
+                readonly readAt: { readonly column: 'readAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+              };
+            };
+          };
           readonly Product: {
             readonly fields: {
               readonly id: {
@@ -2561,6 +2807,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['storeId'];
                 };
               };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['storeId'];
+                };
+              };
               readonly products: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -2844,6 +3101,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['userId'];
                 };
               };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['recipientId'];
+                };
+              };
               readonly purchases: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -2915,6 +3183,18 @@ type ContractBase = Omit<
               { readonly name: 'INVALIDATED'; readonly value: 'INVALIDATED' },
             ];
           };
+          readonly NotificationType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'STORE_ACTIVATED'; readonly value: 'STORE_ACTIVATED' },
+              { readonly name: 'STORE_SUSPENDED'; readonly value: 'STORE_SUSPENDED' },
+              { readonly name: 'MEMBERSHIP_ACCEPTED'; readonly value: 'MEMBERSHIP_ACCEPTED' },
+              { readonly name: 'MEMBERSHIP_REJECTED'; readonly value: 'MEMBERSHIP_REJECTED' },
+              { readonly name: 'MEMBER_ROLE_CHANGED'; readonly value: 'MEMBER_ROLE_CHANGED' },
+              { readonly name: 'MEMBERSHIP_INVALIDATED'; readonly value: 'MEMBERSHIP_INVALIDATED' },
+              { readonly name: 'PRODUCT_LOW_STOCK'; readonly value: 'PRODUCT_LOW_STOCK' },
+            ];
+          };
         };
       };
     };
@@ -2942,6 +3222,14 @@ type ContractBase = Omit<
     readonly executionHash: ExecutionHash;
     readonly mutations: {
       readonly defaults: readonly [
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'notification';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
         {
           readonly ref: {
             readonly namespace: 'public';
