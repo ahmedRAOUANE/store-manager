@@ -1,9 +1,27 @@
 import { AppError } from "@/errors/base.error";
 import { DatabaseError } from "@/errors/db.error";
 import { ValidationError } from "@/errors/validation.error";
-import { models } from "@/prisma/db";
+import { db, models, TransactionClient } from "@/prisma/db";
 import { isUuid } from "@/utils/uuid";
 import { CreateMembershipInput } from "@/zod/membership.schema";
+import { createNotificationInTransaction } from "./notification.services";
+
+const getStoreNameInTransaction = async (
+    tx: TransactionClient,
+    storeId: string,
+): Promise<string> => {
+    const store = await tx.orm.public.Store
+        .where({ id: storeId })
+        .first();
+
+    if (!store) {
+        throw new Error(
+            "Store not found while creating membership notification",
+        );
+    }
+
+    return store.name;
+};
 
 // for the user to be able to manage his own memberships
 export const getAllMembershipsService = async (userId: string) => {
@@ -139,123 +157,285 @@ export const getAllStoreMembersService = async (storeId: string) => {
     }
 }
 
-export const promoteStoreMemberService = async (storeId: string, memberId: string, newRole: "STAFF" | "MANAGER" | "OWNER") => {
+export const promoteStoreMemberService = async (
+    storeId: string,
+    memberId: string,
+    newRole: "STAFF" | "MANAGER" | "OWNER",
+) => {
     if (!isUuid(storeId) || !isUuid(memberId)) {
-        console.log("store id: ", storeId)
-        console.log("member id: ", memberId)
-        return new ValidationError("invalid store id or member id provided")
+        return new ValidationError(
+            "invalid store id or member id provided",
+        );
     }
 
     try {
-        const existMember = await models.StoreMembership
-            .where({
+        return await db.transaction(async (tx) => {
+            const member = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: memberId,
+                })
+                .first();
+
+            if (!member) {
+                return new AppError("store member was not found");
+            }
+
+            if (member.role === newRole) {
+                return member;
+            }
+
+            const updated = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: memberId,
+                })
+                .update({
+                    role: newRole,
+                });
+
+            if (!updated) {
+                return updated;
+            }
+
+            const storeName = await getStoreNameInTransaction(
+                tx,
                 storeId,
-                id: memberId
-            })
-            .first();
+            );
 
-        if (!existMember) {
-            return new AppError("store member was not found")
-        }
+            await createNotificationInTransaction(
+                tx,
+                member.userId,
+                storeId,
+                {
+                    type: "MEMBER_ROLE_CHANGED",
+                    payload: {
+                        storeName,
+                        previousRole: member.role,
+                        newRole,
+                    },
+                },
+            );
 
-        const updatedMember = await models.StoreMembership.where({
-            storeId,
-            id: memberId
-        }).update({
-            role: newRole
+            return updated;
         });
-
-        return updatedMember;
     } catch (error) {
-        console.log("services/storeMembership.services.ts > promoteStoreMemberService > ", error)
-        throw new DatabaseError("unable to get membership from the db", error as Record<string, unknown>)
-    }
-}
+        console.log(
+            "services/storeMembership.services.ts > promoteStoreMemberService > ",
+            error,
+        );
 
-export const acceptMembershipService = async (storeId: string, membershipId: string) => {
+        throw new DatabaseError(
+            "unable to update store member",
+            error as Record<string, unknown>,
+        );
+    }
+};
+
+export const acceptMembershipService = async (
+    storeId: string,
+    membershipId: string,
+) => {
     if (!isUuid(storeId) || !isUuid(membershipId)) {
-        console.log("services/storeMembership.services.ts > acceptMembershipService > storeId", storeId)
-        console.log("services/storeMembership.services.ts > acceptMembershipService > membershipId", membershipId)
-        return new ValidationError("invalid store id provided")
-    };
+        return new ValidationError("invalid store id provided");
+    }
 
     try {
-        return await models.StoreMembership.where({storeId, id: membershipId, status: "PENDING"}).update({status: "ACTIVE"})
-    } catch (error) {
-        console.log("services/storeMembership.services.ts > acceptMembershipService > ", error)
-        throw new DatabaseError("unable to push membership to the db", error as Record<string, unknown>)
-    }
-}
+        return await db.transaction(async (tx) => {
+            const membership = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: membershipId,
+                    status: "PENDING",
+                })
+                .first();
 
-export const rejectMembershipService = async (storeId: string, membershipId: string) => {
+            if (!membership) {
+                return null;
+            }
+
+            const updated = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: membershipId,
+                    status: "PENDING",
+                })
+                .update({
+                    status: "ACTIVE",
+                });
+
+            if (!updated) {
+                return updated;
+            }
+
+            const storeName = await getStoreNameInTransaction(
+                tx,
+                storeId,
+            );
+
+            await createNotificationInTransaction(
+                tx,
+                membership.userId,
+                storeId,
+                {
+                    type: "MEMBERSHIP_ACCEPTED",
+                    payload: { storeName },
+                },
+            );
+
+            return updated;
+        });
+    } catch (error) {
+        console.log(
+            "services/storeMembership.services.ts > acceptMembershipService > ",
+            error,
+        );
+
+        throw new DatabaseError(
+            "unable to push membership to the db",
+            error as Record<string, unknown>,
+        );
+    }
+};
+
+export const rejectMembershipService = async (
+    storeId: string,
+    membershipId: string,
+) => {
     if (!isUuid(storeId) || !isUuid(membershipId)) {
-        console.log("services/storeMembership.services.ts > rejectMembershipService > storeId", storeId)
-        console.log("services/storeMembership.services.ts > rejectMembershipService > membershipId", membershipId)
-        return new ValidationError("invalid store id provided")
-    };
+        return new ValidationError("invalid store id provided");
+    }
 
     try {
-        return await models.StoreMembership.where({storeId, status: "PENDING", id: membershipId}).update({status: "REJECTED"})
+        return await db.transaction(async (tx) => {
+            const membership = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: membershipId,
+                    status: "PENDING",
+                })
+                .first();
+
+            if (!membership) {
+                return null;
+            }
+
+            const updated = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: membershipId,
+                    status: "PENDING",
+                })
+                .update({
+                    status: "REJECTED",
+                });
+
+            if (!updated) {
+                return updated;
+            }
+
+            const storeName = await getStoreNameInTransaction(
+                tx,
+                storeId,
+            );
+
+            await createNotificationInTransaction(
+                tx,
+                membership.userId,
+                storeId,
+                {
+                    type: "MEMBERSHIP_REJECTED",
+                    payload: { storeName },
+                },
+            );
+
+            return updated;
+        });
     } catch (error) {
-        console.log("services/storeMembership.services.ts > rejectMembershipService > ", error)
-        throw new DatabaseError("unable to push membership to the db", error as Record<string, unknown>)
+        console.log(
+            "services/storeMembership.services.ts > rejectMembershipService > ",
+            error,
+        );
+
+        throw new DatabaseError(
+            "unable to push membership to the db",
+            error as Record<string, unknown>,
+        );
     }
-}
+};
 
 export const invalidStoreMemberService = async (
     storeId: string,
-    memberId: string
+    memberId: string,
 ) => {
     if (!isUuid(storeId) || !isUuid(memberId)) {
-        console.log(
-            "services/storeMembership.services.ts > fireStoreMemberService > storeId",
-            storeId
-        );
-        console.log(
-            "services/storeMembership.services.ts > fireStoreMemberService > memberId",
-            memberId
-        );
-
         return new ValidationError("invalid id provided");
     }
 
     try {
-        const member = await models.StoreMembership
-            .where({
+        return await db.transaction(async (tx) => {
+            const member = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: memberId,
+                    status: "ACTIVE",
+                })
+                .first();
+
+            if (!member) {
+                return new AppError(
+                    "active store member was not found",
+                );
+            }
+
+            if (member.role === "OWNER") {
+                return new AppError(
+                    "store owner cannot be fired",
+                );
+            }
+
+            const updated = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    id: memberId,
+                    status: "ACTIVE",
+                })
+                .update({
+                    status: "INVALIDATED",
+                });
+
+            if (!updated) {
+                return new AppError(
+                    "active store member was not found",
+                );
+            }
+
+            const storeName = await getStoreNameInTransaction(
+                tx,
                 storeId,
-                id: memberId,
-                status: "ACTIVE",
-            })
-            .first();
+            );
 
-        if (!member) {
-            return new AppError("active store member was not found");
-        }
-
-        // Don't allow firing the owner
-        if (member.role === "OWNER") {
-            return new AppError("store owner cannot be fired");
-        }
-
-        return await models.StoreMembership
-            .where({
+            await createNotificationInTransaction(
+                tx,
+                member.userId,
                 storeId,
-                id: memberId,
-                status: "ACTIVE",
-            })
-            .update({
-                status: "INVALIDATED",
-            });
+                {
+                    type: "MEMBERSHIP_INVALIDATED",
+                    payload: { storeName },
+                },
+            );
 
+            return updated;
+        });
     } catch (error) {
         console.log(
-            "services/storeMembership.services.ts > fireStoreMemberService > ",
-            error
+            "services/storeMembership.services.ts > invalidStoreMemberService > ",
+            error,
         );
 
         throw new DatabaseError(
-            "unable to fire store member",
-            error as Record<string, unknown>
+            "unable to invalidate store member",
+            error as Record<string, unknown>,
         );
     }
 };
