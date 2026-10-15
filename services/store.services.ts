@@ -5,6 +5,7 @@ import { db, models } from "@/prisma/db";
 import { isUuid } from "@/utils/uuid";
 import { CreateMembershipInput } from "@/zod/membership.schema";
 import { CreateStoreInput, CreateStoreSchema, GetStoreSchema, UpdateStoreInput, UpdateStoreSchema } from "@/zod/store.schema";
+import { createNotificationsForRecipientsInTransaction } from "./notification.services";
 
 // for admin only
 export const getAllStoresService = async () => {
@@ -31,11 +32,11 @@ export const getDiscoveryStoresService = async (userId: string) => {
 
     try {
         const dbStores = await models.Store
-        .where({
-            status: "ACTIVE",
-        })
-        .include('memberships', (m) => m.where({userId}).select('status', 'role'))
-        .all();
+            .where({
+                status: "ACTIVE",
+            })
+            .include('memberships', (m) => m.where({ userId }).select('status', 'role'))
+            .all();
 
         const parsedStores = GetStoreSchema.array().safeParse(dbStores);
         if (!parsedStores.success) {
@@ -137,7 +138,7 @@ export const activateStoreService = async (storeId: string) => {
             await tx.orm.public.Store
                 .where({ id: storeId })
                 .update({
-                    status: "ACTIVE"
+                    status: "ACTIVE",
                 });
 
             await tx.orm.public.StoreMembership
@@ -150,17 +151,36 @@ export const activateStoreService = async (storeId: string) => {
                     status: "ACTIVE",
                 });
 
+            const owners = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    role: "OWNER",
+                })
+                .all();
+
+            await createNotificationsForRecipientsInTransaction(
+                tx,
+                owners.map((owner) => owner.userId),
+                storeId,
+                {
+                    type: "STORE_ACTIVATED",
+                    payload: {
+                        storeName: store.name,
+                    },
+                },
+            );
+
             return true;
         });
     } catch (error) {
         console.log(
             "services/store.services.ts > activateStoreService > ",
-            error
+            error,
         );
 
         throw new DatabaseError(
             "unable to activate store",
-            error as Record<string, unknown>
+            error as Record<string, unknown>,
         );
     }
 };
@@ -170,7 +190,7 @@ export const updateStoreService = async (storeId: string, storeData: UpdateStore
     if (!isUuid(storeId)) {
         return new ValidationError("invalid store id provided");
     }
-    
+
     try {
         const parsedStore = UpdateStoreSchema.safeParse(storeData);
         if (!parsedStore.success) {
@@ -197,18 +217,60 @@ export const suspendStoreService = async (storeId: string) => {
     if (!isUuid(storeId)) {
         return new ValidationError("invalid store id provided");
     }
-    
-    try {
-        // allow only one store
-        const existingStore = await getStoreService(storeId);
-        if (!existingStore || existingStore instanceof AppError) {
-            console.log("services/store.services.ts > suspendStoreService > the store does not exists")
-            return new AppError("the store is not available");
-        }
 
-        return await models.Store.where({ id: storeId }).update({status: "SUSPENDED"});
+    try {
+        return await db.transaction(async (tx) => {
+            const store = await tx.orm.public.Store
+                .where({ id: storeId })
+                .first();
+
+            if (!store) {
+                return new AppError("the store is not available");
+            }
+
+            const wasAlreadySuspended =
+                store.status === "SUSPENDED";
+
+            if (wasAlreadySuspended) {
+                return new AppError("the store is already suspended");
+            }
+
+            const updatedStore = await tx.orm.public.Store
+                .where({ id: storeId })
+                .update({
+                    status: "SUSPENDED",
+                });
+
+            const owners = await tx.orm.public.StoreMembership
+                .where({
+                    storeId,
+                    role: "OWNER",
+                })
+                .all();
+
+            await createNotificationsForRecipientsInTransaction(
+                tx,
+                owners.map((owner) => owner.userId),
+                storeId,
+                {
+                    type: "STORE_SUSPENDED",
+                    payload: {
+                        storeName: store.name,
+                    },
+                },
+            );
+
+            return updatedStore;
+        });
     } catch (error) {
-        console.log("services/store.services.ts > suspendStoreService > ", error)
-        throw new DatabaseError("unable to push store to the db", error as Record<string, unknown>);
+        console.log(
+            "services/store.services.ts > suspendStoreService > ",
+            error,
+        );
+
+        throw new DatabaseError(
+            "unable to push store to the db",
+            error as Record<string, unknown>,
+        );
     }
-}
+};
