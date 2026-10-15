@@ -213,3 +213,32 @@ export const markAllMyNotificationsReadService = async (
             readAt: Temporal.Instant.fromEpochMilliseconds(Date.now()),
         });
 };
+
+
+/**
+ * Mark one of the recipient's notifications as unread.
+ *
+ * The recipient scope is enforced in the database query.
+ * Returns false if the notification does not belong to the recipient
+ * or does not exist.
+ */
+export const markMyNotificationUnreadService = async (
+    recipientId: string,
+    notificationId: string,
+): Promise<boolean> => {
+    if (!isUuid(recipientId) || !isUuid(notificationId)) {
+        throw new Error("Invalid notification ID");
+    }
+
+    const updated = await models.Notification
+        .where({
+            id: notificationId,
+            recipientId,
+        })
+        .update({
+            readAt: null,
+        });
+
+    return updated !== null;
+};
+
