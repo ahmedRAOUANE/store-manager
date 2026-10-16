@@ -1,11 +1,13 @@
+import { getMyUnreadNotificationCount } from "@/actions/notification.actions";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { buildStoreNavItems } from "@/components/layout/nav-items";
 import { TopBar } from "@/components/layout/top-bar";
 import { UserMenu } from "@/components/layout/user-menu";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { AppError } from "@/errors/base.error";
 import { getCurrentStoreContext } from "@/utils/auth";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
@@ -29,6 +31,8 @@ export default async function ManagerLayout({ children, params }: LayoutProps<"/
     if (membership.role !== "MANAGER") {
         redirect(`/dashboard`);
     }
+
+    const unreadCount = await getMyUnreadNotificationCount().catch(() => 0);
 
     const sidebarItems = buildStoreNavItems(storeId, "MANAGER");
 
@@ -62,14 +66,10 @@ export default async function ManagerLayout({ children, params }: LayoutProps<"/
                             </button>
 
                             {/* Notifications */}
-                            <button
-                                type="button"
-                                className="relative inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label="Notifications"
-                            >
-                                <Bell className="size-4" />
-                                <span className="absolute right-2 top-2 size-1.5 rounded-full bg-primary" />
-                            </button>
+                            <NotificationBell
+                                userId={user.id}
+                                initialUnreadCount={unreadCount}
+                            />
 
                             {/* User menu */}
                             <UserMenu

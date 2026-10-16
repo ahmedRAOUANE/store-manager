@@ -5,7 +5,8 @@ import { db, models } from "@/prisma/db";
 import { isUuid } from "@/utils/uuid";
 import { CreateMembershipInput } from "@/zod/membership.schema";
 import { CreateStoreInput, CreateStoreSchema, GetStoreSchema, UpdateStoreInput, UpdateStoreSchema } from "@/zod/store.schema";
-import { createNotificationsForRecipientsInTransaction } from "./notification.services";
+import { publishNotificationInTransaction } from "@/notifications/publish";
+import { storeActivated, storeSuspended } from "@/notifications/definitions/store";
 
 // for admin only
 export const getAllStoresService = async () => {
@@ -151,23 +152,11 @@ export const activateStoreService = async (storeId: string) => {
                     status: "ACTIVE",
                 });
 
-            const owners = await tx.orm.public.StoreMembership
-                .where({
-                    storeId,
-                    role: "OWNER",
-                })
-                .all();
-
-            await createNotificationsForRecipientsInTransaction(
+            await publishNotificationInTransaction(
                 tx,
-                owners.map((owner) => owner.userId),
-                storeId,
-                {
-                    type: "STORE_ACTIVATED",
-                    payload: {
-                        storeName: store.name,
-                    },
-                },
+                storeActivated,
+                { storeName: store.name },
+                { storeId },
             );
 
             return true;
@@ -241,23 +230,11 @@ export const suspendStoreService = async (storeId: string) => {
                     status: "SUSPENDED",
                 });
 
-            const owners = await tx.orm.public.StoreMembership
-                .where({
-                    storeId,
-                    role: "OWNER",
-                })
-                .all();
-
-            await createNotificationsForRecipientsInTransaction(
+            await publishNotificationInTransaction(
                 tx,
-                owners.map((owner) => owner.userId),
-                storeId,
-                {
-                    type: "STORE_SUSPENDED",
-                    payload: {
-                        storeName: store.name,
-                    },
-                },
+                storeSuspended,
+                { storeName: store.name },
+                { storeId },
             );
 
             return updatedStore;

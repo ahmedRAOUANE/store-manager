@@ -4,7 +4,13 @@ import { ValidationError } from "@/errors/validation.error";
 import { db, models, TransactionClient } from "@/prisma/db";
 import { isUuid } from "@/utils/uuid";
 import { CreateMembershipInput } from "@/zod/membership.schema";
-import { createNotificationInTransaction } from "./notification.services";
+import { publishNotificationInTransaction } from "@/notifications/publish";
+import {
+    memberRoleChanged,
+    membershipAccepted,
+    membershipInvalidated,
+    membershipRejected,
+} from "@/notifications/definitions/membership";
 
 const getStoreNameInTransaction = async (
     tx: TransactionClient,
@@ -203,18 +209,15 @@ export const promoteStoreMemberService = async (
                 storeId,
             );
 
-            await createNotificationInTransaction(
+            await publishNotificationInTransaction(
                 tx,
-                member.userId,
-                storeId,
+                memberRoleChanged,
                 {
-                    type: "MEMBER_ROLE_CHANGED",
-                    payload: {
-                        storeName,
-                        previousRole: member.role,
-                        newRole,
-                    },
+                    storeName,
+                    previousRole: member.role,
+                    newRole,
                 },
+                { storeId, affectedUserId: member.userId },
             );
 
             return updated;
@@ -273,14 +276,11 @@ export const acceptMembershipService = async (
                 storeId,
             );
 
-            await createNotificationInTransaction(
+            await publishNotificationInTransaction(
                 tx,
-                membership.userId,
-                storeId,
-                {
-                    type: "MEMBERSHIP_ACCEPTED",
-                    payload: { storeName },
-                },
+                membershipAccepted,
+                { storeName },
+                { storeId, affectedUserId: membership.userId },
             );
 
             return updated;
@@ -339,14 +339,11 @@ export const rejectMembershipService = async (
                 storeId,
             );
 
-            await createNotificationInTransaction(
+            await publishNotificationInTransaction(
                 tx,
-                membership.userId,
-                storeId,
-                {
-                    type: "MEMBERSHIP_REJECTED",
-                    payload: { storeName },
-                },
+                membershipRejected,
+                { storeName },
+                { storeId, affectedUserId: membership.userId },
             );
 
             return updated;
@@ -415,14 +412,11 @@ export const invalidStoreMemberService = async (
                 storeId,
             );
 
-            await createNotificationInTransaction(
+            await publishNotificationInTransaction(
                 tx,
-                member.userId,
-                storeId,
-                {
-                    type: "MEMBERSHIP_INVALIDATED",
-                    payload: { storeName },
-                },
+                membershipInvalidated,
+                { storeName },
+                { storeId, affectedUserId: member.userId },
             );
 
             return updated;

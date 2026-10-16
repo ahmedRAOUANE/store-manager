@@ -1,12 +1,9 @@
-
 import { param } from "@prisma/orm-postgres/relational-core/expression";
 
 import { AppError } from "@/errors/base.error";
 import { db, type TransactionClient } from "@/prisma/db";
-import {
-    createNotificationsForRecipientsInTransaction,
-    getLowStockRecipientIdsInTransaction,
-} from "@/services/notification.services";
+import { publishNotificationInTransaction } from "@/notifications/publish";
+import { productLowStock } from "@/notifications/definitions/inventory";
 import { crossedIntoLowStock } from "@/utils/notification-transitions";
 import { calculateProductNewAverageCost } from "@/calculations/purchases";
 
@@ -158,22 +155,16 @@ export const mutateProductInventoryInTransaction = async ({
     };
 
     if (crossedIntoLowStock(before, after)) {
-        const recipientIds =
-            await getLowStockRecipientIdsInTransaction(tx, storeId);
-
-        await createNotificationsForRecipientsInTransaction(
+        await publishNotificationInTransaction(
             tx,
-            recipientIds,
-            storeId,
+            productLowStock,
             {
-                type: "PRODUCT_LOW_STOCK",
-                payload: {
-                    productId: product.id,
-                    productName: product.name,
-                    stockQuantity: newStockQuantity,
-                    minimumStock: product.minimumStock,
-                },
+                productId: product.id,
+                productName: product.name,
+                stockQuantity: newStockQuantity,
+                minimumStock: product.minimumStock,
             },
+            { storeId },
         );
     }
 

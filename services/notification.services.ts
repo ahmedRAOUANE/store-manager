@@ -1,110 +1,5 @@
-
-import { models, TransactionClient } from "@/prisma/db";
-import { NotificationEventSchema } from "@/zod/notification.schema";
+import { models } from "@/prisma/db";
 import { isUuid } from "@/utils/uuid";
-
-/**
- * Insert one notification inside the transaction that performed
- * the corresponding business mutation.
- *
- * The recipient ID must come from trusted server-side authorization
- * or recipient resolution, never directly from client input.
- *
- * Database errors intentionally propagate so the surrounding
- * transaction can roll back.
- */
-export const createNotificationInTransaction = async (
-    tx: TransactionClient,
-    recipientId: string,
-    storeId: string | null,
-    input: unknown,
-) => {
-    if (!isUuid(recipientId)) {
-        throw new Error("Invalid notification recipient ID");
-    }
-
-    if (storeId !== null && !isUuid(storeId)) {
-        throw new Error("Invalid notification store ID");
-    }
-
-    const parsedEvent = NotificationEventSchema.safeParse(input);
-
-    if (!parsedEvent.success) {
-        throw new Error("Invalid notification event payload");
-    }
-
-    return tx.orm.public.Notification.create({
-        recipientId,
-        storeId,
-        type: parsedEvent.data.type,
-        payload: parsedEvent.data.payload,
-    });
-};
-
-
-/**
- * Resolve the recipients for PRODUCT_LOW_STOCK notifications.
- *
- * This function deliberately excludes STAFF and only considers
- * active memberships. It must be called inside the same transaction
- * as the stock mutation and notification inserts.
- */
-export const getLowStockRecipientIdsInTransaction = async (
-    tx: TransactionClient,
-    storeId: string,
-): Promise<string[]> => {
-    if (!isUuid(storeId)) {
-        throw new Error("Invalid notification store ID");
-    }
-
-    const memberships = await tx.orm.public.StoreMembership
-        .where({
-            storeId,
-            status: "ACTIVE",
-        })
-        .all();
-
-    const recipientIds = memberships
-        .filter(
-            (membership) =>
-                membership.role === "OWNER" ||
-                membership.role === "MANAGER",
-        )
-        .map((membership) => membership.userId);
-
-    // Defensive deduplication in case recipient resolution changes later.
-    return [...new Set(recipientIds)];
-};
-
-/**
- * Create the same event for several trusted recipients.
- *
- * Recipient IDs must be resolved by server-side code, not supplied
- * directly by a request body.
- */
-export const createNotificationsForRecipientsInTransaction = async (
-    tx: TransactionClient,
-    recipientIds: string[],
-    storeId: string | null,
-    input: unknown,
-) => {
-    const uniqueRecipientIds = [...new Set(recipientIds)];
-
-    const createdNotifications = [];
-
-    for (const recipientId of uniqueRecipientIds) {
-        const notification = await createNotificationInTransaction(
-            tx,
-            recipientId,
-            storeId,
-            input,
-        );
-
-        createdNotifications.push(notification);
-    }
-
-    return createdNotifications;
-};
 
 /**
  * Return one page of notifications belonging to the authenticated user.
@@ -214,7 +109,6 @@ export const markAllMyNotificationsReadService = async (
         });
 };
 
-
 /**
  * Mark one of the recipient's notifications as unread.
  *
@@ -241,4 +135,3 @@ export const markMyNotificationUnreadService = async (
 
     return updated !== null;
 };
-

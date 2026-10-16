@@ -340,17 +340,6 @@ model SaleItem {
 // NOTIFICATIONS
 // ============================================================
 
-enum NotificationType {
-  @@type("pg/text@1")
-  STORE_ACTIVATED
-  STORE_SUSPENDED
-  MEMBERSHIP_ACCEPTED
-  MEMBERSHIP_REJECTED
-  MEMBER_ROLE_CHANGED
-  MEMBERSHIP_INVALIDATED
-  PRODUCT_LOW_STOCK
-}
-
 model Notification {
   id Uuid @id @default(uuid())
 
@@ -368,7 +357,11 @@ model Notification {
     onDelete: SetNull
   )
 
-  type NotificationType
+  /// Stable event identifier. Validated in the application layer via the
+  /// NotificationDefinition registry (src/notifications). Do NOT add a
+  /// database enum or check constraint — extension-defined types must be
+  /// publishable without a migration.
+  type String
   payload Json
 
   readAt DateTime?

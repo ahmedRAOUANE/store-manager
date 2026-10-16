@@ -1,3 +1,4 @@
+import { getMyUnreadNotificationCount } from "@/actions/notification.actions";
 import { getAllMemberships } from "@/actions/user.actions";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
@@ -7,9 +8,10 @@ import { UserMenu } from "@/components/layout/user-menu";
 import { AppError } from "@/errors/base.error";
 import { getCurrentUser } from "@/utils/auth";
 import { isUuid } from "@/utils/uuid";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 export default async function UserLayout({ children, params }: LayoutProps<"/user/[userId]">) {
     const userId = (await params).userId
@@ -27,19 +29,20 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
         redirect("/dashboard");
     }
 
+    const unreadCount = await getMyUnreadNotificationCount().catch(() => 0);
+
     const t = await getTranslations("navigation");
-    const accessibilityT = await getTranslations("accessibility");
     const actionsT = await getTranslations("actions");
 
     const membershipsResult = await getAllMemberships()
 
     const sidebarItems = buildUserNavItems(userId);
-    const adminDashboard = 
-        user.globalRole === "ADMIN" 
-            ? { label: t("adminDashboard"), link: `/admin/${userId}/dashboard` } 
+    const adminDashboard =
+        user.globalRole === "ADMIN"
+            ? { label: t("adminDashboard"), link: `/admin/${userId}/dashboard` }
             : null;
 
-    const membershipLinks: { link: string; label: string }[] = 
+    const membershipLinks: { link: string; label: string }[] =
         membershipsResult.ok && membershipsResult.memberships
             ? membershipsResult.memberships.map(m => ({
                 link: `/stores/${m.storeId}/${m.role.toLowerCase()}/dashboard`,
@@ -75,14 +78,10 @@ export default async function UserLayout({ children, params }: LayoutProps<"/use
                             </button>
 
                             {/* Notifications */}
-                            <button
-                                type="button"
-                                className="relative inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label={accessibilityT("notifications")}
-                            >
-                                <Bell className="size-4" />
-                                <span className="absolute inset-e-2 top-2 size-1.5 rounded-full bg-primary" />
-                            </button>
+                            <NotificationBell
+                                userId={user.id}
+                                initialUnreadCount={unreadCount}
+                            />
 
                             {/* User menu */}
                             <UserMenu

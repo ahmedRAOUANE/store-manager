@@ -950,5 +950,49 @@
         "footer": {
             "tagline": "Manage your store. Simplify your workflow."
         }
+    },
+    "notifications": {
+        "title": "Notifications",
+        "loading": "Loading…",
+        "empty": {
+            "title": "You're all caught up",
+            "description": "No notifications to show."
+        },
+        "actions": {
+            "markAllRead": "Mark all as read",
+            "viewAll": "View all",
+            "close": "Close"
+        },
+        "errors": {
+            "loadFailed": "Couldn't load notifications."
+        },
+        "STORE_ACTIVATED": {
+            "title": "Store activated",
+            "body": "{storeName} is now active."
+        },
+        "STORE_SUSPENDED": {
+            "title": "Store suspended",
+            "body": "{storeName} has been suspended."
+        },
+        "MEMBERSHIP_ACCEPTED": {
+            "title": "Membership accepted",
+            "body": "You have been accepted into {storeName}."
+        },
+        "MEMBERSHIP_REJECTED": {
+            "title": "Membership rejected",
+            "body": "Your request to join {storeName} was rejected."
+        },
+        "MEMBERSHIP_INVALIDATED": {
+            "title": "Membership removed",
+            "body": "Your membership at {storeName} has been removed."
+        },
+        "MEMBER_ROLE_CHANGED": {
+            "title": "Role updated",
+            "body": "Your role at {storeName} changed from {previousRole, select, OWNER {Owner} MANAGER {Manager} STAFF {Staff} other {#}} to {newRole, select, OWNER {Owner} MANAGER {Manager} STAFF {Staff} other {#}}."
+        },
+        "PRODUCT_LOW_STOCK": {
+            "title": "Low stock",
+            "body": "{productName} is at {stockQuantity} (minimum {minimumStock})."
+        }
     }
 }

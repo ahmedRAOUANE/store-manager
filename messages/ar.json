@@ -951,5 +951,49 @@
         "footer": {
             "tagline": "أدر متجرك. بسّط سير عملك."
         }
+    },
+    "notifications": {
+        "title": "الإشعارات",
+        "loading": "جارٍ التحميل…",
+        "empty": {
+            "title": "لا توجد إشعارات",
+            "description": "لا يوجد شيء لعرضه حاليًا."
+        },
+        "actions": {
+            "markAllRead": "تحديد الكل كمقروء",
+            "viewAll": "عرض الكل",
+            "close": "إغلاق"
+        },
+        "errors": {
+            "loadFailed": "تعذر تحميل الإشعارات."
+        },
+        "STORE_ACTIVATED": {
+            "title": "تم تفعيل المتجر",
+            "body": "{storeName} أصبح نشطًا الآن."
+        },
+        "STORE_SUSPENDED": {
+            "title": "تم تعليق المتجر",
+            "body": "تم تعليق {storeName}."
+        },
+        "MEMBERSHIP_ACCEPTED": {
+            "title": "تم قبول العضوية",
+            "body": "تم قبولك في {storeName}."
+        },
+        "MEMBERSHIP_REJECTED": {
+            "title": "تم رفض العضوية",
+            "body": "تم رفض طلبك للانضمام إلى {storeName}."
+        },
+        "MEMBERSHIP_INVALIDATED": {
+            "title": "تمت إزالة العضوية",
+            "body": "تمت إزالة عضويتك في {storeName}."
+        },
+        "MEMBER_ROLE_CHANGED": {
+            "title": "تم تحديث الدور",
+            "body": "تغيّر دورك في {storeName} من {previousRole, select, OWNER {المالك} MANAGER {المدير} STAFF {الموظف} other {#}} إلى {newRole, select, OWNER {المالك} MANAGER {المدير} STAFF {الموظف} other {#}}."
+        },
+        "PRODUCT_LOW_STOCK": {
+            "title": "مخزون منخفض",
+            "body": "{productName} وصل إلى {stockQuantity} (الحد الأدنى {minimumStock})."
+        }
     }
 }

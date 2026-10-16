@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
@@ -10,6 +10,8 @@ import { UserMenu } from "@/components/layout/user-menu";
 import { AppError } from "@/errors/base.error";
 import { getCurrentUser } from "@/utils/auth";
 import { isUuid } from "@/utils/uuid";
+import { NotificationBell } from "@/components/notifications/notification-bell";
+import { getMyUnreadNotificationCount } from "@/actions/notification.actions";
 
 export default async function AdminLayout({
     children,
@@ -31,10 +33,11 @@ export default async function AdminLayout({
         redirect(`/dashboard`);
     }
 
+    const unreadCount = await getMyUnreadNotificationCount().catch(() => 0);
+
     const tAdmin = await getTranslations("admin");
     const tCommon = await getTranslations("common");
     const tUserMenu = await getTranslations("userMenu");
-    const tAccessibility = await getTranslations("accessibility");
 
     const sidebarItems = buildAdminNavItems(adminId);
 
@@ -66,14 +69,10 @@ export default async function AdminLayout({
                             </button>
 
                             {/* Notifications */}
-                            <button
-                                type="button"
-                                className="relative inline-flex size-9 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high"
-                                aria-label={tAccessibility("notifications")}
-                            >
-                                <Bell className="size-4" aria-hidden="true" />
-                                <span className="absolute inset-e-2 top-2 size-1.5 rounded-full bg-primary" />
-                            </button>
+                            <NotificationBell
+                                userId={user.id}
+                                initialUnreadCount={unreadCount}
+                            />
 
                             {/* User menu */}
                             <UserMenu

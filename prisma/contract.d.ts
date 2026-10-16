@@ -33,7 +33,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d4b38c049bb927a3c0f2d901e0be5cad24b1bfd59e95be5a7fa66bb35c6f4c61'>;
+  StorageHashBase<'605402d4e74a1207f0b0bb9c27205db28e2906a6e8f743692d854638505a3104'>;
 export type ExecutionHash =
   ExecutionHashBase<'92ebe982489679d9201df9aed8c0085cd602b9f3c7dfb859d2ebc7555aed3dbf'>;
 export type ProfileHash =
@@ -245,14 +245,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly recipientId: CodecTypes['pg/uuid@1']['output'];
       readonly storeId: CodecTypes['pg/uuid@1']['output'] | null;
-      readonly type:
-        | 'STORE_ACTIVATED'
-        | 'STORE_SUSPENDED'
-        | 'MEMBERSHIP_ACCEPTED'
-        | 'MEMBERSHIP_REJECTED'
-        | 'MEMBER_ROLE_CHANGED'
-        | 'MEMBERSHIP_INVALIDATED'
-        | 'PRODUCT_LOW_STOCK';
+      readonly type: CodecTypes['pg/text@1']['output'];
       readonly payload: CodecTypes['pg/json@1']['output'];
       readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
@@ -392,14 +385,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly recipientId: CodecTypes['pg/uuid@1']['input'];
       readonly storeId: CodecTypes['pg/uuid@1']['input'] | null;
-      readonly type:
-        | 'STORE_ACTIVATED'
-        | 'STORE_SUSPENDED'
-        | 'MEMBERSHIP_ACCEPTED'
-        | 'MEMBERSHIP_REJECTED'
-        | 'MEMBER_ROLE_CHANGED'
-        | 'MEMBERSHIP_INVALIDATED'
-        | 'PRODUCT_LOW_STOCK';
+      readonly type: CodecTypes['pg/text@1']['input'];
       readonly payload: CodecTypes['pg/json@1']['input'];
       readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
@@ -542,14 +528,7 @@ export type StorageColumnTypes = {
       readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
       readonly recipientId: CodecTypes['pg/uuid@1']['output'];
       readonly storeId: CodecTypes['pg/uuid@1']['output'] | null;
-      readonly type:
-        | 'STORE_ACTIVATED'
-        | 'STORE_SUSPENDED'
-        | 'MEMBERSHIP_ACCEPTED'
-        | 'MEMBERSHIP_REJECTED'
-        | 'MEMBER_ROLE_CHANGED'
-        | 'MEMBERSHIP_INVALIDATED'
-        | 'PRODUCT_LOW_STOCK';
+      readonly type: CodecTypes['pg/text@1']['output'];
     };
     readonly product: {
       readonly averageCost: CodecTypes['pg/float8@1']['output'];
@@ -689,14 +668,7 @@ export type StorageColumnInputTypes = {
       readonly readAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
       readonly recipientId: CodecTypes['pg/uuid@1']['input'];
       readonly storeId: CodecTypes['pg/uuid@1']['input'] | null;
-      readonly type:
-        | 'STORE_ACTIVATED'
-        | 'STORE_SUSPENDED'
-        | 'MEMBERSHIP_ACCEPTED'
-        | 'MEMBERSHIP_REJECTED'
-        | 'MEMBER_ROLE_CHANGED'
-        | 'MEMBERSHIP_INVALIDATED'
-        | 'PRODUCT_LOW_STOCK';
+      readonly type: CodecTypes['pg/text@1']['input'];
     };
     readonly product: {
       readonly averageCost: CodecTypes['pg/float8@1']['input'];
@@ -2016,18 +1988,6 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['PENDING', 'ACTIVE', 'REJECTED', 'INVALIDATED'];
             };
-            readonly NotificationType: {
-              readonly kind: 'valueSet';
-              readonly values: readonly [
-                'STORE_ACTIVATED',
-                'STORE_SUSPENDED',
-                'MEMBERSHIP_ACCEPTED',
-                'MEMBERSHIP_REJECTED',
-                'MEMBER_ROLE_CHANGED',
-                'MEMBERSHIP_INVALIDATED',
-                'PRODUCT_LOW_STOCK',
-              ];
-            };
             readonly StoreRole: {
               readonly kind: 'valueSet';
               readonly values: readonly ['OWNER', 'MANAGER', 'STAFF'];
@@ -3181,18 +3141,6 @@ type ContractBase = Omit<
               { readonly name: 'ACTIVE'; readonly value: 'ACTIVE' },
               { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
               { readonly name: 'INVALIDATED'; readonly value: 'INVALIDATED' },
-            ];
-          };
-          readonly NotificationType: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'STORE_ACTIVATED'; readonly value: 'STORE_ACTIVATED' },
-              { readonly name: 'STORE_SUSPENDED'; readonly value: 'STORE_SUSPENDED' },
-              { readonly name: 'MEMBERSHIP_ACCEPTED'; readonly value: 'MEMBERSHIP_ACCEPTED' },
-              { readonly name: 'MEMBERSHIP_REJECTED'; readonly value: 'MEMBERSHIP_REJECTED' },
-              { readonly name: 'MEMBER_ROLE_CHANGED'; readonly value: 'MEMBER_ROLE_CHANGED' },
-              { readonly name: 'MEMBERSHIP_INVALIDATED'; readonly value: 'MEMBERSHIP_INVALIDATED' },
-              { readonly name: 'PRODUCT_LOW_STOCK'; readonly value: 'PRODUCT_LOW_STOCK' },
             ];
           };
         };

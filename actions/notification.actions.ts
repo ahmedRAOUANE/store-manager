@@ -1,4 +1,3 @@
-
 "use server";
 
 import { withAuth } from "@/utils/auth";
@@ -6,120 +5,102 @@ import {
     getMyNotificationsService,
     getMyUnreadNotificationCountService,
     markMyNotificationReadService,
-    markMyNotificationUnreadService,
     markAllMyNotificationsReadService,
+    markMyNotificationUnreadService,
 } from "@/services/notification.services";
-import { UuidSchema } from "@/zod/general.schema";
-import { z } from "zod";
 
-const NotificationPageSchema = z.object({
-    page: z.number().int().min(1).default(1),
-    pageSize: z.number().int().min(1).max(100).default(20),
+/**
+ * Client-safe representation of a notification.
+ *
+ * `Temporal.Instant` cannot cross the RSC boundary, so timestamps are
+ * serialized to ISO strings. Everything else is passed through unchanged.
+ *
+ * The `type` field is a raw string: it may be a core type (validate with
+ * `isCoreNotificationType` from `@/notifications/registry`) or an
+ * extension type. `payload` is opaque to the transport layer — the
+ * consumer narrows it against the appropriate payload schema.
+ */
+export interface SerializedNotification {
+    id: string;
+    type: string;
+    payload: unknown;
+    storeId: string | null;
+    readAt: string | null;
+    createdAt: string;
+}
+
+type NotificationRow = Awaited<
+    ReturnType<typeof getMyNotificationsService>
+>[number];
+
+const serializeNotification = (
+    notification: NotificationRow,
+): SerializedNotification => ({
+    id: notification.id,
+    type: notification.type,
+    payload: notification.payload,
+    storeId: notification.storeId,
+    readAt: notification.readAt ? notification.readAt.toString() : null,
+    createdAt: notification.createdAt.toString(),
 });
 
-const NotificationIdSchema = UuidSchema;
-
-const invalidInput = {
-    ok: false as const,
-    message: "Invalid notification input",
-};
-
 /**
- * Fetch a page of the signed-in user's notifications.
- * Use pageSize=5 for the recent-notifications dropdown.
+ * Return one page of the authenticated user's notifications, newest first.
+ *
+ * `recipientId` is taken from the authenticated session, never from the
+ * caller. `page` is 1-based; `pageSize` is capped at 100 by the service.
  */
 export const getMyNotifications = withAuth(
-    async (user, page: unknown = 1, pageSize: unknown = 20) => {
-        const parsed = NotificationPageSchema.safeParse({
+    async (
+        user,
+        page: number = 1,
+        pageSize: number = 20,
+    ): Promise<SerializedNotification[]> => {
+        const notifications = await getMyNotificationsService(
+            user.id,
             page,
             pageSize,
-        });
+        );
 
-        if (!parsed.success) return invalidInput;
-
-        return {
-            ok: true as const,
-            data: await getMyNotificationsService(
-                user.id,
-                parsed.data.page,
-                parsed.data.pageSize,
-            ),
-        };
+        return notifications.map(serializeNotification);
     },
 );
 
 /**
- * Fetch the signed-in user's unread notification count.
+ * Return the count of unread notifications for the authenticated user.
  */
 export const getMyUnreadNotificationCount = withAuth(
-    async (user) => ({
-        ok: true as const,
-        count: await getMyUnreadNotificationCountService(user.id),
-    }),
+    async (user): Promise<number> =>
+        getMyUnreadNotificationCountService(user.id),
 );
 
 /**
- * Mark one of the signed-in user's notifications as read.
+ * Mark one of the authenticated user's notifications as read.
+ *
+ * Returns false if the notification does not belong to the user, does
+ * not exist, or was already read.
  */
-export const markMyNotificationRead = withAuth(
-    async (user, notificationId: unknown) => {
-        const parsedId = NotificationIdSchema.safeParse(notificationId);
-
-        if (!parsedId.success) return invalidInput;
-
-        const updated = await markMyNotificationReadService(
-            user.id,
-            parsedId.data,
-        );
-
-        if (!updated) {
-            return {
-                ok: false as const,
-                message: "Notification not found or already read",
-            };
-        }
-
-        return { ok: true as const };
-    },
+export const markNotificationRead = withAuth(
+    async (user, notificationId: string): Promise<boolean> =>
+        markMyNotificationReadService(user.id, notificationId),
 );
 
 /**
- * Mark one of the signed-in user's notifications as unread.
+ * Mark all unread notifications belonging to the authenticated user as
+ * read. Returns the number of affected rows.
  */
-export const markMyNotificationUnread = withAuth(
-    async (user, notificationId: unknown) => {
-        const parsedId = NotificationIdSchema.safeParse(notificationId);
-
-        if (!parsedId.success) return invalidInput;
-
-        const updated = await markMyNotificationUnreadService(
-            user.id,
-            parsedId.data,
-        );
-
-        if (!updated) {
-            return {
-                ok: false as const,
-                message: "Notification not found",
-            };
-        }
-
-        return { ok: true as const };
-    },
+export const markAllNotificationsRead = withAuth(
+    async (user): Promise<number> =>
+        markAllMyNotificationsReadService(user.id),
 );
 
 /**
- * Mark all of the signed-in user's notifications as read.
+ * Mark one of the authenticated user's notifications as unread.
+ *
+ * Returns false if the notification does not belong to the user or does
+ * not exist.
  */
-export const markAllMyNotificationsRead = withAuth(
-    async (user) => {
-        const updatedCount =
-            await markAllMyNotificationsReadService(user.id);
-
-        return {
-            ok: true as const,
-            updatedCount,
-        };
-    },
+export const markNotificationUnread = withAuth(
+    async (user, notificationId: string): Promise<boolean> =>
+        markMyNotificationUnreadService(user.id, notificationId),
 );
-

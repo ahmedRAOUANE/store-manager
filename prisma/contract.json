@@ -83,39 +83,6 @@
               }
             ]
           },
-          "NotificationType": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "STORE_ACTIVATED",
-                "value": "STORE_ACTIVATED"
-              },
-              {
-                "name": "STORE_SUSPENDED",
-                "value": "STORE_SUSPENDED"
-              },
-              {
-                "name": "MEMBERSHIP_ACCEPTED",
-                "value": "MEMBERSHIP_ACCEPTED"
-              },
-              {
-                "name": "MEMBERSHIP_REJECTED",
-                "value": "MEMBERSHIP_REJECTED"
-              },
-              {
-                "name": "MEMBER_ROLE_CHANGED",
-                "value": "MEMBER_ROLE_CHANGED"
-              },
-              {
-                "name": "MEMBERSHIP_INVALIDATED",
-                "value": "MEMBERSHIP_INVALIDATED"
-              },
-              {
-                "name": "PRODUCT_LOW_STOCK",
-                "value": "PRODUCT_LOW_STOCK"
-              }
-            ]
-          },
           "StoreRole": {
             "codecId": "pg/text@1",
             "members": [
@@ -201,12 +168,6 @@
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "NotificationType",
-                  "namespaceId": "public",
-                  "plane": "domain"
                 }
               }
             },
@@ -1922,13 +1883,6 @@
         "entries": {
           "table": {
             "notification": {
-              "checks": [
-                {
-                  "expression": "\"type\" IN ('STORE_ACTIVATED', 'STORE_SUSPENDED', 'MEMBERSHIP_ACCEPTED', 'MEMBERSHIP_REJECTED', 'MEMBER_ROLE_CHANGED', 'MEMBERSHIP_INVALIDATED', 'PRODUCT_LOW_STOCK')",
-                  "name": "notification_type_check_4dbfd761",
-                  "prefix": "notification_type_check"
-                }
-              ],
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-temporal@1",
@@ -1967,13 +1921,7 @@
                 "type": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "NotificationType",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
+                  "nullable": false
                 }
               },
               "foreignKeys": [
@@ -3406,18 +3354,6 @@
                 "INVALIDATED"
               ]
             },
-            "NotificationType": {
-              "kind": "valueSet",
-              "values": [
-                "STORE_ACTIVATED",
-                "STORE_SUSPENDED",
-                "MEMBERSHIP_ACCEPTED",
-                "MEMBERSHIP_REJECTED",
-                "MEMBER_ROLE_CHANGED",
-                "MEMBERSHIP_INVALIDATED",
-                "PRODUCT_LOW_STOCK"
-              ]
-            },
             "StoreRole": {
               "kind": "valueSet",
               "values": [
@@ -3440,7 +3376,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d4b38c049bb927a3c0f2d901e0be5cad24b1bfd59e95be5a7fa66bb35c6f4c61"
+    "storageHash": "605402d4e74a1207f0b0bb9c27205db28e2906a6e8f743692d854638505a3104"
   },
   "execution": {
     "executionHash": "92ebe982489679d9201df9aed8c0085cd602b9f3c7dfb859d2ebc7555aed3dbf",
