@@ -4,9 +4,11 @@ import {
     getSalesService,
 } from "../services/sale.services";
 import { AppError } from "../errors/base.error";
-import { db } from "../prisma/db";
+import { db, models } from "../prisma/db";
 import type { CreateSaleInput } from "../zod/sale.schema";
 import { describe, expect, it } from "vitest";
+import { CreateStoreInput } from "../zod/store.schema";
+import { activateStoreService, createStoreService } from "../services/store.services";
 
 describe("sales tests", () => {
     const storeId = "8dacefdb-2c06-41e8-a845-a6a9c2cba418";
@@ -148,6 +150,166 @@ describe("sales tests", () => {
             expect(productAfter.stockQuantity).toBe(
                 productBefore.stockQuantity,
             );
+        },
+    );
+
+    it(
+        "creates a low-stock notification when a sale crosses the threshold",
+        { tags: ["create", "sale", "inventory", "notification"] },
+        async () => {
+            const storeData: CreateStoreInput = {
+                name: `Low - stock test store ${crypto.randomUUID()}`,
+                description: null,
+                phone: null,
+                email: null,
+                address: null,
+                currency: "DZ",
+                timezone: "UTC",
+            };
+
+            const store = await createStoreService(userId, storeData);
+
+            expect(store).not.toBeInstanceOf(Error);
+
+            if (store instanceof Error) {
+                throw store;
+            }
+
+            const activationResult = await activateStoreService(store.id);
+            expect(activationResult).toBe(true);
+
+            // Stock goes from 5 to 2, reaching the minimum-stock threshold.
+            const product = await models.Product.create({
+                storeId: store.id,
+                name: `Low - stock test product ${crypto.randomUUID()}`,
+                stockQuantity: 5,
+                minimumStock: 2,
+                averageCost: 4,
+                sellingPrice: 10,
+            });
+
+            const sale: CreateSaleInput = {
+                discountAmount: 0,
+                taxAmount: 0,
+                amountPaid: 0,
+                items: [
+                    {
+                        productId: product.id,
+                        quantity: 3,
+                        unitPrice: 10,
+                        discountAmount: 0,
+                        taxAmount: 0,
+                    },
+                ],
+            };
+
+            const createdSale = await createSaleService(
+                userId,
+                store.id,
+                sale,
+            );
+
+            expect(createdSale).not.toBeInstanceOf(Error);
+
+            if (createdSale instanceof Error) {
+                throw createdSale;
+            }
+
+            const productAfter = await models.Product
+                .where({
+                    id: product.id,
+                    storeId: store.id,
+                })
+                .first();
+
+            expect(productAfter?.stockQuantity).toBe(2);
+
+            const notifications = await models.Notification
+                .where({
+                    recipientId: userId,
+                    storeId: store.id,
+                    type: "PRODUCT_LOW_STOCK",
+                })
+                .all();
+
+            expect(notifications).toHaveLength(1);
+            expect(notifications[0].payload).toEqual({
+                productId: product.id,
+                productName: product.name,
+                stockQuantity: 2,
+                minimumStock: 2,
+            });
+        },
+    );
+
+    it(
+        "rolls back a low-stock notification when the sale fails after inventory mutation",
+        { tags: ["create", "sale", "inventory", "notification", "rollback"] },
+        async () => {
+            const storeData: CreateStoreInput = {
+                name: `Notification rollback store ${crypto.randomUUID()}`,
+                description: null,
+                phone: null,
+                email: null,
+                address: null,
+                currency: "DZ",
+                timezone: "UTC",
+            };
+
+            const store = await createStoreService(userId, storeData);
+
+            if (store instanceof Error) {
+                throw store;
+            }
+
+            await activateStoreService(store.id);
+
+            const product = await models.Product.create({
+                storeId: store.id,
+                name: `Notification rollback product ${crypto.randomUUID()}`,
+                stockQuantity: 5,
+                minimumStock: 2,
+                averageCost: 4,
+                sellingPrice: 10,
+            });
+
+            const sale: CreateSaleInput = {
+                discountAmount: 0,
+                taxAmount: 0,
+                amountPaid: 100,
+                items: [
+                    {
+                        productId: product.id,
+                        quantity: 3,
+                        unitPrice: 10,
+                        discountAmount: 0,
+                        taxAmount: 0,
+                    },
+                ],
+            };
+
+            const result = await createSaleService(userId, store.id, sale);
+
+            expect(result).toBeInstanceOf(Error);
+
+            const productAfter = await models.Product
+                .where({
+                    id: product.id,
+                    storeId: store.id,
+                })
+                .first();
+
+            expect(productAfter?.stockQuantity).toBe(5);
+
+            const notifications = await models.Notification
+                .where({
+                    recipientId: userId,
+                    storeId: store.id,
+                    type: "PRODUCT_LOW_STOCK",
+                })
+                .all();
+
+            expect(notifications).toHaveLength(0);
         },
     );
 });
