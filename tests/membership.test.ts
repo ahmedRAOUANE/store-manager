@@ -78,7 +78,8 @@ describe("membership notification tests", () => {
             | "MEMBERSHIP_ACCEPTED"
             | "MEMBERSHIP_REJECTED"
             | "MEMBER_ROLE_CHANGED"
-            | "MEMBERSHIP_INVALIDATED",
+            | "MEMBERSHIP_INVALIDATED"
+            | "MEMBERSHIP_REQUESTED"
     ) => {
         return models.Notification
             .where({ storeId, recipientId, type })
@@ -238,4 +239,32 @@ describe("membership notification tests", () => {
 
         expect(notifications).toHaveLength(0);
     });
+
+    it("notifies the store owners when a membership is requested", async () => {
+    const store = await createActiveStore();
+    const userId = await getNonOwnerUserId();
+
+    const membership = await requestMembershipService(
+        store.id,
+        userId,
+    );
+
+    expect(membership).not.toBeInstanceOf(Error);
+    expect(membership).toHaveProperty("id");
+
+    const notifications = await getNotifications(
+        store.id,
+        ownerId,
+        "MEMBERSHIP_REQUESTED",
+    );
+
+    expect(notifications).toHaveLength(1);
+    expect(notifications[0].payload).toMatchObject({
+        storeName: store.name,
+    });
+    expect(
+        (notifications[0].payload as { requesterName: string })
+            .requesterName,
+    ).toBeTruthy();
+});
 });

@@ -993,6 +993,10 @@
         "PRODUCT_LOW_STOCK": {
             "title": "Low stock",
             "body": "{productName} is at {stockQuantity} (minimum {minimumStock})."
+        },
+        "MEMBERSHIP_REQUESTED": {
+            "title": "Membership request",
+            "body": "{requesterName} asked to join {storeName}."
         }
     }
 }

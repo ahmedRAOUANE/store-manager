@@ -5,6 +5,7 @@ import {
     membershipAccepted,
     membershipInvalidated,
     membershipRejected,
+    membershipRequested,
 } from "./definitions/membership";
 import { productLowStock } from "./definitions/inventory";
 
@@ -32,6 +33,7 @@ export const CORE_NOTIFICATION_REGISTRY = Object.freeze({
     [membershipRejected.type]: membershipRejected,
     [membershipInvalidated.type]: membershipInvalidated,
     [memberRoleChanged.type]: memberRoleChanged,
+    [membershipRequested.type]: membershipRequested,
     [productLowStock.type]: productLowStock,
 } satisfies Record<string, NotificationDefinition>);
 

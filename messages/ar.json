@@ -994,6 +994,10 @@
         "PRODUCT_LOW_STOCK": {
             "title": "مخزون منخفض",
             "body": "{productName} وصل إلى {stockQuantity} (الحد الأدنى {minimumStock})."
+        },
+        "MEMBERSHIP_REQUESTED": {
+            "title": "طلب انضمام",
+            "body": "{requesterName} طلب الانضمام إلى {storeName}."
         }
     }
 }

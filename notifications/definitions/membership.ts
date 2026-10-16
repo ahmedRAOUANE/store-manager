@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { StoreRole } from "@/zod/membership.schema";
-import { defineNotification, derivePresentation } from "../definition";
-import { resolveAffectedUser } from "../recipients";
+import { defineNotification, derivePresentation, requireStoreId } from "../definition";
+import { getStoreOwnersAndManagers, resolveAffectedUser } from "../recipients";
 
 /**
  * Payload shared by the three membership lifecycle events.
@@ -92,4 +92,34 @@ export const memberRoleChanged = defineNotification({
     payloadSchema: MemberRoleChangedPayloadSchema,
     presentation: derivePresentation("MEMBER_ROLE_CHANGED"),
     resolveRecipients: resolveAffectedUser,
+});
+
+/**
+ * Payload for MEMBERSHIP_REQUESTED.
+ *
+ * `requesterName` is captured at event time — the owner sees the name
+ * the user had when they asked to join, not the name they might have
+ * later.
+ */
+const MembershipRequestedPayloadSchema = z
+    .object({
+        storeName: z.string().trim().min(1).max(200),
+        requesterName: z.string().trim().min(1).max(200),
+    })
+    .strict();
+
+/**
+ * MEMBERSHIP_REQUESTED
+ *
+ * Fired when a user asks to join a store. Notifies the store's
+ * decision-makers (OWNER and MANAGER) so they can accept or reject.
+ *
+ * Recipients: active OWNER and MANAGER members of the store.
+ */
+export const membershipRequested = defineNotification({
+    type: "MEMBERSHIP_REQUESTED",
+    payloadSchema: MembershipRequestedPayloadSchema,
+    presentation: derivePresentation("MEMBERSHIP_REQUESTED"),
+    resolveRecipients: (tx, ctx) =>
+        getStoreOwnersAndManagers(tx, requireStoreId(ctx)),
 });

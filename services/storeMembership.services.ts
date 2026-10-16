@@ -10,6 +10,7 @@ import {
     membershipAccepted,
     membershipInvalidated,
     membershipRejected,
+    membershipRequested,
 } from "@/notifications/definitions/membership";
 
 const getStoreNameInTransaction = async (
@@ -103,9 +104,31 @@ export const requestMembershipService = async (
             status: "PENDING",
         };
 
-        return await models.StoreMembership
-            .where({ storeId })
-            .create(newMembershipRequest);
+        return await db.transaction(async (tx) => {
+            const created = await tx.orm.public.StoreMembership
+                .where({ storeId })
+                .create(newMembershipRequest);
+
+            // Resolve the requester's display name inside the same transaction
+            // so the event captures what was true at the moment of the request.
+            const requester = await tx.orm.public.User
+                .where({ id: userId })
+                .first();
+
+            const requesterName =
+                requester?.firstName?.trim() ||
+                requester?.email ||
+                "A user";
+
+            await publishNotificationInTransaction(
+                tx,
+                membershipRequested,
+                { storeName: store.name, requesterName },
+                { storeId },
+            );
+
+            return created;
+        });
 
     } catch (error) {
         console.log(
