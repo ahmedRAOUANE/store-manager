@@ -61,3 +61,16 @@ Feature:
             - manually discovered shortages
             - initial stock entry
         so this featire is didicated to solve this problem
+
+
+root/app
+    /admin
+    /dashboard # act as guard to redirect the user to the correct page
+    /notifications
+    /stores/[storeId]
+        /activate # this page every user related to store get redirected to when a store have an issue or suspended
+        /manager
+        /owner
+        /staff
+        layout.tsx
+    /user
