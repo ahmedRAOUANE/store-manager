@@ -4,8 +4,8 @@ import { createPurchaseItemService, deleteAllPurchaseItemsService, deletePurchas
 import { CreatePurchaseItemInputWithRequiredPurchaseId, UpdatePurchaseItemInput } from "@/zod/purchaseItem.schema";
 
 /**
-* ! this file is currently under investigation, I don't know if I should add these services or
-* the plan as usual frees it until the actual usage shows wether we need them or not
+* ! this file is currently under investigation, I don't know if I should add these services or not
+* the plan as usual freez it until the actual usage shows wether we need them or not
  */
 
 export const getAllPurchaseItems = (purchaseId: string) => getAllPurchaseItemsService(purchaseId);

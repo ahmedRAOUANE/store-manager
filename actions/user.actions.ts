@@ -4,7 +4,7 @@ import { AppError } from "@/errors/base.error";
 import { createStoreService, getDiscoveryStoresService } from "@/services/store.services";
 import { getAllMembershipsService, requestMembershipService } from "@/services/storeMembership.services";
 import { getUserService, updateUserLocaleService } from "@/services/user.services";
-import { withAuth } from "@/utils/auth";
+import { withAuth } from "@/access/wrappers";
 import { CreateStoreInput } from "@/zod/store.schema";
 import { revalidatePath } from "next/cache";
 

@@ -8,7 +8,7 @@ import {
     getSupplierByIdService,
     updateSupplierService,
 } from "@/services/supplier.services";
-import { withStoreRole } from "@/utils/auth";
+import { withStoreRole } from "@/access/wrappers";
 import { AppError } from "@/errors/base.error";
 import {
     CreateSupplierInput,

@@ -2,18 +2,18 @@
 
 import { createProductsService, deleteAllProductsService, deleteProductService, getProductsService, getSingleProductService, updateProductService } from "@/services/product.services";
 import { CreateProductInput, UpdateProductInput } from "@/zod/product.schema";
-import { withStoreRole } from "@/utils/auth";
+import { withStoreRole } from "@/access/wrappers";
 import { AppError } from "@/errors/base.error";
 
 export const getAllProducts = withStoreRole(
     ["OWNER", "MANAGER", "STAFF"],
-    async (_user, _membership, storeId: string) => 
+    async (_user, _membership, storeId: string) =>
         await getProductsService(storeId)
 );
 
 export const getProductById = withStoreRole(
     ["OWNER", "MANAGER"],
-    async (_user, _membership, storeId, id: string) => 
+    async (_user, _membership, storeId, id: string) =>
         await getSingleProductService(storeId, id)
 );
 
@@ -51,12 +51,12 @@ export const updateProduct = withStoreRole(
 
 export const deleteProduct = withStoreRole(
     ["OWNER"],
-    async (_user, _membership, storeId, id: string) => 
+    async (_user, _membership, storeId, id: string) =>
         deleteProductService(storeId, id)
 );
 
 export const deleteAllProducts = withStoreRole(
     ["OWNER"],
-    async (_user, _membership, storeId) => 
+    async (_user, _membership, storeId) =>
         await deleteAllProductsService(storeId)
 );

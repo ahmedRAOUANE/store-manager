@@ -1,6 +1,6 @@
 "use server";
 
-import { withAuth } from "@/utils/auth";
+import { withAuth } from "@/access/wrappers";
 import {
     getMyNotificationsService,
     getMyUnreadNotificationCountService,

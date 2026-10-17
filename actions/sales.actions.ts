@@ -2,24 +2,23 @@
 
 import { AppError } from "@/errors/base.error";
 import { createSaleService, getSaleByIdService, getSalesService, getSalesWithIdService, updateSaleService } from "@/services/sale.services";
-import { withStoreRole } from "@/utils/auth";
+import { withStoreRole } from "@/access/wrappers";
 import { CreateSaleInput, UpdateSaleInput } from "@/zod/sale.schema";
 
 export const getAllSales = withStoreRole(
     ["OWNER", "MANAGER"],
-    async (_user, _membership, storeId) => 
+    async (_user, _membership, storeId) =>
         await getSalesService(storeId)
-    
 );
 
 export const getSalesWithUserId = withStoreRole(
     ["STAFF"],
     async (user, _membership, storeId) => await getSalesWithIdService(storeId, user.id)
-) 
+)
 
 export const getSaleById = withStoreRole(
     ["OWNER", "MANAGER", "STAFF"],
-    async (_user, _membership, storeId, saleId: string) => 
+    async (_user, _membership, storeId, saleId: string) =>
         await getSaleByIdService(storeId, saleId)
 );
 
@@ -55,11 +54,11 @@ export const createSale = withStoreRole(
 
 export const updateSale = withStoreRole(
     ["OWNER", "MANAGER", "STAFF"],
-    async (_user, _membership, storeId, saleId: string, saleData: UpdateSaleInput) => 
+    async (_user, _membership, storeId, saleId: string, saleData: UpdateSaleInput) =>
         await updateSaleService(
             storeId,
             saleId,
             saleData
         )
-    
+
 );

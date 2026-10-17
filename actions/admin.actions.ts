@@ -2,7 +2,7 @@ import { AppError } from "@/errors/base.error";
 import { getAdminDashboardService } from "@/services/adminDashboard.services";
 import { activateStoreService, getAllStoresService, getStoreService, suspendStoreService } from "@/services/store.services";
 import { getAllUsersService, getUserService } from "@/services/user.services";
-import { withGlobalRole } from "@/utils/auth";
+import { withGlobalRole } from "@/access/wrappers";
 import { revalidatePath } from "next/cache";
 
 
@@ -61,9 +61,9 @@ export const activateStore = withGlobalRole(
         const activatedStore = await activateStoreService(storeId);
         revalidatePath("/stores", "layout")
         if (activatedStore instanceof AppError) {
-            return {ok: false}
+            return { ok: false }
         } else {
-            return {ok: true}
+            return { ok: true }
         }
     }
 )
@@ -78,7 +78,7 @@ export const suspendStore = withGlobalRole(
                 ok: false,
             }
         } else {
-            return {ok: true}
+            return { ok: true }
         }
     }
 )

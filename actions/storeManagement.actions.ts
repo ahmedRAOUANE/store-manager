@@ -4,7 +4,7 @@ import { AppError } from "@/errors/base.error";
 import { suspendStoreService, getStoreService, updateStoreService } from "@/services/store.services";
 import { getManagementDashboardService, getStaffDashboardService } from "@/services/storeDashboard.services";
 import { acceptMembershipService, getAllStoreMembersService, invalidStoreMemberService, promoteStoreMemberService, rejectMembershipService } from "@/services/storeMembership.services";
-import { withStoreRole } from "@/utils/auth";
+import { withStoreRole } from "@/access/wrappers";
 import { UpdateStoreInput } from "@/zod/store.schema";
 import { revalidatePath } from "next/cache";
 
@@ -130,4 +130,3 @@ export const getCurrentMembership = withStoreRole(
         };
     }
 );
-

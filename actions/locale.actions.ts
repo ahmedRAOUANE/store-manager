@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/utils/auth";
+import { getCurrentUser } from "@/access/context";
 import { AppError } from "@/errors/base.error";
 import {
     isLocale,
@@ -18,7 +18,7 @@ export async function setLocale(next: Locale) {
 
     if (user && !(user instanceof AppError)) {
         // Existing path — user service → Prisma. Unchanged.
-        await updateUserLocaleService(user.id, {locale: next});
+        await updateUserLocaleService(user.id, { locale: next });
     } else {
         // New path — anonymous user: persist via cookie.
         const cookieStore = await cookies();

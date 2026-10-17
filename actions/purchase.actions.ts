@@ -8,7 +8,7 @@ import {
     getPurchaseByIdService,
     updatePurchaseService,
 } from "@/services/purchase.services";
-import { withStoreRole } from "@/utils/auth";
+import { withStoreRole } from "@/access/wrappers";
 import { AppError } from "@/errors/base.error";
 import { CreatePurchaseInput, UpdatePurchaseInput } from "@/zod/purchase.schema";
 import { CreatePurchaseItemInput } from "@/zod/purchaseItem.schema";
