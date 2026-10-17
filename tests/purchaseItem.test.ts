@@ -1,10 +1,8 @@
-import { AppError } from "@/errors/base.error";
+import { AppError } from "../errors/base.error";
 import { describe, it } from "vitest";
-import { getCurrentStore } from "@/actions/storeManagement.actions";
-import { createPurchaseItem, deleteAllPurchaseItems, deletePurchaseItem, getAllPurchaseItems, getPurchaseItemById, updatePurchaseItem } from "@/actions/purchaseItem.actions";
-import { CreatePurchaseItemInputWithRequiredPurchaseId, UpdatePurchaseItemInput } from "@/zod/purchaseItem.schema";
-
-// import "temporal-polyfill/full/global";
+import { getCurrentStore } from "../actions/storeManagement.actions";
+import { createPurchaseItem, deleteAllPurchaseItems, deletePurchaseItem, getAllPurchaseItems, getPurchaseItemById, updatePurchaseItem } from "../actions/purchaseItem.actions";
+import { CreatePurchaseItemInputWithRequiredPurchaseId, UpdatePurchaseItemInput } from "../zod/purchaseItem.schema";
 
 //TODO: Do not forget to change the id's, 
 
@@ -31,6 +29,7 @@ describe("supplier tests", () => {
             discountAmount: 12.5,
             taxAmount: 12.5,
             totalAmount: 10,
+            lineSubtotal: 10,
 
             purchaseId: "974f5307-7ca5-45ed-ba01-31e28e9c639f", //! this must be UUID
             productId: "0e0fb388-7879-4171-8716-3e9cb0577d8f", //! this must be UUID
@@ -53,6 +52,7 @@ describe("supplier tests", () => {
             quantity: 12.5,
             unitCost: 12.5,
             batchNumber: "123.4",
+            lineSubtotal: 20,
         } 
 
         const updatedPurchaseItem = await updatePurchaseItem(PurchaseItem);

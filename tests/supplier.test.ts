@@ -1,10 +1,9 @@
-import { createSupplier, deleteAllSuppliers, deleteSupplier, getAllSuppliers, getSupplierById, updateSupplier } from "@/actions/supplier.actions";
-import { AppError } from "@/errors/base.error";
+import { createSupplier, deleteAllSuppliers, deleteSupplier, getAllSuppliers, getSupplierById, updateSupplier } from "../actions/supplier.actions";
+import { AppError } from "../errors/base.error";
 import { describe, it } from "vitest";
 
-// import "temporal-polyfill/full/global";
-import { CreateSupplierInput, UpdateSupplierInput } from "@/zod/supplier.schema";
-import { getCurrentStore } from "@/actions/storeManagement.actions";
+import { CreateSupplierInput, UpdateSupplierInput } from "../zod/supplier.schema";
+import { getCurrentStore } from "../actions/storeManagement.actions";
 
 describe("supplier tests", () => {
     const storeId = "8dacefdb-2c06-41e8-a845-a6a9c2cba418"; //! this must be changed to an actual store id > run  `pnpm test:run --tags-filter="get and store"` to finc it 

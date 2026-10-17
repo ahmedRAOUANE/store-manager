@@ -1,6 +1,6 @@
 import { getRequestConfig } from "next-intl/server";
 import { cookies } from "next/headers";
-import { getCurrentUser } from "@/utils/auth";
+import { getCurrentUser } from "@/access/context";
 import { AppError } from "@/errors/base.error";
 import {
     defaultLocale,

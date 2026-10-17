@@ -1,7 +1,7 @@
 import { ErrorState } from "@/components/UI/state";
 import { LanguageSelector } from "@/components/user/language-selectore";
 import { AppError } from "@/errors/base.error";
-import { getCurrentUser } from "@/utils/auth";
+import { getCurrentUser } from "@/access/context";
 import { cn } from "@/utils/jsx-classes";
 import {
     Bell,
@@ -20,7 +20,7 @@ export default async function ProfilePage() {
     const t = await getTranslations("profile");
     const statusT = await getTranslations("status");
 
-    if(user instanceof AppError) {
+    if (user instanceof AppError) {
         return <ErrorState title={t("loadError")} />
     }
 

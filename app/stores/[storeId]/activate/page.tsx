@@ -1,5 +1,5 @@
 import { AppError } from "@/errors/base.error";
-import { getCurrentStoreContext } from "@/utils/auth";
+import { getCurrentStoreContext } from "@/access/context";
 import { isUuid } from "@/utils/uuid";
 import { TriangleAlert } from "lucide-react";
 import { getTranslations } from "next-intl/server";

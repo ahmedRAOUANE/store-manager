@@ -41,7 +41,7 @@ export function LanguageSelector({
             <div className={cn("relative inline-flex items-center", className)}>
                 <Globe
                     aria-hidden="true"
-                    className="pointer-events-none absolute isnet-s-2.5 size-3.5 text-on-surface-variant"
+                    className="pointer-events-none absolute inset-s-2.5 size-3.5 text-on-surface-variant"
                 />
                 <select
                     value={locale}

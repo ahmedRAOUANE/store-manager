@@ -6,7 +6,7 @@ import { buildUserNavItems } from "@/components/layout/nav-items";
 import { TopBar } from "@/components/layout/top-bar";
 import { UserMenu } from "@/components/layout/user-menu";
 import { AppError } from "@/errors/base.error";
-import { getCurrentUser } from "@/utils/auth";
+import { getCurrentUser } from "@/access/context";
 import { isUuid } from "@/utils/uuid";
 import { Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";

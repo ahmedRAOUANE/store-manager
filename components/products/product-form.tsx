@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -189,18 +189,18 @@ export function ProductForm(props: ProductFormProps) {
      * We don't automatically clear errors here because errors should remain
      * visible until the user successfully submits the form again.
      */
-    useEffect(() => {
-        if (!state.success) {
-            return;
-        }
+    // useEffect(() => {
+    //     if (!state.success) {
+    //         return;
+    //     }
 
-        const timer = window.setTimeout(() => {
-            // Triggering a new form action just to clear the message would be
-            // unnecessary. The notification is intentionally transient.
-        }, 4000);
+    //     const timer = window.setTimeout(() => {
+    //         // Triggering a new form action just to clear the message would be
+    //         // unnecessary. The notification is intentionally transient.
+    //     }, 4000);
 
-        return () => window.clearTimeout(timer);
-    }, [state.success]);
+    //     return () => window.clearTimeout(timer);
+    // }, [state.success]);
 
     return (
         <>

@@ -1,10 +1,10 @@
 import { describe, it } from "vitest";
 
 // // // // // // import "temporal-polyfill/full/global";
-import { createPurchase, deleteAllPurchases, deletePurchase, getPurchaseById, updatePurchase } from "@/actions/purchase.actions";
-import { CreatePurchaseInput, UpdatePurchaseInput } from "@/zod/purchase.schema";
-import { CreatePurchaseItemInput } from "@/zod/purchaseItem.schema";
-import { getAllPurchasesService } from "@/services/purchase.services";
+import { createPurchase, deleteAllPurchases, deletePurchase, getPurchaseById, updatePurchase } from "../actions/purchase.actions";
+import { CreatePurchaseInput, UpdatePurchaseInput } from "../zod/purchase.schema";
+import { CreatePurchaseItemInput } from "../zod/purchaseItem.schema";
+import { getAllPurchasesService } from "../services/purchase.services";
 
 // the server actions now are protected
 // these tests are dedicated to test the services only

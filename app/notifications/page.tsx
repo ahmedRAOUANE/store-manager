@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/utils/auth";
+import { getCurrentUser } from "@/access/context";
 import { AppError } from "@/errors/base.error";
 import { getMyNotifications } from "@/actions/notification.actions";
 import { NotificationList } from "@/components/notifications/notification-list";
@@ -9,7 +9,7 @@ import { MarkAllReadButton } from "@/components/notifications/mark-all-read-butt
 export default async function NotificationsPage() {
 
     const user = await getCurrentUser();
-    if (!user || user instanceof AppError) {
+    if (user instanceof AppError) {
         redirect("/");
     }
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { redirect } from "next/navigation";
-import { getCurrentStoreContext } from "@/utils/auth";
+import { getCurrentStoreContext } from "@/access/context";
 
 import { getManagementDashboard } from "@/actions/storeManagement.actions";
 import { getAllSuppliers } from "@/actions/supplier.actions";

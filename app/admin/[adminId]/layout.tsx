@@ -8,7 +8,7 @@ import { buildAdminNavItems } from "@/components/layout/nav-items";
 import { TopBar } from "@/components/layout/top-bar";
 import { UserMenu } from "@/components/layout/user-menu";
 import { AppError } from "@/errors/base.error";
-import { getCurrentUser } from "@/utils/auth";
+import { getCurrentUser } from "@/access/context";
 import { isUuid } from "@/utils/uuid";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { getMyUnreadNotificationCount } from "@/actions/notification.actions";

@@ -1,10 +1,9 @@
-
 /*
-    this route is not an aqual page
+    this route is not an actual page
     it is working as a redirection afte kinde auth redirects the user to this page
-*/ 
+*/
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/utils/auth";
+import { getCurrentUser } from "@/access/context";
 import { AppError } from "@/errors/base.error";
 
 export default async function DashboardPage() {

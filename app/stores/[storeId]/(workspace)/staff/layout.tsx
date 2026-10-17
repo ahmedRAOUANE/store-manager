@@ -6,7 +6,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { UserMenu } from "@/components/layout/user-menu";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { AppError } from "@/errors/base.error";
-import { getCurrentStoreContext } from "@/utils/auth";
+import { getCurrentStoreContext } from "@/access/context";
 import { Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";

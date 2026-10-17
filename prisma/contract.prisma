@@ -36,6 +36,10 @@ enum MembershipStatus {
 // USER
 // ============================================================
 
+/*
+* we are planning in next versions to make the email field unique and required
+* and adding an extra auto generated unique public id field
+*/
 model User {
   id Uuid @id @default(uuid())
 
@@ -43,7 +47,7 @@ model User {
 
   locale String @default("en")
 
-  email     String?
+  email     String? 
   firstName String?
   lastName  String?
   imageUrl  String?
