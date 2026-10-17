@@ -1,3 +1,11 @@
+/**
+ * ! the boundary
+ * these functions are only guards, their only job is recognize the user and report it
+ * to what ever function calls them
+ * 
+ * they do not redirect, or work with routing
+ */
+
 import { AuthenticationError, AuthorizationError } from "@/errors/auth.error";
 import { AppError } from "@/errors/base.error";
 import { getActiveMembershipService } from "@/services/storeMembership.services";

@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { redirect } from "next/navigation";
+import { getCurrentStoreContext } from "@/utils/auth";
+
 import { getManagementDashboard } from "@/actions/storeManagement.actions";
 import { getAllSuppliers } from "@/actions/supplier.actions";
 import { PageHeader } from "@/components/UI/page-header";
@@ -40,6 +43,16 @@ export default async function ManagerDashboardPage({
 }: PageProps<"/stores/[storeId]/manager/dashboard">) {
     const { storeId } = await params;
     const base = `/stores/${storeId}/manager`;
+
+    const ctx = await getCurrentStoreContext(storeId);
+
+    if (ctx instanceof AppError) {
+        redirect("/dashboard");
+    }
+
+    if (ctx.membership.role !== "MANAGER") {
+        redirect("/dashboard");
+    }
 
     const t = await getTranslations("dashboard");
     const tHints = await getTranslations("dashboard.hints");
