@@ -40,7 +40,6 @@ export const GetPurchaseSchema = z.object({
 export type GetPurchase = z.infer<typeof GetPurchaseSchema>;
 
 export const CreatePurchaseSchema = z.object({
-    storeId: UuidSchema,
     supplierId: UuidSchema,
 
     discountAmount: z.number().default(0),

@@ -29,11 +29,11 @@ export const createPurchase = withStoreRole(
     async (
         _user,
         _membership,
-        _storeId,
+        storeId,
         purchase: CreatePurchaseInput,
         items: CreatePurchaseItemInput[] = [],
     ) => {
-        const result = await createPurchaseService(purchase, items);
+        const result = await createPurchaseService(storeId, purchase, items);
 
         if (result instanceof AppError) {
             return { ok: false as const, message: result.message };

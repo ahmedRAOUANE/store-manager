@@ -176,7 +176,9 @@ describe("sales tests", () => {
             }
 
             const activationResult = await activateStoreService(store.id);
-            expect(activationResult).toBe(true);
+            // `activateStoreService` now returns the updated store row
+            // (not `true`). See services/store.services.ts.
+            expect(activationResult).not.toBeInstanceOf(AppError);
 
             // Stock goes from 5 to 2, reaching the minimum-stock threshold.
             const product = await models.Product.create({

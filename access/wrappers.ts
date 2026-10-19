@@ -3,13 +3,14 @@ import { AppError } from "@/errors/base.error";
 import { getActiveMembershipService } from "@/services/storeMembership.services";
 
 import { getCurrentUser } from "./context";
-import { hasGlobalRole, hasStoreRole } from "./predicates";
+import { canOperateOnStore, hasGlobalRole, hasStoreRole } from "./predicates";
 import type {
     AuthenticatedUser,
     GlobalRole,
     StoreMembership,
     StoreRole,
 } from "./types";
+import { getStoreService } from "@/services/store.services";
 
 type AuthenticatedHandler<TArgs extends unknown[], TResult> = (
     user: AuthenticatedUser,
@@ -62,23 +63,6 @@ export const withGlobalRole = <TArgs extends unknown[], TResult>(
     });
 };
 
-/* ========================================================================== */
-/*  Store wrappers                                                            */
-/* ========================================================================== */
-
-/**
- * Require an active membership in the store identified by the first
- * argument.
- *
- * The first argument is consumed as the store ID and is also forwarded
- * to the handler. This is what makes `withStoreAccess` and its
- * subclasses compatible with the existing call-site signature:
- *
- *   withStoreRole(["OWNER"], async (_user, _membership, storeId) => ...)
- *
- * Throws `AuthorizationError` when the user has no active membership
- * in the store.
- */
 export const withStoreAccess = <
     TArgs extends [string, ...unknown[]],
     TResult,
@@ -102,6 +86,31 @@ export const withStoreAccess = <
         }
 
         if (!membership) {
+            throw new AuthorizationError();
+        }
+
+        // Store-status enforcement.
+        //
+        // A suspended or pending store must reject business mutations.
+        // The layout also redirects away from non-active stores, but
+        // Server Actions can be invoked directly, so the check must
+        // also live here at the action-authorization boundary.
+        //
+        // Admins bypass this check so platform-level recovery flows
+        // (activation, data repair) continue to work. See
+        // `canOperateOnStore` for the full policy.
+        //
+        // Note: this blocks read actions too, not just mutations. In
+        // this app that is acceptable because the workspace layout
+        // redirects users away from suspended stores entirely — no UI
+        // exists to invoke reads while suspended. If self-service
+        // reads are ever needed during suspension, split this wrapper
+        // into read and write variants.
+        const store = await getStoreService(storeId);
+        if (store instanceof AppError) {
+            throw store;
+        }
+        if (!canOperateOnStore(store.status, user.globalRole)) {
             throw new AuthorizationError();
         }
 

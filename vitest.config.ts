@@ -43,6 +43,7 @@ export default defineConfig({
             { name: "inventory" },
             { name: "rollback" },
             { name: "notification" },
+            { name: "concurrency" },
 
         ]
     }

@@ -37,13 +37,13 @@ export const getSupplierByIdService = async (id: string, storeId: string) => {
         const dbSupplier = await models.Supplier.first({ id, storeId });
         const parsedSupplier = GetSupplierSchema.safeParse(dbSupplier);
         if (!parsedSupplier.success) {
-            console.log("services/supplier.services.ts > getSuppliersByIdService > ", parsedSupplier.error);
+            console.log("services/supplier.services.ts > getSupplierByIdService > ", parsedSupplier.error);
             return new ValidationError("the recived data from the db is invalid");
         }
 
         return parsedSupplier.data;
     } catch (error) {
-        console.log("services/supplier.services.ts > getSuppliersByIdService > ", error);
+        console.log("services/supplier.services.ts > getSupplierByIdService > ", error);
         throw new DatabaseError("unable to get the specified supplier from the db", error as Record<string, unknown>)
     }
 }
@@ -101,7 +101,7 @@ export const deleteAllSuppliersService = async (storeId: string) => {
     }
 
     try {
-        return await models.Supplier.where({ storeId }).delete();
+        return await models.Supplier.where({ storeId }).deleteAll();
     } catch (error) {
         console.log("services/supplier.services.ts > deleteSupplierService > ", error);
         throw new DatabaseError("unable to delete supplier from the db", error as Record<string, unknown>)

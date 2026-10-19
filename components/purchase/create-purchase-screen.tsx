@@ -784,7 +784,6 @@ export function CreatePurchaseScreen({
     FormData
   >(async () => {
     const input: CreatePurchaseInput = {
-      storeId,
       supplierId,
       discountAmount: totals.discount,
       taxAmount: totals.tax,

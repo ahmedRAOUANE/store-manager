@@ -136,11 +136,32 @@ export const activateStoreService = async (storeId: string) => {
                 return new AppError("store is already active");
             }
 
-            await tx.orm.public.Store
-                .where({ id: storeId })
+            /*
+             * Conditional update — the WHERE clause includes the status
+             * we observed at read time. Under concurrency:
+             *
+             *   T1: reads PENDING → updates PENDING→ACTIVE (holds row lock)
+             *   T2: reads PENDING → attempts PENDING→ACTIVE, blocks on lock
+             *   T1: commits
+             *   T2: re-evaluates WHERE against the new state (ACTIVE).
+             *       No match. 0 rows affected. Bails out without
+             *       publishing a duplicate notification.
+             *
+             * `.update()` returns `null` on 0 rows affected (verified
+             * against `markMyNotificationReadService`'s `updated !== null`
+             * pattern elsewhere in the codebase).
+             */
+            const activatedStore = await tx.orm.public.Store
+                .where({ id: storeId, status: store.status })
                 .update({
                     status: "ACTIVE",
                 });
+
+            if (!activatedStore) {
+                // Lost the race — a concurrent activation won.
+                // No notification should be published.
+                return new AppError("store is already active");
+            }
 
             await tx.orm.public.StoreMembership
                 .where({
@@ -159,7 +180,7 @@ export const activateStoreService = async (storeId: string) => {
                 { storeId },
             );
 
-            return true;
+            return activatedStore;
         });
     } catch (error) {
         console.log(
@@ -217,18 +238,30 @@ export const suspendStoreService = async (storeId: string) => {
                 return new AppError("the store is not available");
             }
 
-            const wasAlreadySuspended =
-                store.status === "SUSPENDED";
-
-            if (wasAlreadySuspended) {
+            if (store.status === "SUSPENDED") {
                 return new AppError("the store is already suspended");
             }
 
-            const updatedStore = await tx.orm.public.Store
-                .where({ id: storeId })
+            if (store.status === "PENDING") {
+                return new AppError("this store is pending for activation, can not be suspended");
+            }
+
+            /*
+             * Conditional update — same pattern as activation.
+             * Only flip status if it still matches the observed value.
+             * Prevents duplicate suspension notifications when two
+             * requests race.
+             */
+            const suspendedStore = await tx.orm.public.Store
+                .where({ id: storeId, status: store.status })
                 .update({
                     status: "SUSPENDED",
                 });
+
+            if (!suspendedStore) {
+                // Lost the race — a concurrent suspension won.
+                return new AppError("the store is already suspended");
+            }
 
             await publishNotificationInTransaction(
                 tx,
@@ -237,7 +270,7 @@ export const suspendStoreService = async (storeId: string) => {
                 { storeId },
             );
 
-            return updatedStore;
+            return suspendedStore;
         });
     } catch (error) {
         console.log(

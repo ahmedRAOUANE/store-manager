@@ -58,3 +58,26 @@ export const isSelf = (
 ): boolean => {
     return user.id === targetUserId;
 };
+
+/**
+ * Can this user operate on a store in this status?
+ *
+ * `ADMIN` global role bypasses the status check so platform admins
+ * can still perform administrative recovery on suspended stores.
+ *
+ * For non-admin users, only `ACTIVE` stores permit operation. This is
+ * deliberately stricter than "only block SUSPENDED" because `PENDING`
+ * stores are in the middle of activation and should not accept
+ * business mutations before they are ready.
+ *
+ * See `withStoreAccess` for the enforcement point.
+ */
+export const canOperateOnStore = (
+    storeStatus: "PENDING" | "ACTIVE" | "SUSPENDED",
+    globalRole: GlobalRole,
+): boolean => {
+    if (globalRole === "ADMIN") {
+        return true;
+    }
+    return storeStatus === "ACTIVE";
+};

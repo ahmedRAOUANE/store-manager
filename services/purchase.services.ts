@@ -58,7 +58,11 @@ export const getPurchaseByIdService = async (storeId: string, id: string) => {
     }
 }
 
-export const createPurchaseService = async (purchaseData: CreatePurchaseInput, purchaseItems: CreatePurchaseItemInput[] = []) => {
+export const createPurchaseService = async (storeId: string, purchaseData: CreatePurchaseInput, purchaseItems: CreatePurchaseItemInput[] = []) => {
+    if (!isUuid(storeId)) {
+        return new ValidationError("invalid store Id provided");
+    }
+
     const parsedPurchase = CreatePurchaseSchema.safeParse(purchaseData);
     if (!parsedPurchase.success) {
         console.log("services/purchase.services.ts > createPurchaseByIdService > ", parsedPurchase.error);
@@ -80,6 +84,7 @@ export const createPurchaseService = async (purchaseData: CreatePurchaseInput, p
                 subtotal,
                 totalAmount,
                 amountDue,
+                storeId,
                 items: (items) => items.create(calculatedPurchaseItems)
             });
 
@@ -87,7 +92,7 @@ export const createPurchaseService = async (purchaseData: CreatePurchaseInput, p
             for (const item of calculatedPurchaseItems) {
                 const updatedProduct =
                     await updateProductInventoryFromPurchaseItems(
-                        parsedPurchase.data,
+                        storeId,
                         item,
                         tx
                     );

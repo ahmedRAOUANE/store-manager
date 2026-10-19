@@ -6,7 +6,8 @@ INSTRUCTIONS:
 - use Feature for new functionalities, Test for testing tasks, Issue for bugs or problems.
 
 DONE:
-- Feature: brief description
+- Feature: UI + translations
+- Feature: notifications
 
 ONGOING:
 - update the UI for the new muti-lang support
@@ -17,12 +18,12 @@ DONE/FIXED:
 - after the store creation is implemented make sure to redirect the user to activate page with search params that desides witch message will be shown
 - in store/[storeId]/manager/members a manager can promot/inpromot his own account 
     - this is a security issue, a user should not be able to change his own role
-- 
-
-TODO:
 - we are working now on adding translations on the store side
 -  - we finished the staff (layout, dashboard, sales, and sales/new)
 - next we should move on to stores/activate first and then finish the staff pages, and move on to the others
+- 
+
+TODO:
 
 WARNING:
 - the migration `20260911T0924_add_sales_and_sale_item` failed because the original store.currency DEFAULT value was 'USD'
@@ -60,17 +61,17 @@ Feature:
             - stock-count corrections
             - manually discovered shortages
             - initial stock entry
-        so this featire is didicated to solve this problem
+        so this feature is didicated to solve this problem
 
 
-root/app
-    /admin
-    /dashboard # act as guard to redirect the user to the correct page
-    /notifications
-    /stores/[storeId]
-        /activate # this page every user related to store get redirected to when a store have an issue or suspended
-        /manager
-        /owner
-        /staff
-        layout.tsx
-    /user
+the branches you have
+    - main
+    - feature/
+        - notifications
+
+    - security/
+        auth
+
+    - fix/
+        - general # every fix branch should extend from this branch, and merged to this first, when all the fixes are applied, does not cause conflicts/errors/issues then this get merged to main
+        - db-test 

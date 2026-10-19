@@ -61,7 +61,7 @@ export const mutateProductInventoryInTransaction = async ({
         WHERE
             "id" = ${param(productId, { codecId: "pg/uuid@1" })}
             AND "storeId" = ${param(storeId, { codecId: "pg/uuid@1" })}
-        FOR UPDATE
+        FOR NO KEY UPDATE
     `
         .returnsRow({
             id: {

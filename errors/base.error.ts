@@ -12,6 +12,6 @@ export class AppError extends Error {
         this.status = status;
         this.code = code;
 
-        Object.setPrototypeOf(this, AppError.prototype);
+        // Object.setPrototypeOf(this, AppError.prototype);
     }
 }
