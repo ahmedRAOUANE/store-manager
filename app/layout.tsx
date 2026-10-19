@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: LayoutProps<"/">) {
+  
   const locale = await getLocale();
   const dir = localeDirection[locale as keyof typeof localeDirection];
 

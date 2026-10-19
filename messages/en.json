@@ -114,6 +114,11 @@
         "searchPlaceholder": "Search..."
     },
     "errors": {
+        "pageTitle": "Something went wrong",
+        "pageDescription": "We couldn't load this page. Please try again.",
+        "tryAgain": "Try again",
+        "goHome": "Go home",
+        "digest": "Reference: {digest}",
         "generic": "Something went wrong",
         "failedToLoad": "Failed to load data",
         "failedToSave": "Failed to save changes",
@@ -1017,5 +1022,16 @@
         "errors": {
             "loadFailed": "Couldn't load users"
         }
+    },
+    "authError": {
+        "title": "Sign-in problem",
+        "description": "We couldn't complete your sign-in. This usually happens when your session expires or the sign-in takes too long.",
+        "reasons": {
+            "callbackFailed": "The sign-in could not be verified.",
+            "unexpected": "An unexpected error occurred during sign-in."
+        },
+        "tryAgain": "Try signing in again",
+        "goHome": "Go to home page",
+        "help": "If the problem continues, contact support."
     }
 }
