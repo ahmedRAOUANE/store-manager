@@ -998,5 +998,24 @@
             "title": "Membership request",
             "body": "{requesterName} asked to join {storeName}."
         }
+    },
+    "usersPage": {
+        "title": "Users",
+        "summary": "{total, plural, =0 {No users} =1 {# user} other {# users}}",
+        "summaryWithInvalid": "{total, plural, =0 {No users} =1 {# user} other {# users}} · {invalid} missing email",
+        "columns": {
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "joined": "Joined"
+        },
+        "missingEmail": "Missing email",
+        "empty": {
+            "title": "No users",
+            "description": "No users have registered on the platform yet."
+        },
+        "errors": {
+            "loadFailed": "Couldn't load users"
+        }
     }
 }

@@ -1,3 +1,4 @@
+import { toAdminUserRow, type AdminUserRow } from "@/zod/adminUser.schema";
 import { DatabaseError } from "@/errors/db.error";
 import { ValidationError } from "@/errors/validation.error";
 import { models } from "@/prisma/db";
@@ -58,33 +59,43 @@ export const syncKindeUserService = async (kindeUser: KindeUser) => {
 
 
 // admin only
-export const getAllUsersService = async () => {
+
+// replace the existing getAllUsersService with this:
+export const getAllUsersService = async (): Promise<
+    AdminUserRow[] | ValidationError
+> => {
     try {
-        const dbUser = await models.User.all();
+        const dbUsers = await models.User.all();
 
-        const parsedUsers = GetUserSchema.array().safeParse(dbUser);
-
-        if (!parsedUsers.success) {
-            console.log(
-                "services/user.services.ts > getAllUsersService > ",
-                parsedUsers.error
-            );
-
-            return new ValidationError(
-                "invalid user recieved from the db"
-            );
-        }
-
-        return parsedUsers.data;
+        /*
+         * Per-row validation.
+         *
+         * Unlike most services in the codebase, this does not use
+         * `GetUserSchema.array().safeParse(...)` because a single bad
+         * row would reject the whole array. The admin users page must
+         * render every user (valid or not) — silently hiding invalid
+         * rows would defeat the purpose of the admin view.
+         *
+         * `toAdminUserRow` sets `isValid` and `issues` per row. The
+         * page renders invalid rows with a warning badge and lets the
+         * admin decide what to do (e.g. delete, backfill, or wait for
+         * the upcoming DB cleanup).
+         *
+         * No `ValidationError` is returned today — the per-row mapper
+         * cannot fail the batch. The `| ValidationError` return type
+         * is preserved for consistency with the other services and to
+         * leave room for a future "reject on empty result" rule.
+         */
+        return dbUsers.map(toAdminUserRow);
     } catch (error) {
         console.log(
             "services/user.services.ts > getAllUsersService > ",
-            error
+            error,
         );
 
         throw new DatabaseError(
             "unable to get all users from the db",
-            error as Record<string, unknown>
+            error as Record<string, unknown>,
         );
     }
 };
