@@ -1,4 +1,3 @@
-
 import {
     acceptMembershipService,
     invalidStoreMemberService,
@@ -13,6 +12,7 @@ import {
 import { models } from "../prisma/db";
 import { describe, expect, it } from "vitest";
 import type { CreateStoreInput } from "../zod/store.schema";
+import { AppError } from "../errors/base.error";
 
 describe("membership notification tests", () => {
     const ownerId = "52b45375-ce27-4859-8839-d991d3634330";
@@ -35,7 +35,9 @@ describe("membership notification tests", () => {
         }
 
         const activation = await activateStoreService(store.id);
-        expect(activation).toBe(true);
+        // `activateStoreService` now returns the updated store row,
+        // not `true`. See services/store.services.ts.
+        expect(activation).not.toBeInstanceOf(AppError);
 
         return store;
     };
@@ -79,7 +81,7 @@ describe("membership notification tests", () => {
             | "MEMBERSHIP_REJECTED"
             | "MEMBER_ROLE_CHANGED"
             | "MEMBERSHIP_INVALIDATED"
-            | "MEMBERSHIP_REQUESTED"
+            | "MEMBERSHIP_REQUESTED",
     ) => {
         return models.Notification
             .where({ storeId, recipientId, type })
@@ -241,30 +243,30 @@ describe("membership notification tests", () => {
     });
 
     it("notifies the store owners when a membership is requested", async () => {
-    const store = await createActiveStore();
-    const userId = await getNonOwnerUserId();
+        const store = await createActiveStore();
+        const userId = await getNonOwnerUserId();
 
-    const membership = await requestMembershipService(
-        store.id,
-        userId,
-    );
+        const membership = await requestMembershipService(
+            store.id,
+            userId,
+        );
 
-    expect(membership).not.toBeInstanceOf(Error);
-    expect(membership).toHaveProperty("id");
+        expect(membership).not.toBeInstanceOf(Error);
+        expect(membership).toHaveProperty("id");
 
-    const notifications = await getNotifications(
-        store.id,
-        ownerId,
-        "MEMBERSHIP_REQUESTED",
-    );
+        const notifications = await getNotifications(
+            store.id,
+            ownerId,
+            "MEMBERSHIP_REQUESTED",
+        );
 
-    expect(notifications).toHaveLength(1);
-    expect(notifications[0].payload).toMatchObject({
-        storeName: store.name,
+        expect(notifications).toHaveLength(1);
+        expect(notifications[0].payload).toMatchObject({
+            storeName: store.name,
+        });
+        expect(
+            (notifications[0].payload as { requesterName: string })
+                .requesterName,
+        ).toBeTruthy();
     });
-    expect(
-        (notifications[0].payload as { requesterName: string })
-            .requesterName,
-    ).toBeTruthy();
-});
 });
