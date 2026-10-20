@@ -23,6 +23,7 @@ export interface NotificationPresentation {
 export interface NotificationPublishContext {
     readonly storeId: string | null;
     readonly affectedUserId?: string;
+    readonly actorId?: string;
 }
 
 /**

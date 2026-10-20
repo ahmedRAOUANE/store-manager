@@ -33,9 +33,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'605402d4e74a1207f0b0bb9c27205db28e2906a6e8f743692d854638505a3104'>;
+  StorageHashBase<'6eebf89a2f6c64f53e5744e58b8c0ce02377716ce22f52afc87b67bd8032adbc'>;
 export type ExecutionHash =
-  ExecutionHashBase<'92ebe982489679d9201df9aed8c0085cd602b9f3c7dfb859d2ebc7555aed3dbf'>;
+  ExecutionHashBase<'10ca09b14b39512af19868d128cb3fbc3a778e4476143bbd773b1b930959a409'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -241,6 +241,51 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
+    readonly Extension: {
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly authorName: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
+    readonly ExtensionData: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly installId: CodecTypes['pg/uuid@1']['output'];
+      readonly tableName: CodecTypes['pg/text@1']['output'];
+      readonly data: CodecTypes['pg/json@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
+    readonly ExtensionInstall: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly extensionId: CodecTypes['pg/text@1']['output'];
+      readonly versionId: CodecTypes['pg/uuid@1']['output'];
+      readonly scope: CodecTypes['pg/text@1']['output'];
+      readonly scopeId: CodecTypes['pg/uuid@1']['output'];
+      readonly installedById: CodecTypes['pg/uuid@1']['output'];
+      readonly installedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly status: CodecTypes['pg/text@1']['output'];
+      readonly errorReason: CodecTypes['pg/text@1']['output'] | null;
+      readonly quotaMaxRows: CodecTypes['pg/int4@1']['output'];
+      readonly quotaMaxBytes: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly ExtensionStorage: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly installId: CodecTypes['pg/uuid@1']['output'];
+      readonly key: CodecTypes['pg/text@1']['output'];
+      readonly value: CodecTypes['pg/json@1']['output'];
+    };
+    readonly ExtensionVersion: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly extensionId: CodecTypes['pg/text@1']['output'];
+      readonly version: CodecTypes['pg/text@1']['output'];
+      readonly manifest: CodecTypes['pg/json@1']['output'];
+      readonly artifactPath: CodecTypes['pg/text@1']['output'];
+      readonly artifactChecksum: CodecTypes['pg/text@1']['output'];
+      readonly status: CodecTypes['pg/text@1']['output'];
+      readonly reviewNotes: CodecTypes['pg/text@1']['output'] | null;
+      readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
     readonly Notification: {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly recipientId: CodecTypes['pg/uuid@1']['output'];
@@ -381,6 +426,51 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
+    readonly Extension: {
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly authorName: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
+    readonly ExtensionData: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly installId: CodecTypes['pg/uuid@1']['input'];
+      readonly tableName: CodecTypes['pg/text@1']['input'];
+      readonly data: CodecTypes['pg/json@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
+    readonly ExtensionInstall: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly extensionId: CodecTypes['pg/text@1']['input'];
+      readonly versionId: CodecTypes['pg/uuid@1']['input'];
+      readonly scope: CodecTypes['pg/text@1']['input'];
+      readonly scopeId: CodecTypes['pg/uuid@1']['input'];
+      readonly installedById: CodecTypes['pg/uuid@1']['input'];
+      readonly installedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly status: CodecTypes['pg/text@1']['input'];
+      readonly errorReason: CodecTypes['pg/text@1']['input'] | null;
+      readonly quotaMaxRows: CodecTypes['pg/int4@1']['input'];
+      readonly quotaMaxBytes: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly ExtensionStorage: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly installId: CodecTypes['pg/uuid@1']['input'];
+      readonly key: CodecTypes['pg/text@1']['input'];
+      readonly value: CodecTypes['pg/json@1']['input'];
+    };
+    readonly ExtensionVersion: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly extensionId: CodecTypes['pg/text@1']['input'];
+      readonly version: CodecTypes['pg/text@1']['input'];
+      readonly manifest: CodecTypes['pg/json@1']['input'];
+      readonly artifactPath: CodecTypes['pg/text@1']['input'];
+      readonly artifactChecksum: CodecTypes['pg/text@1']['input'];
+      readonly status: CodecTypes['pg/text@1']['input'];
+      readonly reviewNotes: CodecTypes['pg/text@1']['input'] | null;
+      readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
     readonly Notification: {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly recipientId: CodecTypes['pg/uuid@1']['input'];
@@ -521,6 +611,51 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
+    readonly extension: {
+      readonly authorName: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+    };
+    readonly extensionData: {
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly data: CodecTypes['pg/json@1']['output'];
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly installId: CodecTypes['pg/uuid@1']['output'];
+      readonly tableName: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
+    readonly extensionInstall: {
+      readonly errorReason: CodecTypes['pg/text@1']['output'] | null;
+      readonly extensionId: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly installedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly installedById: CodecTypes['pg/uuid@1']['output'];
+      readonly quotaMaxBytes: CodecTypes['pg/int4@1']['output'];
+      readonly quotaMaxRows: CodecTypes['pg/int4@1']['output'];
+      readonly scope: CodecTypes['pg/text@1']['output'];
+      readonly scopeId: CodecTypes['pg/uuid@1']['output'];
+      readonly status: CodecTypes['pg/text@1']['output'];
+      readonly versionId: CodecTypes['pg/uuid@1']['output'];
+    };
+    readonly extensionStorage: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly installId: CodecTypes['pg/uuid@1']['output'];
+      readonly key: CodecTypes['pg/text@1']['output'];
+      readonly value: CodecTypes['pg/json@1']['output'];
+    };
+    readonly extensionVersion: {
+      readonly artifactChecksum: CodecTypes['pg/text@1']['output'];
+      readonly artifactPath: CodecTypes['pg/text@1']['output'];
+      readonly extensionId: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly manifest: CodecTypes['pg/json@1']['output'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly reviewNotes: CodecTypes['pg/text@1']['output'] | null;
+      readonly status: CodecTypes['pg/text@1']['output'];
+      readonly version: CodecTypes['pg/text@1']['output'];
+    };
     readonly notification: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly id: CodecTypes['pg/uuid@1']['output'];
@@ -661,6 +796,51 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
+    readonly extension: {
+      readonly authorName: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+    };
+    readonly extensionData: {
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly data: CodecTypes['pg/json@1']['input'];
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly installId: CodecTypes['pg/uuid@1']['input'];
+      readonly tableName: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
+    readonly extensionInstall: {
+      readonly errorReason: CodecTypes['pg/text@1']['input'] | null;
+      readonly extensionId: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly installedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly installedById: CodecTypes['pg/uuid@1']['input'];
+      readonly quotaMaxBytes: CodecTypes['pg/int4@1']['input'];
+      readonly quotaMaxRows: CodecTypes['pg/int4@1']['input'];
+      readonly scope: CodecTypes['pg/text@1']['input'];
+      readonly scopeId: CodecTypes['pg/uuid@1']['input'];
+      readonly status: CodecTypes['pg/text@1']['input'];
+      readonly versionId: CodecTypes['pg/uuid@1']['input'];
+    };
+    readonly extensionStorage: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly installId: CodecTypes['pg/uuid@1']['input'];
+      readonly key: CodecTypes['pg/text@1']['input'];
+      readonly value: CodecTypes['pg/json@1']['input'];
+    };
+    readonly extensionVersion: {
+      readonly artifactChecksum: CodecTypes['pg/text@1']['input'];
+      readonly artifactPath: CodecTypes['pg/text@1']['input'];
+      readonly extensionId: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly manifest: CodecTypes['pg/json@1']['input'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly reviewNotes: CodecTypes['pg/text@1']['input'] | null;
+      readonly status: CodecTypes['pg/text@1']['input'];
+      readonly version: CodecTypes['pg/text@1']['input'];
+    };
     readonly notification: {
       readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly id: CodecTypes['pg/uuid@1']['input'];
@@ -817,6 +997,377 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly extension: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly authorName: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
+            readonly extensionData: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly installId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly tableName: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly data: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'extensionData_installId_tableName_createdAt_idx_cfbb7f8f';
+                  readonly prefix: 'extensionData_installId_tableName_createdAt_idx';
+                  readonly columns: readonly ['installId', 'tableName', 'createdAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionData_installId_tableName_updatedAt_idx_448cd24c';
+                  readonly prefix: 'extensionData_installId_tableName_updatedAt_idx';
+                  readonly columns: readonly ['installId', 'tableName', 'updatedAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionData_installId_idx_d6105b3e';
+                  readonly prefix: 'extensionData_installId_idx';
+                  readonly columns: readonly ['installId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionData';
+                    readonly columns: readonly ['installId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionInstall';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly extensionInstall: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly extensionId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly versionId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly scope: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly scopeId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly installedById: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly installedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'active'>;
+                  };
+                };
+                readonly errorReason: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly quotaMaxRows: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1000000>;
+                  };
+                };
+                readonly quotaMaxBytes: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 524288000>;
+                  };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [
+                { readonly columns: readonly ['extensionId', 'scope', 'scopeId'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'extensionInstall_scope_scopeId_idx_dc8103e8';
+                  readonly prefix: 'extensionInstall_scope_scopeId_idx';
+                  readonly columns: readonly ['scope', 'scopeId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionInstall_extensionId_idx_f089c64f';
+                  readonly prefix: 'extensionInstall_extensionId_idx';
+                  readonly columns: readonly ['extensionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionInstall_versionId_idx_ef8aa804';
+                  readonly prefix: 'extensionInstall_versionId_idx';
+                  readonly columns: readonly ['versionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionInstall_installedById_idx_de87c177';
+                  readonly prefix: 'extensionInstall_installedById_idx';
+                  readonly columns: readonly ['installedById'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionInstall';
+                    readonly columns: readonly ['extensionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extension';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionInstall';
+                    readonly columns: readonly ['versionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionVersion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionInstall';
+                    readonly columns: readonly ['installedById'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'user';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly extensionStorage: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly installId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly key: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly value: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['installId', 'key'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'extensionStorage_installId_idx_d6105b3e';
+                  readonly prefix: 'extensionStorage_installId_idx';
+                  readonly columns: readonly ['installId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionStorage';
+                    readonly columns: readonly ['installId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionInstall';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly extensionVersion: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly extensionId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly version: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly manifest: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: false;
+                };
+                readonly artifactPath: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly artifactChecksum: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'approved'>;
+                  };
+                };
+                readonly reviewNotes: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly publishedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['extensionId', 'version'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'extensionVersion_extensionId_idx_f089c64f';
+                  readonly prefix: 'extensionVersion_extensionId_idx';
+                  readonly columns: readonly ['extensionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionVersion';
+                    readonly columns: readonly ['extensionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extension';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly notification: {
               columns: {
                 readonly id: {
@@ -2026,11 +2577,396 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Notification';
     };
+    readonly extension: { readonly namespace: 'public' & NamespaceId; readonly model: 'Extension' };
+    readonly extensionVersion: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ExtensionVersion';
+    };
+    readonly extensionInstall: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ExtensionInstall';
+    };
+    readonly extensionStorage: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ExtensionStorage';
+    };
+    readonly extensionData: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ExtensionData';
+    };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly Extension: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly description: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly authorName: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly installs: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionInstall';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['extensionId'];
+                };
+              };
+              readonly versions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionVersion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['extensionId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'extension';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly name: { readonly column: 'name' };
+                readonly description: { readonly column: 'description' };
+                readonly authorName: { readonly column: 'authorName' };
+                readonly createdAt: { readonly column: 'createdAt' };
+              };
+            };
+          };
+          readonly ExtensionData: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly installId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly tableName: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly data: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly install: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionInstall';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['installId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'extensionData';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly installId: { readonly column: 'installId' };
+                readonly tableName: { readonly column: 'tableName' };
+                readonly data: { readonly column: 'data' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly ExtensionInstall: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly extensionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly versionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly scope: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly scopeId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly installedById: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly installedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly errorReason: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly quotaMaxRows: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly quotaMaxBytes: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly data: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionData';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['installId'];
+                };
+              };
+              readonly extension: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Extension';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['extensionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly installedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['installedById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly storage: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionStorage';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['installId'];
+                };
+              };
+              readonly version: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionVersion';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['versionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'extensionInstall';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly extensionId: { readonly column: 'extensionId' };
+                readonly versionId: { readonly column: 'versionId' };
+                readonly scope: { readonly column: 'scope' };
+                readonly scopeId: { readonly column: 'scopeId' };
+                readonly installedById: { readonly column: 'installedById' };
+                readonly installedAt: { readonly column: 'installedAt' };
+                readonly status: { readonly column: 'status' };
+                readonly errorReason: { readonly column: 'errorReason' };
+                readonly quotaMaxRows: { readonly column: 'quotaMaxRows' };
+                readonly quotaMaxBytes: { readonly column: 'quotaMaxBytes' };
+              };
+            };
+          };
+          readonly ExtensionStorage: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly installId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly key: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly value: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
+            };
+            readonly relations: {
+              readonly install: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionInstall';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['installId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'extensionStorage';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly installId: { readonly column: 'installId' };
+                readonly key: { readonly column: 'key' };
+                readonly value: { readonly column: 'value' };
+              };
+            };
+          };
+          readonly ExtensionVersion: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly extensionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly version: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly manifest: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
+              readonly artifactPath: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly artifactChecksum: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly reviewNotes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly publishedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly extension: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Extension';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['extensionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly installs: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionInstall';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['versionId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'extensionVersion';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly extensionId: { readonly column: 'extensionId' };
+                readonly version: { readonly column: 'version' };
+                readonly manifest: { readonly column: 'manifest' };
+                readonly artifactPath: { readonly column: 'artifactPath' };
+                readonly artifactChecksum: { readonly column: 'artifactChecksum' };
+                readonly status: { readonly column: 'status' };
+                readonly reviewNotes: { readonly column: 'reviewNotes' };
+                readonly publishedAt: { readonly column: 'publishedAt' };
+              };
+            };
+          };
           readonly Notification: {
             readonly fields: {
               readonly id: {
@@ -3170,6 +4106,47 @@ type ContractBase = Omit<
     readonly executionHash: ExecutionHash;
     readonly mutations: {
       readonly defaults: readonly [
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'extensionData';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'extensionData';
+            readonly column: 'updatedAt';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'instantNow' };
+          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'instantNow' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'extensionInstall';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'extensionStorage';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'extensionVersion';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
         {
           readonly ref: {
             readonly namespace: 'public';

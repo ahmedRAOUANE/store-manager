@@ -12,19 +12,9 @@ import { productLowStock } from "./definitions/inventory";
 /**
  * The set of notification types owned by core (non-extension) code.
  *
- * This is the single source of truth for:
- *   - which event types core code can publish
- *   - the presentation keys each type resolves to
- *   - the compile-time union of core type IDs
- *
- * Extensions do NOT add entries here. They register their own
- * definitions through a future extension API. The publisher accepts any
- * `NotificationDefinition` regardless of registry membership, so core
- * and extension code share one publish path without sharing one list.
- *
- * Frozen to prevent accidental reassignment at runtime. The definitions
- * themselves are not deep-frozen; they are already constructed via
- * `defineNotification`, which is treated as an immutable contract.
+ * Frozen so nothing accidentally mutates it at runtime. Extensions
+ * never add entries here; their types live in the runtime registry
+ * below, managed by the extension runner.
  */
 export const CORE_NOTIFICATION_REGISTRY = Object.freeze({
     [storeActivated.type]: storeActivated,
@@ -37,28 +27,8 @@ export const CORE_NOTIFICATION_REGISTRY = Object.freeze({
     [productLowStock.type]: productLowStock,
 } satisfies Record<string, NotificationDefinition>);
 
-/**
- * Union of core notification type identifiers.
- *
- * Derived from the registry, not declared by hand, so adding a
- * definition automatically extends the union and removing one shrinks it.
- *
- * This is a *closed* union. Extension-provided types are deliberately
- * not part of it — they are not core, and pretending otherwise would
- * couple the compile-time type graph to a runtime extension model that
- * does not exist yet.
- */
 export type CoreNotificationType = keyof typeof CORE_NOTIFICATION_REGISTRY;
 
-/**
- * Runtime type guard for core notification types.
- *
- * Read-side code (rendering, filtering) receives a stored
- * `type: string` from the database and narrows to the core union before
- * indexing the registry. Returning `false` is the correct outcome for
- * extension types and for unknown IDs — the caller decides how to
- * render or fall back.
- */
 export const isCoreNotificationType = (
     type: string,
 ): type is CoreNotificationType =>
@@ -66,3 +36,87 @@ export const isCoreNotificationType = (
         CORE_NOTIFICATION_REGISTRY,
         type,
     );
+
+/* ========================================================================== */
+/*  Runtime extension registry                                                */
+/* ========================================================================== */
+
+/**
+ * Extension-provided notification definitions, populated at boot by the
+ * extension runner. Keyed by the full type ID (`ext.<extensionId>.<EVENT>`).
+ *
+ * The map is module-level and mutable by design — extensions install and
+ * uninstall at runtime. All mutations go through the two functions below
+ * so that invariants (no core-type collision, no double-registration)
+ * stay enforced in one place.
+ */
+const EXTENSION_NOTIFICATION_REGISTRY = new Map<
+    string,
+    NotificationDefinition
+>();
+
+/**
+ * Register an extension-provided notification definition.
+ *
+ * Throws if:
+ *   - the type collides with a core type (extensions cannot shadow core)
+ *   - the type is already registered (double-registration is a runner bug)
+ *
+ * The runner is responsible for unregistering on uninstall; the registry
+ * does not track which install registered what. That bookkeeping lives in
+ * the runner's in-memory state.
+ */
+export const registerExtensionNotification = (
+    definition: NotificationDefinition,
+): void => {
+    if (isCoreNotificationType(definition.type)) {
+        throw new Error(
+            `Cannot register extension notification with core type ID "${definition.type}"`,
+        );
+    }
+
+    if (EXTENSION_NOTIFICATION_REGISTRY.has(definition.type)) {
+        throw new Error(
+            `Notification type "${definition.type}" is already registered`,
+        );
+    }
+
+    EXTENSION_NOTIFICATION_REGISTRY.set(definition.type, definition);
+};
+
+/**
+ * Unregister an extension-provided notification definition.
+ *
+ * Silent no-op if the type is not currently registered — uninstall
+ * flows run this idempotently, and an extension can be in an error
+ * state where its definition was never registered to begin with.
+ *
+ * Throws if the caller tries to unregister a core type. That indicates
+ * a runner bug — core types are not managed by the runtime registry.
+ */
+export const unregisterExtensionNotification = (type: string): void => {
+    if (isCoreNotificationType(type)) {
+        throw new Error(
+            `Cannot unregister core notification type "${type}"`,
+        );
+    }
+
+    EXTENSION_NOTIFICATION_REGISTRY.delete(type);
+};
+
+/**
+ * Resolve a stored notification's `type` string to its definition.
+ *
+ * Checks core first, then extension. Returns `null` for unknown types —
+ * including the type of an extension that has since been uninstalled.
+ * Callers must handle `null` (fallback rendering).
+ */
+export const lookupNotificationDefinition = (
+    type: string,
+): NotificationDefinition | null => {
+    if (isCoreNotificationType(type)) {
+        return CORE_NOTIFICATION_REGISTRY[type];
+    }
+
+    return EXTENSION_NOTIFICATION_REGISTRY.get(type) ?? null;
+};

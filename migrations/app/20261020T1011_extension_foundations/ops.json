@@ -1,0 +1,926 @@
+[
+  {
+    "id": "table.extension",
+    "label": "Create table \"extension\"",
+    "summary": "Creates table \"extension\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "extension"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"extension\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extension\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"extension\"",
+        "sql": "CREATE TABLE \"public\".\"extension\" (\n  \"authorName\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"extension\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extension\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.extensionData",
+    "label": "Create table \"extensionData\"",
+    "summary": "Creates table \"extensionData\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "extensionData"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"extensionData\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"extensionData\"",
+        "sql": "CREATE TABLE \"public\".\"extensionData\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"data\" json NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"installId\" uuid NOT NULL,\n  \"tableName\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"extensionData\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.extensionInstall",
+    "label": "Create table \"extensionInstall\"",
+    "summary": "Creates table \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"extensionInstall\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"extensionInstall\"",
+        "sql": "CREATE TABLE \"public\".\"extensionInstall\" (\n  \"errorReason\" text,\n  \"extensionId\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"installedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"installedById\" uuid NOT NULL,\n  \"quotaMaxBytes\" int4 DEFAULT 524288000 NOT NULL,\n  \"quotaMaxRows\" int4 DEFAULT 1000000 NOT NULL,\n  \"scope\" text NOT NULL,\n  \"scopeId\" uuid NOT NULL,\n  \"status\" text DEFAULT 'active' NOT NULL,\n  \"versionId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"extensionInstall\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.extensionStorage",
+    "label": "Create table \"extensionStorage\"",
+    "summary": "Creates table \"extensionStorage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "extensionStorage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"extensionStorage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionStorage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"extensionStorage\"",
+        "sql": "CREATE TABLE \"public\".\"extensionStorage\" (\n  \"id\" uuid NOT NULL,\n  \"installId\" uuid NOT NULL,\n  \"key\" text NOT NULL,\n  \"value\" json NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"extensionStorage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionStorage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.extensionVersion",
+    "label": "Create table \"extensionVersion\"",
+    "summary": "Creates table \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"extensionVersion\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"extensionVersion\"",
+        "sql": "CREATE TABLE \"public\".\"extensionVersion\" (\n  \"artifactChecksum\" text NOT NULL,\n  \"artifactPath\" text NOT NULL,\n  \"extensionId\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"manifest\" json NOT NULL,\n  \"publishedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"reviewNotes\" text,\n  \"status\" text DEFAULT 'approved' NOT NULL,\n  \"version\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"extensionVersion\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.extensionInstall.extensionInstall_extensionId_scope_scopeId_key",
+    "label": "Add unique constraint on \"extensionInstall\" (extensionId, scope, scopeId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "extensionInstall_extensionId_scope_scopeId_key",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"extensionInstall_extensionId_scope_scopeId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_extensionId_scope_scopeId_key",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"extensionInstall_extensionId_scope_scopeId_key\"",
+        "sql": "ALTER TABLE \"public\".\"extensionInstall\" ADD CONSTRAINT \"extensionInstall_extensionId_scope_scopeId_key\" UNIQUE (\"extensionId\", \"scope\", \"scopeId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"extensionInstall_extensionId_scope_scopeId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_extensionId_scope_scopeId_key",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.extensionStorage.extensionStorage_installId_key_key",
+    "label": "Add unique constraint on \"extensionStorage\" (installId, key)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "extensionStorage_installId_key_key",
+        "table": "extensionStorage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"extensionStorage_installId_key_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionStorage_installId_key_key",
+          "public",
+          "\"public\".\"extensionStorage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"extensionStorage_installId_key_key\"",
+        "sql": "ALTER TABLE \"public\".\"extensionStorage\" ADD CONSTRAINT \"extensionStorage_installId_key_key\" UNIQUE (\"installId\", \"key\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"extensionStorage_installId_key_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionStorage_installId_key_key",
+          "public",
+          "\"public\".\"extensionStorage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.extensionVersion.extensionVersion_extensionId_version_key",
+    "label": "Add unique constraint on \"extensionVersion\" (extensionId, version)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "extensionVersion_extensionId_version_key",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"extensionVersion_extensionId_version_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_extensionId_version_key",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"extensionVersion_extensionId_version_key\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\" ADD CONSTRAINT \"extensionVersion_extensionId_version_key\" UNIQUE (\"extensionId\", \"version\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"extensionVersion_extensionId_version_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_extensionId_version_key",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionData.extensionData_installId_idx_d6105b3e",
+    "label": "Create index \"extensionData_installId_idx_d6105b3e\" on \"extensionData\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionData_installId_idx_d6105b3e",
+        "table": "extensionData"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionData_installId_idx_d6105b3e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData_installId_idx_d6105b3e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionData_installId_idx_d6105b3e\"",
+        "sql": "CREATE INDEX \"extensionData_installId_idx_d6105b3e\" ON \"public\".\"extensionData\" (\"installId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionData_installId_idx_d6105b3e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData_installId_idx_d6105b3e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionData.extensionData_installId_tableName_createdAt_idx_cfbb7f8f",
+    "label": "Create index \"extensionData_installId_tableName_createdAt_idx_cfbb7f8f\" on \"extensionData\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionData_installId_tableName_createdAt_idx_cfbb7f8f",
+        "table": "extensionData"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionData_installId_tableName_createdAt_idx_cfbb7f8f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData_installId_tableName_createdAt_idx_cfbb7f8f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionData_installId_tableName_createdAt_idx_cfbb7f8f\"",
+        "sql": "CREATE INDEX \"extensionData_installId_tableName_createdAt_idx_cfbb7f8f\" ON \"public\".\"extensionData\" (\"installId\", \"tableName\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionData_installId_tableName_createdAt_idx_cfbb7f8f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData_installId_tableName_createdAt_idx_cfbb7f8f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionData.extensionData_installId_tableName_updatedAt_idx_448cd24c",
+    "label": "Create index \"extensionData_installId_tableName_updatedAt_idx_448cd24c\" on \"extensionData\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionData_installId_tableName_updatedAt_idx_448cd24c",
+        "table": "extensionData"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionData_installId_tableName_updatedAt_idx_448cd24c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData_installId_tableName_updatedAt_idx_448cd24c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionData_installId_tableName_updatedAt_idx_448cd24c\"",
+        "sql": "CREATE INDEX \"extensionData_installId_tableName_updatedAt_idx_448cd24c\" ON \"public\".\"extensionData\" (\"installId\", \"tableName\", \"updatedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionData_installId_tableName_updatedAt_idx_448cd24c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionData_installId_tableName_updatedAt_idx_448cd24c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionInstall.extensionInstall_extensionId_idx_f089c64f",
+    "label": "Create index \"extensionInstall_extensionId_idx_f089c64f\" on \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionInstall_extensionId_idx_f089c64f",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionInstall_extensionId_idx_f089c64f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_extensionId_idx_f089c64f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionInstall_extensionId_idx_f089c64f\"",
+        "sql": "CREATE INDEX \"extensionInstall_extensionId_idx_f089c64f\" ON \"public\".\"extensionInstall\" (\"extensionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionInstall_extensionId_idx_f089c64f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_extensionId_idx_f089c64f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionInstall.extensionInstall_installedById_idx_de87c177",
+    "label": "Create index \"extensionInstall_installedById_idx_de87c177\" on \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionInstall_installedById_idx_de87c177",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionInstall_installedById_idx_de87c177\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_installedById_idx_de87c177\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionInstall_installedById_idx_de87c177\"",
+        "sql": "CREATE INDEX \"extensionInstall_installedById_idx_de87c177\" ON \"public\".\"extensionInstall\" (\"installedById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionInstall_installedById_idx_de87c177\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_installedById_idx_de87c177\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionInstall.extensionInstall_scope_scopeId_idx_dc8103e8",
+    "label": "Create index \"extensionInstall_scope_scopeId_idx_dc8103e8\" on \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionInstall_scope_scopeId_idx_dc8103e8",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionInstall_scope_scopeId_idx_dc8103e8\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_scope_scopeId_idx_dc8103e8\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionInstall_scope_scopeId_idx_dc8103e8\"",
+        "sql": "CREATE INDEX \"extensionInstall_scope_scopeId_idx_dc8103e8\" ON \"public\".\"extensionInstall\" (\"scope\", \"scopeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionInstall_scope_scopeId_idx_dc8103e8\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_scope_scopeId_idx_dc8103e8\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionInstall.extensionInstall_versionId_idx_ef8aa804",
+    "label": "Create index \"extensionInstall_versionId_idx_ef8aa804\" on \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionInstall_versionId_idx_ef8aa804",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionInstall_versionId_idx_ef8aa804\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_versionId_idx_ef8aa804\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionInstall_versionId_idx_ef8aa804\"",
+        "sql": "CREATE INDEX \"extensionInstall_versionId_idx_ef8aa804\" ON \"public\".\"extensionInstall\" (\"versionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionInstall_versionId_idx_ef8aa804\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionInstall_versionId_idx_ef8aa804\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionStorage.extensionStorage_installId_idx_d6105b3e",
+    "label": "Create index \"extensionStorage_installId_idx_d6105b3e\" on \"extensionStorage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionStorage_installId_idx_d6105b3e",
+        "table": "extensionStorage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionStorage_installId_idx_d6105b3e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionStorage_installId_idx_d6105b3e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionStorage_installId_idx_d6105b3e\"",
+        "sql": "CREATE INDEX \"extensionStorage_installId_idx_d6105b3e\" ON \"public\".\"extensionStorage\" (\"installId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionStorage_installId_idx_d6105b3e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionStorage_installId_idx_d6105b3e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionVersion.extensionVersion_extensionId_idx_f089c64f",
+    "label": "Create index \"extensionVersion_extensionId_idx_f089c64f\" on \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionVersion_extensionId_idx_f089c64f",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionVersion_extensionId_idx_f089c64f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_extensionId_idx_f089c64f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionVersion_extensionId_idx_f089c64f\"",
+        "sql": "CREATE INDEX \"extensionVersion_extensionId_idx_f089c64f\" ON \"public\".\"extensionVersion\" (\"extensionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionVersion_extensionId_idx_f089c64f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_extensionId_idx_f089c64f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionData.extensionData_installId_fkey",
+    "label": "Add foreign key \"extensionData_installId_fkey\" on \"extensionData\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionData_installId_fkey",
+        "table": "extensionData"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionData_installId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionData_installId_fkey",
+          "public",
+          "\"public\".\"extensionData\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionData_installId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionData\"\nADD CONSTRAINT \"extensionData_installId_fkey\"\nFOREIGN KEY (\"installId\")\nREFERENCES \"public\".\"extensionInstall\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionData_installId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionData_installId_fkey",
+          "public",
+          "\"public\".\"extensionData\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionInstall.extensionInstall_extensionId_fkey",
+    "label": "Add foreign key \"extensionInstall_extensionId_fkey\" on \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionInstall_extensionId_fkey",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionInstall_extensionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_extensionId_fkey",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionInstall_extensionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionInstall\"\nADD CONSTRAINT \"extensionInstall_extensionId_fkey\"\nFOREIGN KEY (\"extensionId\")\nREFERENCES \"public\".\"extension\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionInstall_extensionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_extensionId_fkey",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionInstall.extensionInstall_versionId_fkey",
+    "label": "Add foreign key \"extensionInstall_versionId_fkey\" on \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionInstall_versionId_fkey",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionInstall_versionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_versionId_fkey",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionInstall_versionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionInstall\"\nADD CONSTRAINT \"extensionInstall_versionId_fkey\"\nFOREIGN KEY (\"versionId\")\nREFERENCES \"public\".\"extensionVersion\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionInstall_versionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_versionId_fkey",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionInstall.extensionInstall_installedById_fkey",
+    "label": "Add foreign key \"extensionInstall_installedById_fkey\" on \"extensionInstall\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionInstall_installedById_fkey",
+        "table": "extensionInstall"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionInstall_installedById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_installedById_fkey",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionInstall_installedById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionInstall\"\nADD CONSTRAINT \"extensionInstall_installedById_fkey\"\nFOREIGN KEY (\"installedById\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionInstall_installedById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionInstall_installedById_fkey",
+          "public",
+          "\"public\".\"extensionInstall\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionStorage.extensionStorage_installId_fkey",
+    "label": "Add foreign key \"extensionStorage_installId_fkey\" on \"extensionStorage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionStorage_installId_fkey",
+        "table": "extensionStorage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionStorage_installId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionStorage_installId_fkey",
+          "public",
+          "\"public\".\"extensionStorage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionStorage_installId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionStorage\"\nADD CONSTRAINT \"extensionStorage_installId_fkey\"\nFOREIGN KEY (\"installId\")\nREFERENCES \"public\".\"extensionInstall\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionStorage_installId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionStorage_installId_fkey",
+          "public",
+          "\"public\".\"extensionStorage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionVersion.extensionVersion_extensionId_fkey",
+    "label": "Add foreign key \"extensionVersion_extensionId_fkey\" on \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionVersion_extensionId_fkey",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionVersion_extensionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_extensionId_fkey",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionVersion_extensionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\"\nADD CONSTRAINT \"extensionVersion_extensionId_fkey\"\nFOREIGN KEY (\"extensionId\")\nREFERENCES \"public\".\"extension\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionVersion_extensionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_extensionId_fkey",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ]
+  }
+]

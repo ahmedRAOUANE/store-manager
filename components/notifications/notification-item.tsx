@@ -1,10 +1,7 @@
 "use client";
 
 import type { SerializedNotification } from "@/actions/notification.actions";
-import {
-    CORE_NOTIFICATION_REGISTRY,
-    isCoreNotificationType,
-} from "@/notifications/registry";
+import { lookupNotificationDefinition } from "@/notifications/registry";
 import { useFormatter, useTranslations } from "next-intl";
 import { cn } from "@/utils/jsx-classes";
 
@@ -16,15 +13,11 @@ interface NotificationItemProps {
 /**
  * Render one notification row.
  *
- * The `type` field is narrowed against the core registry; if it is a
- * core type, the payload is parsed against that definition's schema and
- * the presentation keys are resolved through next-intl. Unknown or
- * extension types fall back to a neutral row showing the raw type.
- *
- * Translation keys are dynamically composed by `derivePresentation`, so
- * they are not part of the compile-time message catalog. The cast below
- * reflects that; if a future version of next-intl supports template
- * literal keys, the cast can be removed.
+ * Uses `lookupNotificationDefinition` to resolve the stored type ID to
+ * a definition — either core or extension-provided. Unknown types
+ * (unregistered extension types, historical rows from uninstalled
+ * extensions, or tampered data) fall back to a neutral row showing the
+ * raw type ID.
  */
 export function NotificationItem({
     notification,
@@ -41,8 +34,9 @@ export function NotificationItem({
     let title = notification.type;
     let body = "";
 
-    if (isCoreNotificationType(notification.type)) {
-        const definition = CORE_NOTIFICATION_REGISTRY[notification.type];
+    const definition = lookupNotificationDefinition(notification.type);
+
+    if (definition) {
         const parsed = definition.payloadSchema.safeParse(
             notification.payload,
         );

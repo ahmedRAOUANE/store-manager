@@ -36,10 +36,8 @@ enum MembershipStatus {
 // USER
 // ============================================================
 
-/*
-* we are planning in next versions to make the email field unique and required
-* and adding an extra auto generated unique public id field
-*/
+// we are planning in next versions to make the email field unique and required
+// and adding an extra auto generated unique public id field
 model User {
   id Uuid @id @default(uuid())
 
@@ -376,3 +374,119 @@ model Notification {
   @@index([recipientId, readAt, createdAt])
 }
 
+// ============================================================
+// EXTENSIONS
+// ============================================================
+
+/// The catalog entry for a published extension.
+/// One row per extension ID ("product-audit").
+/// Multiple versions live under one Extension row.
+model Extension {
+  id          String   @id
+  name        String
+  description String?
+  authorName  String
+  createdAt   DateTime @default(now())
+
+  versions    ExtensionVersion[]
+  installs    ExtensionInstall[]
+}
+
+/// A published version of an extension.
+/// Multiple versions coexist so existing installs keep working
+/// after a newer version is published.
+model ExtensionVersion {
+  id                Uuid   @id @default(uuid())
+  extensionId       String
+  extension         Extension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+
+  version           String
+  manifest          Json
+  artifactPath      String
+  artifactChecksum  String
+
+  /// "approved" | "rejected" | "draft"
+  /// Plain text with app-level validation (via zod valueSet) so new
+  /// statuses can be introduced without a DB migration.
+  status            String   @default("approved")
+  reviewNotes       String?
+
+  publishedAt       DateTime @default(now())
+
+  installs          ExtensionInstall[]
+
+  @@unique([extensionId, version])
+  @@index([extensionId])
+}
+
+/// One row per (extension, scope, target).
+/// `scope` is "user" | "store" | "admin".
+/// `scopeId` is the userId or storeId the extension is installed for.
+/// Scope and target must match the manifest's declared scope; the
+/// runner enforces this at install time.
+model ExtensionInstall {
+  id            Uuid   @id @default(uuid())
+  extensionId   String
+  versionId     Uuid
+  extension     Extension @relation(fields: [extensionId], references: [id], onDelete: Cascade)
+  version       ExtensionVersion @relation(fields: [versionId], references: [id], onDelete: Restrict)
+
+  scope         String
+  scopeId       Uuid
+
+  installedById Uuid
+  installedBy   User   @relation(fields: [installedById], references: [id], onDelete: Cascade)
+
+  installedAt   DateTime @default(now())
+
+  /// "active" | "disabled" | "error"
+  status        String   @default("active")
+  errorReason   String?
+
+  /// Per-install quota ceilings. Each install gets its own budget;
+  /// one install hitting its limit does not affect another install
+  /// of the same extension.
+  quotaMaxRows  Int      @default(1000000)
+  quotaMaxBytes Int      @default(524288000)
+
+  storage       ExtensionStorage[]
+  data          ExtensionData[]
+
+  @@unique([extensionId, scope, scopeId])
+  @@index([scope, scopeId])
+  @@index([extensionId])
+}
+
+/// Per-install key-value storage for small state.
+/// Bounded by quotaMaxBytes; the runner enforces total storage size.
+model ExtensionStorage {
+  id        Uuid     @id @default(uuid())
+  installId Uuid
+  install   ExtensionInstall @relation(fields: [installId], references: [id], onDelete: Cascade)
+
+  key       String
+  value     Json
+
+  @@unique([installId, key])
+  @@index([installId])
+}
+
+/// One row per "table row" written by an extension.
+/// The "table" concept is a logical namespace: rows are filtered by
+/// (installId, tableName). No real per-extension tables are created.
+/// Isolation is enforced at the query layer; every query includes
+/// installId in its WHERE clause.
+model ExtensionData {
+  id        Uuid     @id @default(uuid())
+  installId Uuid
+  install   ExtensionInstall @relation(fields: [installId], references: [id], onDelete: Cascade)
+
+  tableName String
+  data      Json
+
+  createdAt DateTime @default(now())
+  updatedAt temporal.updatedAt()
+
+  @@index([installId, tableName, createdAt])
+  @@index([installId, tableName, updatedAt])
+}
