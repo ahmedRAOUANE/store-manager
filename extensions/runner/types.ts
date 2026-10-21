@@ -173,6 +173,8 @@ export interface LoadedExtension {
         eventName: string;
         definition: ExtensionNotificationDefinition;
     }>;
+    quotaMaxRows: number; 
+    quotaMaxBytes: number;
 }
 
 export class ExtensionCapabilityError extends Error {

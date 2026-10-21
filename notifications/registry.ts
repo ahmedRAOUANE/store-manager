@@ -66,6 +66,24 @@ const EXTENSION_NOTIFICATION_REGISTRY = new Map<
  * does not track which install registered what. That bookkeeping lives in
  * the runner's in-memory state.
  */
+// export const registerExtensionNotification = (
+//     definition: NotificationDefinition,
+// ): void => {
+//     if (isCoreNotificationType(definition.type)) {
+//         throw new Error(
+//             `Cannot register extension notification with core type ID "${definition.type}"`,
+//         );
+//     }
+
+//     if (EXTENSION_NOTIFICATION_REGISTRY.has(definition.type)) {
+//         throw new Error(
+//             `Notification type "${definition.type}" is already registered`,
+//         );
+//     }
+
+//     EXTENSION_NOTIFICATION_REGISTRY.set(definition.type, definition);
+// };
+
 export const registerExtensionNotification = (
     definition: NotificationDefinition,
 ): void => {
@@ -76,9 +94,27 @@ export const registerExtensionNotification = (
     }
 
     if (EXTENSION_NOTIFICATION_REGISTRY.has(definition.type)) {
-        throw new Error(
-            `Notification type "${definition.type}" is already registered`,
-        );
+        /*
+         * Idempotent: multiple installs of the same extension register
+         * the same type string. The registry is keyed by type, not by
+         * install, because notification rendering has no install context
+         * — a stored notification's `type` is looked up to a single
+         * definition regardless of which install produced it.
+         *
+         * First-wins semantics: the definition loaded first is
+         * preserved. Subsequent registrations of the same type from
+         * another install are silently ignored.
+         *
+         * Caveat for future versions: if two installs use different
+         * versions of the extension and the payload schema diverged
+         * between them, stored notifications from one version may
+         * fail to parse against the other version's schema. Fixing
+         * this requires version-pinned lookup (e.g. adding `version`
+         * to `Notification` and looking up by `(type, version)`),
+         * deferred until the phase where multi-version installs are
+         * allowed.
+         */
+        return;
     }
 
     EXTENSION_NOTIFICATION_REGISTRY.set(definition.type, definition);

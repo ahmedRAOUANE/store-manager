@@ -1,0 +1,66 @@
+{
+    "id": "product-audit",
+    "version": "1.0.0",
+    "name": "Product Audit Log",
+    "description": "Logs every product change with actor and timestamp.",
+    "author": {
+        "name": "Store Manager"
+    },
+    "scope": "store",
+    "eligibility": {
+        "minimumGlobalRole": "USER",
+        "requiresStoreRole": [
+            "OWNER",
+            "MANAGER"
+        ]
+    },
+    "libraryVersion": "^1.0.0",
+    "capabilities": {
+        "db.read": true,
+        "db.write": true,
+        "storage.read": false,
+        "storage.write": false,
+        "notifications.publish": [
+            "LOG_CHANGED"
+        ],
+        "http.fetch": [],
+        "logs.write": true
+    },
+    "hooks": [
+        "product.created",
+        "product.updated"
+    ],
+    "tables": {
+        "audit_log": {
+            "columns": {
+                "productId": "uuid",
+                "action": "text",
+                "actorId": "uuid"
+            }
+        }
+    },
+    "notifications": {
+        "LOG_CHANGED": {
+            "titleKey": "ext.product-audit.LOG_CHANGED.title",
+            "bodyKey": "ext.product-audit.LOG_CHANGED.body"
+        }
+    },
+    "translations": {
+        "en": {
+            "notifications": {
+                "LOG_CHANGED": {
+                    "title": "Product changed",
+                    "body": "{productName} was updated."
+                }
+            }
+        },
+        "ar": {
+            "notifications": {
+                "LOG_CHANGED": {
+                    "title": "تم تعديل المنتج",
+                    "body": "تم تحديث {productName}."
+                }
+            }
+        }
+    }
+}

@@ -44,7 +44,10 @@ export default defineConfig({
             { name: "rollback" },
             { name: "notification" },
             { name: "concurrency" },
-
+            
+            { name: "extensions" },
+            { name: "install" },
+            { name: "uninstall" },
         ]
     }
 });

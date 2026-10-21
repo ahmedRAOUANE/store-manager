@@ -52,11 +52,23 @@ describe("notification registry", () => {
         expect(fetched?.type).toBe("ext.test.EVENT");
     });
 
-    it("rejects re-registering the same type", () => {
+    // it("rejects re-registering the same type", () => {
+    //     registerExtensionNotification(sampleExtensionDefinition);
+    //     expect(() =>
+    //         registerExtensionNotification(sampleExtensionDefinition),
+    //     ).toThrow(/already registered/);
+    // });
+    it("re-registering the same type is idempotent (no-op)", () => {
         registerExtensionNotification(sampleExtensionDefinition);
+
         expect(() =>
             registerExtensionNotification(sampleExtensionDefinition),
-        ).toThrow(/already registered/);
+        ).not.toThrow();
+
+        // Still registered with the original definition.
+        expect(lookupNotificationDefinition("ext.test.EVENT")).toBe(
+            sampleExtensionDefinition,
+        );
     });
 
     it("rejects registering a type that collides with a core type", () => {
