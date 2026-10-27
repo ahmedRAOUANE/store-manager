@@ -1,0 +1,26 @@
+{
+    "name": "product-audit",
+    "version": "1.0.0",
+    "description": "Logs every product change with actor and timestamp.",
+    "author": "Store Manager",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "store-manager-ext build"
+    },
+    "devDependencies": {
+        "@store-manager/extensions": "workspace:*",
+        "typescript": "^5.9.3",
+        "zod": "^4.0.0"
+    },
+    "storeManager": {
+        "scope": "store",
+        "eligibility": {
+            "minimumGlobalRole": "USER",
+            "requiresStoreRole": [
+                "OWNER",
+                "MANAGER"
+            ]
+        }
+    }
+}

@@ -33,8 +33,9 @@
   },
   "devDependencies": {
     "@prisma/cli-engine": "0.2.3",
+    "@store-manager/extensions": "workspace:*",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.1",

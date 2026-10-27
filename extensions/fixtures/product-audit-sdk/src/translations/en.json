@@ -1,0 +1,8 @@
+{
+    "notifications": {
+        "LOG_CHANGED": {
+            "title": "Product changed",
+            "body": "{productName} was updated."
+        }
+    }
+}

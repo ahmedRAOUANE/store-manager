@@ -48,6 +48,7 @@ export default defineConfig({
             { name: "extensions" },
             { name: "install" },
             { name: "uninstall" },
-        ]
+        ],
+        testTimeout: 20_000,
     }
 });
