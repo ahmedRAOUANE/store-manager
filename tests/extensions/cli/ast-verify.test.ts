@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 
 import {
     verifyUsage,
     type DeclaredSurface,
-} from "../extensions/library/src/cli/verify";
-import type { UsageReport } from "../extensions/library/src/cli/ast";
+} from "../../../extensions/library/src/cli/verify";
+import type { UsageReport } from "../../../extensions/library/src/cli/ast";
 
 /**
  * Construct a `UsageReport` with all usage fields at their empty
@@ -38,7 +38,7 @@ function makeDeclared(
 }
 
 /* ==========================================================================
- * Error cases — capability used but not declared
+ * Error cases â€” capability used but not declared
  * ========================================================================== */
 
 describe("verify: capability used but not declared", () => {
@@ -109,7 +109,7 @@ describe("verify: capability used but not declared", () => {
 });
 
 /* ==========================================================================
- * Error cases — notifications
+ * Error cases â€” notifications
  * ========================================================================== */
 
 describe("verify: notification errors", () => {
@@ -156,7 +156,7 @@ describe("verify: notification errors", () => {
 });
 
 /* ==========================================================================
- * Error cases — tables
+ * Error cases â€” tables
  * ========================================================================== */
 
 describe("verify: table errors", () => {
@@ -192,7 +192,7 @@ describe("verify: table errors", () => {
 });
 
 /* ==========================================================================
- * Warning cases — declared but unused
+ * Warning cases â€” declared but unused
  * ========================================================================== */
 
 describe("verify: warnings for unused declarations", () => {
@@ -306,12 +306,12 @@ describe("verify: analyzer error passthrough", () => {
  * ========================================================================== */
 
 describe("verify: ordering and combined scenarios", () => {
-    it("errors come in analyzer → capability → notification → table order", () => {
+    it("errors come in analyzer â†’ capability â†’ notification â†’ table order", () => {
         // Craft a report that triggers all four categories:
         //   - an analyzer error (non-literal)
         //   - a capability error (db.write used, not declared)
         //   - notification errors (LOG_CHANGED published, not in caps
-        //     and no definition — this produces TWO errors)
+        //     and no definition â€” this produces TWO errors)
         //   - a table error (audit_log written, not declared)
         const r = verifyUsage(
             makeReport({
@@ -351,7 +351,7 @@ describe("verify: ordering and combined scenarios", () => {
         expect(tableIdx).toBeGreaterThan(notifIdx);
     });
 
-    it("empty usage + empty declaration → no errors, no warnings", () => {
+    it("empty usage + empty declaration â†’ no errors, no warnings", () => {
         const r = verifyUsage(makeReport(), makeDeclared());
         expect(r.errors).toHaveLength(0);
         expect(r.warnings).toHaveLength(0);

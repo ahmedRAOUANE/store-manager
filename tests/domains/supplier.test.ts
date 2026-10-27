@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import {
     createSupplierService,
     deleteAllSuppliersService,
@@ -6,14 +6,14 @@ import {
     getAllSuppliersService,
     getSupplierByIdService,
     updateSupplierService,
-} from "../services/supplier.services";
-import { createStoreService } from "../services/store.services";
-import { AppError } from "../errors/base.error";
-import type { CreateStoreInput } from "../zod/store.schema";
+} from "../../services/supplier.services";
+import { createStoreService } from "../../services/store.services";
+import { AppError } from "../../errors/base.error";
+import type { CreateStoreInput } from "../../zod/store.schema";
 
 /**
  * Shared owner for test stores. Same ID used across other integration
- * test files (`store.test.ts`, `membership.test.ts`) — it must exist in
+ * test files (`store.test.ts`, `membership.test.ts`) â€” it must exist in
  * the dev DB. Not created here; assumed to be a real user row.
  */
 const ownerId = "52b45375-ce27-4859-8839-d991d3634330";
@@ -204,7 +204,7 @@ describe("supplier service tests", () => {
 
             // This assertion catches the flagged issue: `deleteAllSuppliersService`
             // currently uses `.delete()` instead of `.deleteAll()`. If `.delete()`
-            // only removes one matching row, this test will fail — and that's
+            // only removes one matching row, this test will fail â€” and that's
             // the correct outcome, because it means the production service has
             // the same bug.
             expect(after.length).toBe(0);

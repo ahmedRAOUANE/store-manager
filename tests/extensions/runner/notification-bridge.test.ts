@@ -1,13 +1,13 @@
-import { describe, it, expect, afterEach } from "vitest";
+﻿import { describe, it, expect, afterEach } from "vitest";
 import { z } from "zod";
-import { toCoreNotificationDefinition } from "../extensions/runner/notification-bridge";
+import { toCoreNotificationDefinition } from "../../../extensions/runner/notification-bridge";
 import {
     registerExtensionNotification,
     unregisterExtensionNotification,
     lookupNotificationDefinition,
-} from "../notifications/registry";
-import type { NotificationPublishContext } from "../notifications/definition";
-import type { ExtensionNotificationDefinition } from "../extensions/runner/types";
+} from "../../../notifications/registry";
+import type { NotificationPublishContext } from "../../../notifications/definition";
+import type { ExtensionNotificationDefinition } from "../../../extensions/runner/types";
 
 const sampleExt: ExtensionNotificationDefinition = {
     payloadSchema: z.object({ productName: z.string() }).strict(),

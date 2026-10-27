@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { StoreMembership } from "../access/types";
-import { canOperateOnStore, hasStoreRole } from "../access/predicates";
+﻿import { describe, it, expect } from "vitest";
+import { StoreMembership } from "../../access/types";
+import { canOperateOnStore, hasStoreRole } from "../../access/predicates";
 
 describe("hasStoreRole", () => {
     it("returns false for null membership", () => {

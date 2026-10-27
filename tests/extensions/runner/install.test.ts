@@ -1,18 +1,18 @@
-import { describe, it, expect, afterEach } from "vitest";
+﻿import { describe, it, expect, afterEach } from "vitest";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-import { models } from "../prisma/db";
+import { models } from "../../../prisma/db";
 import {
     installExtension,
     uninstallExtension,
-} from "../extensions/install";
+} from "../../../extensions/install";
 import {
     activateStoreService,
     createStoreService,
-} from "../services/store.services";
-import { AppError } from "../errors/base.error";
-import type { CreateStoreInput } from "../zod/store.schema";
+} from "../../../services/store.services";
+import { AppError } from "../../../errors/base.error";
+import type { CreateStoreInput } from "../../../zod/store.schema";
 
 const ownerId = "52b45375-ce27-4859-8839-d991d3634330";
 const FIXTURE_PATH = "extensions/fixtures/product-audit";

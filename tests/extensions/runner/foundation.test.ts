@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
-import { ManifestSchema } from "../extensions/runner/manifest";
+﻿import { describe, it, expect } from "vitest";
+import { ManifestSchema } from "../../../extensions/runner/manifest";
 import {
     CAPABILITY_NAMES,
     hasCapability,
     assertCapability,
-} from "../extensions/runner/capability";
-import { ExtensionCapabilityError } from "../extensions/runner/types";
+} from "../../../extensions/runner/capability";
+import { ExtensionCapabilityError } from "../../../extensions/runner/types";
 
 const validStoreManifest = {
     id: "product-audit",
@@ -52,8 +52,8 @@ const validStoreManifest = {
         ar: {
             notifications: {
                 LOG_CHANGED: {
-                    title: "تم التعديل",
-                    body: "تم تعديل {name}",
+                    title: "ØªÙ… Ø§Ù„ØªØ¹Ø¯ÙŠÙ„",
+                    body: "ØªÙ… ØªØ¹Ø¯ÙŠÙ„ {name}",
                 },
             },
         },

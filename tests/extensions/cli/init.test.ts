@@ -1,10 +1,10 @@
-import { describe, it, expect, afterEach } from "vitest";
+﻿import { describe, it, expect, afterEach } from "vitest";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { runInit } from "../extensions/library/src/cli/init";
+import { runInit } from "../../../extensions/library/src/cli/init";
 
 const createdDirs: string[] = [];
 

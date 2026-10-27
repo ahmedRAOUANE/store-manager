@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import {
     createPurchaseService,
     deleteAllPurchasesService,
@@ -6,21 +6,21 @@ import {
     getAllPurchasesService,
     getPurchaseByIdService,
     updatePurchaseService,
-} from "../services/purchase.services";
-import { createSupplierService } from "../services/supplier.services";
+} from "../../services/purchase.services";
+import { createSupplierService } from "../../services/supplier.services";
 import {
     createProductsService,
     getSingleProductService,
-} from "../services/product.services";
-import { createStoreService } from "../services/store.services";
-import { AppError } from "../errors/base.error";
-import { DatabaseError } from "../errors/db.error";
-import type { CreateStoreInput } from "../zod/store.schema";
+} from "../../services/product.services";
+import { createStoreService } from "../../services/store.services";
+import { AppError } from "../../errors/base.error";
+import { DatabaseError } from "../../errors/db.error";
+import type { CreateStoreInput } from "../../zod/store.schema";
 import type {
     CreatePurchaseInput,
     UpdatePurchaseInput,
-} from "../zod/purchase.schema";
-import type { CreatePurchaseItemInput } from "../zod/purchaseItem.schema";
+} from "../../zod/purchase.schema";
+import type { CreatePurchaseItemInput } from "../../zod/purchaseItem.schema";
 
 /**
  * Shared owner for test stores. Same ID used across other integration
@@ -67,7 +67,7 @@ const createPurchaseContext = async () => {
 };
 
 /**
- * Builds a `CreatePurchaseInput`. No `storeId` — that field lives on
+ * Builds a `CreatePurchaseInput`. No `storeId` â€” that field lives on
  * the service signature now, not the payload.
  */
 const buildPurchaseInput = (
@@ -370,7 +370,7 @@ describe("purchase service tests", () => {
      * AND storeId = A`) finds no row and throws `"Product not found"`.
      *
      * The whole transaction rolls back. Store B's product must be
-     * untouched — not debited, not notified, not modified.
+     * untouched â€” not debited, not notified, not modified.
      *
      * This test verifies the fix at the service boundary. It does not
      * verify the action-layer authorization (that requires mocking the

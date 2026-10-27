@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
-import { ManifestSchema } from "../extensions/runner/manifest";
-import { isExtensionExportedDefault } from "../extensions/runner/validation";
+import { ManifestSchema } from "../../../extensions/runner/manifest";
+import { isExtensionExportedDefault } from "../../../extensions/runner/validation";
 
 const FIXTURE_DIR = join(
     process.cwd(),

@@ -1,20 +1,20 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import {
     createStoreService,
     activateStoreService,
-} from "../services/store.services";
+} from "../../services/store.services";
 import {
     getSingleProductService,
-} from "../services/product.services";
-import { createSupplierService } from "../services/supplier.services";
-import { createSaleService } from "../services/sale.services";
-import { createPurchaseService } from "../services/purchase.services";
-import { models } from "../prisma/db";
-import { AppError } from "../errors/base.error";
-import type { CreateStoreInput } from "../zod/store.schema";
-import type { CreateSaleInput } from "../zod/sale.schema";
-import type { CreatePurchaseInput } from "../zod/purchase.schema";
-import type { CreatePurchaseItemInput } from "../zod/purchaseItem.schema";
+} from "../../services/product.services";
+import { createSupplierService } from "../../services/supplier.services";
+import { createSaleService } from "../../services/sale.services";
+import { createPurchaseService } from "../../services/purchase.services";
+import { models } from "../../prisma/db";
+import { AppError } from "../../errors/base.error";
+import type { CreateStoreInput } from "../../zod/store.schema";
+import type { CreateSaleInput } from "../../zod/sale.schema";
+import type { CreatePurchaseInput } from "../../zod/purchase.schema";
+import type { CreatePurchaseItemInput } from "../../zod/purchaseItem.schema";
 
 /**
  * Shared owner for test stores. Same ID used across other integration
@@ -82,14 +82,14 @@ describe("inventory concurrency", () => {
 
             /*
              * Stock progression under any serial order of the 5 sales:
-             *   10 → 8 → 6 → 4 → 2 → 0
+             *   10 â†’ 8 â†’ 6 â†’ 4 â†’ 2 â†’ 0
              *
              * Crossing rule: before > M and after <= M (M = 3).
-             *   (10→8): 10>3 true,  8<=3 false  → no crossing
-             *   (8→6):   8>3 true,  6<=3 false  → no crossing
-             *   (6→4):   6>3 true,  4<=3 false  → no crossing
-             *   (4→2):   4>3 true,  2<=3 true   → CROSSING (exactly one)
-             *   (2→0):   2>3 false              → no crossing
+             *   (10â†’8): 10>3 true,  8<=3 false  â†’ no crossing
+             *   (8â†’6):   8>3 true,  6<=3 false  â†’ no crossing
+             *   (6â†’4):   6>3 true,  4<=3 false  â†’ no crossing
+             *   (4â†’2):   4>3 true,  2<=3 true   â†’ CROSSING (exactly one)
+             *   (2â†’0):   2>3 false              â†’ no crossing
              *
              * So: exactly 1 notification, regardless of which sale ran when.
              */
@@ -124,7 +124,7 @@ describe("inventory concurrency", () => {
                 (r: unknown) => r instanceof AppError,
             );
 
-            // Every sale should succeed — there is enough stock.
+            // Every sale should succeed â€” there is enough stock.
             expect(failures).toHaveLength(0);
             expect(successes).toHaveLength(saleCount);
 
@@ -161,13 +161,13 @@ describe("inventory concurrency", () => {
             /*
              * Stock: 3, min: 1. Five concurrent 1-unit sales.
              *
-             * Exactly 3 should succeed (stock goes 3→2→1→0) and
+             * Exactly 3 should succeed (stock goes 3â†’2â†’1â†’0) and
              * 2 should fail with "Insufficient stock". If the lock
              * were missing, all 5 could read "stock=3" and succeed,
              * driving stock negative.
              *
-             * Crossings: 3→2 (2<=1 false), 2→1 (2>1 true, 1<=1 true
-             * — CROSSING), 1→0 (1>1 false). One notification.
+             * Crossings: 3â†’2 (2<=1 false), 2â†’1 (2>1 true, 1<=1 true
+             * â€” CROSSING), 1â†’0 (1>1 false). One notification.
              */
             const product = await models.Product.create({
                 storeId: store.id,
@@ -235,7 +235,7 @@ describe("inventory concurrency", () => {
              * Stock: 5, min: 3. Five concurrent 3-unit purchases.
              *
              * Final stock must be 5 + 5*3 = 20. If the lock were
-             * missing, some increments would be lost — final would be
+             * missing, some increments would be lost â€” final would be
              * less than 20.
              *
              * Purchases only increase stock, so no low-stock crossing

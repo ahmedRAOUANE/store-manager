@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from "vitest";
+﻿import { describe, it, expect, afterEach } from "vitest";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -6,7 +6,7 @@ import { dirname, join } from "node:path";
 import {
     analyzeSource,
     type UsageReport,
-} from "../extensions/library/src/cli/ast";
+} from "../../../extensions/library/src/cli/ast";
 
 const createdDirs: string[] = [];
 
@@ -36,7 +36,7 @@ afterEach(async () => {
         try {
             await rm(dir, { recursive: true, force: true });
         } catch {
-            // ignore — temp dirs, cleanup is best-effort
+            // ignore â€” temp dirs, cleanup is best-effort
         }
     }
     createdDirs.length = 0;

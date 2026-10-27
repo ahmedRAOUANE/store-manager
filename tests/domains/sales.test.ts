@@ -1,14 +1,14 @@
-import {
+﻿import {
     createSaleService,
     getSaleByIdService,
     getSalesService,
-} from "../services/sale.services";
-import { AppError } from "../errors/base.error";
-import { db, models } from "../prisma/db";
-import type { CreateSaleInput } from "../zod/sale.schema";
+} from "../../services/sale.services";
+import { AppError } from "../../errors/base.error";
+import { db, models } from "../../prisma/db";
+import type { CreateSaleInput } from "../../zod/sale.schema";
 import { describe, expect, it } from "vitest";
-import { CreateStoreInput } from "../zod/store.schema";
-import { activateStoreService, createStoreService } from "../services/store.services";
+import { CreateStoreInput } from "../../zod/store.schema";
+import { activateStoreService, createStoreService } from "../../services/store.services";
 
 describe("sales tests", () => {
     const storeId = "8dacefdb-2c06-41e8-a845-a6a9c2cba418";

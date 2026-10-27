@@ -1,27 +1,27 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
+﻿import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 
-import { models } from "../prisma/db";
+import { models } from "../../../prisma/db";
 import {
     emitHook,
     startRunner,
     stopRunner,
     flushHooks,
-} from "../extensions/runner";
+} from "../../../extensions/runner";
 import {
     installExtension,
     uninstallExtension,
-} from "../extensions/install";
+} from "../../../extensions/install";
 import {
     createProductsService,
     updateProductService,
-} from "../services/product.services";
+} from "../../../services/product.services";
 import {
     activateStoreService,
     createStoreService,
-} from "../services/store.services";
-import { lookupNotificationDefinition } from "../notifications/registry";
-import { AppError } from "../errors/base.error";
-import type { CreateStoreInput } from "../zod/store.schema";
+} from "../../../services/store.services";
+import { lookupNotificationDefinition } from "../../../notifications/registry";
+import { AppError } from "../../../errors/base.error";
+import type { CreateStoreInput } from "../../../zod/store.schema";
 
 const ownerId = "52b45375-ce27-4859-8839-d991d3634330";
 const FIXTURE_PATH = "extensions/fixtures/product-audit";
@@ -113,9 +113,9 @@ describe("extensions e2e", () => {
             .deleteAll();
     });
 
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // 1. product.created fires and writes an audit row
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     it("fires product.created and writes an audit row", async () => {
         const product = await createProductsService(storeId, {
@@ -160,9 +160,9 @@ describe("extensions e2e", () => {
         });
     });
 
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // 2. product.updated fires and writes an audit row
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     it("fires product.updated and writes an audit row", async () => {
         const product = await createProductsService(storeId, {
@@ -220,9 +220,9 @@ describe("extensions e2e", () => {
         });
     });
 
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // 3. LOG_CHANGED fires when sellingPrice changes
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     it("publishes LOG_CHANGED notification when sellingPrice changes", async () => {
         const product = await createProductsService(storeId, {
@@ -272,9 +272,9 @@ describe("extensions e2e", () => {
         });
     });
 
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // 4. LOG_CHANGED does NOT fire for non-price updates
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     it("does NOT publish LOG_CHANGED when only non-price fields change", async () => {
         const product = await createProductsService(storeId, {
@@ -333,9 +333,9 @@ describe("extensions e2e", () => {
         expect(notifications).toHaveLength(0);
     });
 
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // 5. Notification recipients exclude the actor
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     it("excludes the triggering actor from notification recipients", async () => {
         const product = await createProductsService(storeId, {
@@ -382,7 +382,7 @@ describe("extensions e2e", () => {
             .all();
         expect(toSecond).toHaveLength(1);
 
-        // Actor gets nothing — excludeActor: true in the fixture.
+        // Actor gets nothing â€” excludeActor: true in the fixture.
         const toOwner = await models.Notification
             .where({
                 type: EXT_NOTIFICATION_TYPE,
@@ -392,9 +392,9 @@ describe("extensions e2e", () => {
         expect(toOwner).toHaveLength(0);
     });
 
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // 6. Store-scope isolation
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     it("does NOT fire for product events in other stores", async () => {
         const product = await createProductsService(otherStoreId, {
@@ -436,12 +436,12 @@ describe("extensions e2e", () => {
         expect(matching).toHaveLength(0);
     });
 
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // 7. Uninstall removes data but preserves notification history
-    // ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     it("uninstall removes audit data, preserves notification history, and clears the runtime registry", async () => {
-        // ── Setup: fire a notification so there's history to preserve ──
+        // â”€â”€ Setup: fire a notification so there's history to preserve â”€â”€
         const product = await createProductsService(storeId, {
             name: `E2E cleanup ${crypto.randomUUID()}`,
             unit: "piece",
@@ -477,7 +477,7 @@ describe("extensions e2e", () => {
 
         await flushHooks();
 
-        // ── Pre-uninstall checks ──────────────────────────────────
+        // â”€â”€ Pre-uninstall checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const preAudit = await models.ExtensionData
             .where({ installId })
             .all();
@@ -493,11 +493,11 @@ describe("extensions e2e", () => {
             lookupNotificationDefinition(EXT_NOTIFICATION_TYPE),
         ).not.toBeNull();
 
-        // ── Uninstall + stop runner (mirrors "restart server" in dev) ─
+        // â”€â”€ Uninstall + stop runner (mirrors "restart server" in dev) â”€
         await uninstallExtension(installId);
         stopRunner();
 
-        // ── Post-uninstall checks ──────────────────────────────────
+        // â”€â”€ Post-uninstall checks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // 1. All audit rows for the install are gone (cascade).
         const postAudit = await models.ExtensionData
             .where({ installId })

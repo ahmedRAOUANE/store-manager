@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+﻿import { describe, it, expect, beforeEach } from "vitest";
 import { z } from "zod";
 import {
     CORE_NOTIFICATION_REGISTRY,
@@ -6,8 +6,8 @@ import {
     lookupNotificationDefinition,
     registerExtensionNotification,
     unregisterExtensionNotification,
-} from "../notifications/registry";
-import { defineNotification } from "../notifications/definition";
+} from "../../notifications/registry";
+import { defineNotification } from "../../notifications/definition";
 
 const sampleExtensionDefinition = defineNotification({
     type: "ext.test.EVENT",

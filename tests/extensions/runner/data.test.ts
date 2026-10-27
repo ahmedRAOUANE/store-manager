@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
+﻿import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 
-import { db, models } from "../prisma/db";
-import { ManifestSchema, type Manifest } from "../extensions/runner/manifest";
+import { db, models } from "../../../prisma/db";
+import { ManifestSchema, type Manifest } from "../../../extensions/runner/manifest";
 import {
     createExtensionDbApi,
     createExtensionStorageApi,
-} from "../extensions/runner/extension-data";
-import { ExtensionQuotaExceeded } from "../extensions/runner/types";
+} from "../../../extensions/runner/extension-data";
+import { ExtensionQuotaExceeded } from "../../../extensions/runner/types";
 
 const ownerId = "52b45375-ce27-4859-8839-d991d3634330";
 
@@ -273,7 +273,7 @@ describe("extension data access", () => {
         ).rejects.toBeInstanceOf(ExtensionQuotaExceeded);
     });
 
-    it("isolates installs — one install cannot see another's data", async () => {
+    it("isolates installs â€” one install cannot see another's data", async () => {
         // Create a second install of the same extension for a different scope target.
         // Use a store id as the target to differentiate from ownerId.
         const otherInstall = await models.ExtensionInstall.create({

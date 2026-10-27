@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import {
     getAllUsersService,
     updateUserLocaleService,
-} from "../services/user.services";
-import { AppError } from "../errors/base.error";
+} from "../../services/user.services";
+import { AppError } from "../../errors/base.error";
 
 describe("user service tests", () => {
     it(

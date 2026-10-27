@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { addAdminService } from "../services/adminDashboard.services";
-import { models } from "../prisma/db";
+﻿import { describe, it, expect } from "vitest";
+import { addAdminService } from "../../services/adminDashboard.services";
+import { models } from "../../prisma/db";
 
 describe("admin service tests", () => {
     it(
@@ -12,7 +12,7 @@ describe("admin service tests", () => {
 
             // Precondition: this test assumes a populated DB with more
             // than one user. If this fails, either the DB was wiped
-            // or the assertion below no longer matches reality — both
+            // or the assertion below no longer matches reality â€” both
             // are signals to revisit the test, not the service.
             expect(userCount.count).toBeGreaterThan(1);
 

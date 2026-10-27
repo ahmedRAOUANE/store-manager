@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import {
     createProductsService,
     deleteAllProductsService,
@@ -6,14 +6,14 @@ import {
     getProductsService,
     getSingleProductService,
     updateProductService,
-} from "../services/product.services";
-import { createStoreService } from "../services/store.services";
-import { AppError } from "../errors/base.error";
-import type { CreateStoreInput } from "../zod/store.schema";
+} from "../../services/product.services";
+import { createStoreService } from "../../services/store.services";
+import { AppError } from "../../errors/base.error";
+import type { CreateStoreInput } from "../../zod/store.schema";
 import type {
     CreateProductInput,
     UpdateProductInput,
-} from "../zod/product.schema";
+} from "../../zod/product.schema";
 
 /**
  * Shared owner for test stores. Same ID used across other integration
@@ -140,7 +140,7 @@ describe("product service tests", () => {
 
             /*
              * Payload matches the full field set the original test used.
-             * `UpdateProductInput` schema not verified — if it turns out
+             * `UpdateProductInput` schema not verified â€” if it turns out
              * to be partial, this still works; if it requires all fields,
              * this satisfies it.
              */

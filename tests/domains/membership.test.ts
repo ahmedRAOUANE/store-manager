@@ -1,18 +1,18 @@
-import {
+﻿import {
     acceptMembershipService,
     invalidStoreMemberService,
     promoteStoreMemberService,
     rejectMembershipService,
     requestMembershipService,
-} from "../services/storeMembership.services";
+} from "../../services/storeMembership.services";
 import {
     activateStoreService,
     createStoreService,
-} from "../services/store.services";
-import { models } from "../prisma/db";
+} from "../../services/store.services";
+import { models } from "../../prisma/db";
 import { describe, expect, it } from "vitest";
-import type { CreateStoreInput } from "../zod/store.schema";
-import { AppError } from "../errors/base.error";
+import type { CreateStoreInput } from "../../zod/store.schema";
+import { AppError } from "../../errors/base.error";
 
 describe("membership notification tests", () => {
     const ownerId = "52b45375-ce27-4859-8839-d991d3634330";

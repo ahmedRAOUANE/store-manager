@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 
 import {
     createTestContext,
@@ -37,7 +37,7 @@ const PRODUCT_CREATED_PAYLOAD: HookPayloads["product.created"] = {
 };
 
 /* ==========================================================================
- * createTestContext — user and store passthrough
+ * createTestContext â€” user and store passthrough
  * ========================================================================== */
 
 describe("createTestContext: user and store", () => {
@@ -61,7 +61,7 @@ describe("createTestContext: user and store", () => {
 });
 
 /* ==========================================================================
- * createTestContext — capability guard
+ * createTestContext â€” capability guard
  * ========================================================================== */
 
 describe("createTestContext: capability guard", () => {
@@ -111,7 +111,7 @@ describe("createTestContext: capability guard", () => {
     });
 
     it("does not extend grants across capabilities", async () => {
-        // db.read granted, db.write not — the write guard must fire.
+        // db.read granted, db.write not â€” the write guard must fire.
         const ctx = createTestContext({
             user: TEST_USER,
             capabilities: ["db.read"],
@@ -141,7 +141,7 @@ describe("createTestContext: capability guard", () => {
 });
 
 /* ==========================================================================
- * createTestContext — default return values
+ * createTestContext â€” default return values
  * ========================================================================== */
 
 describe("createTestContext: default return values", () => {
@@ -174,7 +174,7 @@ describe("createTestContext: default return values", () => {
 });
 
 /* ==========================================================================
- * createTestContext — overrides
+ * createTestContext â€” overrides
  * ========================================================================== */
 
 describe("createTestContext: overrides", () => {
@@ -188,7 +188,7 @@ describe("createTestContext: overrides", () => {
     });
 
     it("override bypasses the capability guard (intentional)", async () => {
-        // No storage.read granted. Overriding is an explicit act — the
+        // No storage.read granted. Overriding is an explicit act â€” the
         // author is taking responsibility. This is documented behavior
         // in context.ts (D4).
         const ctx = createTestContext({ user: TEST_USER });
@@ -215,7 +215,7 @@ describe("createTestContext: overrides", () => {
 });
 
 /* ==========================================================================
- * fireHook — successful invocation
+ * fireHook â€” successful invocation
  * ========================================================================== */
 
 describe("fireHook: successful invocation", () => {
@@ -273,7 +273,7 @@ describe("fireHook: successful invocation", () => {
 });
 
 /* ==========================================================================
- * fireHook — errors
+ * fireHook â€” errors
  * ========================================================================== */
 
 describe("fireHook: errors", () => {
@@ -318,7 +318,7 @@ describe("fireHook: errors", () => {
 });
 
 /* ==========================================================================
- * End-to-end — the pattern extension authors actually write
+ * End-to-end â€” the pattern extension authors actually write
  * ========================================================================== */
 
 describe("end-to-end: create, fire, assert", () => {

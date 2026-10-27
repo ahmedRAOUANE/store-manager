@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from "vitest";
+﻿import { describe, it, expect, afterEach } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -6,7 +6,7 @@ import { pathToFileURL } from "node:url";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
-import { runInit } from "../extensions/library/src/cli/init";
+import { runInit } from "../../../extensions/library/src/cli/init";
 import { ManifestSchema } from "@store-manager/extensions";
 
 const execFileP = promisify(execFile);
@@ -69,7 +69,7 @@ afterEach(async () => {
         try {
             await rm(dir, { recursive: true, force: true });
         } catch {
-            // ignore — subprocess may hold a handle briefly on Windows
+            // ignore â€” subprocess may hold a handle briefly on Windows
         }
     }
     createdDirs.length = 0;
@@ -196,8 +196,8 @@ export default defineCapabilities({
             JSON.stringify({
                 notifications: {
                     LOG_CHANGED: {
-                        title: "تم التعديل",
-                        body: "تم تعديل {productName}",
+                        title: "ØªÙ… Ø§Ù„ØªØ¹Ø¯ÙŠÙ„",
+                        body: "ØªÙ… ØªØ¹Ø¯ÙŠÙ„ {productName}",
                     },
                 },
             }),
@@ -206,7 +206,7 @@ export default defineCapabilities({
 
         await runCliBuild(target);
 
-        // Runtime shape — proves defineNotification was invoked with the
+        // Runtime shape â€” proves defineNotification was invoked with the
         // correct inlined extension ID and produced a namespaced presentation.
         const bundle = (await import(
             pathToFileURL(join(target, "dist/index.js")).href
@@ -226,7 +226,7 @@ export default defineCapabilities({
             bodyKey: "ext.notif-ext.LOG_CHANGED.body",
         });
 
-        // Manifest — must match the runtime shape
+        // Manifest â€” must match the runtime shape
         const manifest = JSON.parse(
             readFileSync(join(target, "dist/manifest.json"), "utf-8"),
         );

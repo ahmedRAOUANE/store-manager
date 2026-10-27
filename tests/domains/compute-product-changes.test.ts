@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import "temporal-polyfill/full/global";
 
-import { computeProductChanges } from "../utils/compute-product-changes";
-import type { GetProduct } from "../zod/product.schema";
+import { computeProductChanges } from "../../utils/compute-product-changes";
+import type { GetProduct } from "../../zod/product.schema";
 import { Temporal } from "temporal-polyfill";
 
 const baseProduct: GetProduct = {
@@ -58,14 +58,14 @@ describe("computeProductChanges", () => {
         });
     });
 
-    it("detects null → value transitions", () => {
+    it("detects null â†’ value transitions", () => {
         const after: GetProduct = { ...baseProduct, barcode: "1234567890" };
         expect(computeProductChanges(baseProduct, after)).toEqual({
             barcode: { previous: null, next: "1234567890" },
         });
     });
 
-    it("detects value → null transitions", () => {
+    it("detects value â†’ null transitions", () => {
         const before: GetProduct = { ...baseProduct, description: "old" };
         const after: GetProduct = { ...baseProduct, description: null };
         expect(computeProductChanges(before, after)).toEqual({

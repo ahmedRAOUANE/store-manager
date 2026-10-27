@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+﻿import { describe, it, expect, beforeAll } from "vitest";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -25,7 +25,7 @@ const HANDCRAFTED_FIXTURE_DIR = join(
 );
 
 /**
- * B4 — proves that an artifact built by the SDK is functionally
+ * B4 â€” proves that an artifact built by the SDK is functionally
  * equivalent to a hand-crafted one.
  *
  * The hand-crafted fixture (`product-audit/`) is the reference: a raw
@@ -35,7 +35,7 @@ const HANDCRAFTED_FIXTURE_DIR = join(
  * using `@store-manager/extensions` and compiled by `ext build`.
  *
  * If this test passes, the SDK can produce artifacts
- * indistinguishable — at the runtime-contract level — from
+ * indistinguishable â€” at the runtime-contract level â€” from
  * hand-crafted ones.
  */
 describe("extensions: SDK-built fixture (B4)", { timeout: 60_000, hookTimeout: 60_000 }, () => {
@@ -45,14 +45,14 @@ describe("extensions: SDK-built fixture (B4)", { timeout: 60_000, hookTimeout: 6
     let handcraftedBundle: { default: Record<string, unknown> };
 
     beforeAll(async () => {
-        // ── 1. Build the SDK fixture fresh ─────────────────────────
+        // â”€â”€ 1. Build the SDK fixture fresh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         await execFileP(
             PNPM,
             ["exec", "store-manager-ext", "build", SDK_FIXTURE_DIR],
             { cwd: WORKSPACE_ROOT, shell: true },
         );
 
-        // ── 2. Load both manifests ─────────────────────────────────
+        // â”€â”€ 2. Load both manifests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const sdkManifestRaw = await readFile(
             join(SDK_FIXTURE_DIR, "dist", "manifest.json"),
             "utf-8",
@@ -82,10 +82,10 @@ describe("extensions: SDK-built fixture (B4)", { timeout: 60_000, hookTimeout: 6
         }
         handcraftedManifest = handcraftedParsed.data;
 
-        // ── 3. Import both bundles ─────────────────────────────────
+        // â”€â”€ 3. Import both bundles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // The SDK-built bundle uses its checksum as a cache-buster so
         // a rebuild produces a fresh module evaluation. The hand-crafted
-        // one is stable across runs (no rebuild happens) — no buster needed.
+        // one is stable across runs (no rebuild happens) â€” no buster needed.
         const sdkChecksum =
             (sdkManifestJson as { buildMetadata?: { artifactChecksum?: string } })
                 .buildMetadata?.artifactChecksum ?? "no-checksum";

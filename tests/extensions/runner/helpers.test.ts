@@ -1,15 +1,15 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import { z } from "zod";
 import {
     versionSatisfies,
     buildCapabilitySet,
     isExtensionExportedDefault,
-} from "../extensions/runner/validation";
-import { ManifestSchema } from "../extensions/runner/manifest";
+} from "../../../extensions/runner/validation";
+import { ManifestSchema } from "../../../extensions/runner/manifest";
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // versionSatisfies
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 describe("versionSatisfies", () => {
     it("^1.0.0 accepts 1.0.0", () => {
@@ -36,9 +36,9 @@ describe("versionSatisfies", () => {
     });
 });
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // buildCapabilitySet
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const BASE_MANIFEST = {
     id: "test-ext",
@@ -70,7 +70,7 @@ const BASE_MANIFEST = {
             notifications: { EVENT_A: { title: "A", body: "B" } },
         },
         ar: {
-            notifications: { EVENT_A: { title: "أ", body: "ب" } },
+            notifications: { EVENT_A: { title: "Ø£", body: "Ø¨" } },
         },
     },
 };
@@ -96,9 +96,9 @@ describe("buildCapabilitySet", () => {
     });
 });
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // isExtensionExportedDefault
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const VALID_DEF = {
     payloadSchema: z.object({ name: z.string() }).strict(),
@@ -118,7 +118,7 @@ describe("isExtensionExportedDefault", () => {
 
     it("accepts an export with empty notifications and hooks", () => {
         // Manifest schema requires at least one hook, but the runtime
-        // shape validator doesn't enforce that — cross-checks against
+        // shape validator doesn't enforce that â€” cross-checks against
         // the manifest happen in the loader.
         expect(
             isExtensionExportedDefault({

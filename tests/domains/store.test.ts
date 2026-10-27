@@ -1,13 +1,13 @@
-import {
+﻿import {
     activateStoreService,
     createStoreService,
     getAllStoresService,
     suspendStoreService,
-} from "../services/store.services";
-import { models } from "../prisma/db";
+} from "../../services/store.services";
+import { models } from "../../prisma/db";
 import { describe, expect, it } from "vitest";
-import type { CreateStoreInput } from "../zod/store.schema";
-import { AppError } from "../errors/base.error";
+import type { CreateStoreInput } from "../../zod/store.schema";
+import { AppError } from "../../errors/base.error";
 
 describe("store testing", () => {
     const ownerId = "52b45375-ce27-4859-8839-d991d3634330";
@@ -131,7 +131,7 @@ describe("store testing", () => {
             const first = await activateStoreService(store.id);
             expect(first).not.toBeInstanceOf(AppError);
 
-            // Second activation is rejected — the store is already active.
+            // Second activation is rejected â€” the store is already active.
             const second = await activateStoreService(store.id);
             expect(second).toBeInstanceOf(AppError);
 
@@ -162,7 +162,7 @@ describe("store testing", () => {
             const first = await suspendStoreService(store.id);
             expect(first).not.toBeInstanceOf(AppError);
 
-            // Second suspension is rejected — already suspended.
+            // Second suspension is rejected â€” already suspended.
             const second = await suspendStoreService(store.id);
             expect(second).toBeInstanceOf(AppError);
 
