@@ -11,7 +11,11 @@
     "postinstall": "prisma skills sync || exit 0",
     "contract:emit": "prisma contract emit",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:unit": "vitest run --project=unit",
+    "test:integration": "vitest run --project=integration",
+    "typecheck:tests": "tsc -p tsconfig.test.json",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json"
   },
   "dependencies": {
     "@kinde-oss/kinde-auth-nextjs": "^2.13.1",
@@ -28,7 +32,6 @@
     "react-dom": "19.2.8",
     "tailwind-merge": "^3.6.0",
     "temporal-polyfill": "^1.0.4",
-    "vitest": "^4.1.11",
     "zod": "^4.5.4"
   },
   "devDependencies": {
@@ -45,7 +48,8 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",
-    "vite-tsconfig-paths": "^6.1.1"
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^5.0.5"
   },
   "packageManager": "pnpm@11.23.0"
 }

@@ -5,7 +5,7 @@ import {
     fireHook,
     type TestContext,
 } from "@store-manager/extensions/test";
-import type { HookPayloads } from "@store-manager/extensions";
+import type { ExtensionContext, HookPayloads } from "@store-manager/extensions";
 
 /* ==========================================================================
  * Fixtures
@@ -224,7 +224,7 @@ describe("fireHook: successful invocation", () => {
         let receivedCtx: unknown = null;
         let receivedPayload: unknown = null;
         const handler = async (
-            c: TestContext,
+            c: ExtensionContext,
             p: HookPayloads["product.created"],
         ) => {
             receivedCtx = c;
@@ -330,7 +330,7 @@ describe("end-to-end: create, fire, assert", () => {
         });
 
         const handler = async (
-            c: TestContext,
+            c: ExtensionContext,
             p: HookPayloads["product.created"],
         ) => {
             await c.extensions.db.insert("audit_log", {

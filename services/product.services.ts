@@ -98,7 +98,11 @@ export const updateProductService = async (storeId: string, productId: string, p
         const existingProduct = await getSingleProductService(storeId, productId, transaction);
         if (!existingProduct || existingProduct instanceof AppError) return new AppError("the product you are trying to update does not exist")
 
-        return await productModel.where({ id: productId, storeId }).update(parsedProduct.data);
+        const result = await productModel.where({ id: productId, storeId }).update(parsedProduct.data);
+        if (result === null) {
+            return new AppError("the product you are trying to update does not exist");
+        }
+        return result;
     } catch (error) {
         console.log("services/product.services.ts > updatePtoduct > ", error)
         throw new DatabaseError("unable to update product to the db", error as Record<string, unknown>);

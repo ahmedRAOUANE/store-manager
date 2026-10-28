@@ -38,7 +38,7 @@ const HANDCRAFTED_FIXTURE_DIR = join(
  * indistinguishable â€” at the runtime-contract level â€” from
  * hand-crafted ones.
  */
-describe("extensions: SDK-built fixture (B4)", { timeout: 60_000, hookTimeout: 60_000 }, () => {
+describe("extensions: SDK-built fixture (B4)", { timeout: 60_000 }, () => {
     let sdkManifest: Manifest;
     let handcraftedManifest: Manifest;
     let sdkBundle: { default: Record<string, unknown> };

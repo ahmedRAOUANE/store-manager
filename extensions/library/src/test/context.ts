@@ -108,7 +108,8 @@ export interface TestContext {
             >;
         };
         storage: {
-            get: Mock<(key: string) => Promise<unknown>>;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            get: Mock<(key: string) => Promise<any>>;
             set: Mock<(key: string, value: unknown) => Promise<void>>;
             delete: Mock<(key: string) => Promise<void>>;
         };
