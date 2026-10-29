@@ -49,6 +49,12 @@ async function main(): Promise<void> {
         return;
     }
 
+    if (command === "pack") {
+        const { handlePackCommand } = await import("./pack");
+        await handlePackCommand(args.slice(1));
+        return;
+    }
+
     throw new Error(
         `Unknown command "${command}". Run \`store-manager-ext --help\` for usage.`,
     );
@@ -62,6 +68,7 @@ function printHelp(): void {
             "Usage:",
             "  store-manager-ext init <dir> [options]    Scaffold a new extension",
             "  store-manager-ext build [dir] [options]   Build an extension",
+            "  store-manager-ext pack <dir> [options]    Package a built extension into a .zip",
             "  store-manager-ext --help                  Show this message",
             "  store-manager-ext --version               Show version",
             "",

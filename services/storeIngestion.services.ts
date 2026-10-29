@@ -21,7 +21,7 @@ import { inspectZip } from "@/utils/zip-extract";
  * enforce limits again; this is the outermost guard, cheap enough to
  * run first.
  */
-const MAX_ARTIFACT_BYTES = 4.5 * 1024 * 1024;
+export const MAX_ARTIFACT_BYTES = 4.5 * 1024 * 1024;
 
 export interface SubmitExtensionInput {
     readonly buffer: Buffer;

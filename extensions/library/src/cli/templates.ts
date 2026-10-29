@@ -80,6 +80,7 @@ function renderPackageJson(input: ScaffoldInput): string {
         type: "module",
         scripts: {
             build: "store-manager-ext build",
+            pack: "store-manager-ext pack .",
         },
         devDependencies: {
             "@store-manager/extensions": "workspace:*",
