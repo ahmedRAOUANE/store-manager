@@ -1,0 +1,371 @@
+[
+  {
+    "id": "column.public.extensionVersion.artifactUrl",
+    "label": "Add column \"artifactUrl\" to \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "artifactUrl",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"artifactUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "artifactUrl"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"artifactUrl\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\" ADD COLUMN \"artifactUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"artifactUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "artifactUrl"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.extensionVersion.reviewedAt",
+    "label": "Add column \"reviewedAt\" to \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "reviewedAt",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"reviewedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "reviewedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"reviewedAt\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\" ADD COLUMN \"reviewedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"reviewedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "reviewedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.extensionVersion.reviewedById",
+    "label": "Add column \"reviewedById\" to \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "reviewedById",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"reviewedById\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "reviewedById"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"reviewedById\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\" ADD COLUMN \"reviewedById\" uuid"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"reviewedById\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "reviewedById"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.extensionVersion.submittedById",
+    "label": "Add column \"submittedById\" to \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "submittedById",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"submittedById\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "submittedById"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"submittedById\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\" ADD COLUMN \"submittedById\" uuid"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"submittedById\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "extensionVersion",
+          "submittedById"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionVersion.extensionVersion_reviewedById_idx_e2835478",
+    "label": "Create index \"extensionVersion_reviewedById_idx_e2835478\" on \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionVersion_reviewedById_idx_e2835478",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionVersion_reviewedById_idx_e2835478\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_reviewedById_idx_e2835478\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionVersion_reviewedById_idx_e2835478\"",
+        "sql": "CREATE INDEX \"extensionVersion_reviewedById_idx_e2835478\" ON \"public\".\"extensionVersion\" (\"reviewedById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionVersion_reviewedById_idx_e2835478\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_reviewedById_idx_e2835478\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionVersion.extensionVersion_status_idx_e98638ab",
+    "label": "Create index \"extensionVersion_status_idx_e98638ab\" on \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionVersion_status_idx_e98638ab",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionVersion_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionVersion_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"extensionVersion_status_idx_e98638ab\" ON \"public\".\"extensionVersion\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionVersion_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.extensionVersion.extensionVersion_submittedById_idx_89341c73",
+    "label": "Create index \"extensionVersion_submittedById_idx_89341c73\" on \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "extensionVersion_submittedById_idx_89341c73",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"extensionVersion_submittedById_idx_89341c73\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_submittedById_idx_89341c73\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"extensionVersion_submittedById_idx_89341c73\"",
+        "sql": "CREATE INDEX \"extensionVersion_submittedById_idx_89341c73\" ON \"public\".\"extensionVersion\" (\"submittedById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"extensionVersion_submittedById_idx_89341c73\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"extensionVersion_submittedById_idx_89341c73\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionVersion.extensionVersion_reviewedById_fkey",
+    "label": "Add foreign key \"extensionVersion_reviewedById_fkey\" on \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionVersion_reviewedById_fkey",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionVersion_reviewedById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_reviewedById_fkey",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionVersion_reviewedById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\"\nADD CONSTRAINT \"extensionVersion_reviewedById_fkey\"\nFOREIGN KEY (\"reviewedById\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionVersion_reviewedById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_reviewedById_fkey",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.extensionVersion.extensionVersion_submittedById_fkey",
+    "label": "Add foreign key \"extensionVersion_submittedById_fkey\" on \"extensionVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "extensionVersion_submittedById_fkey",
+        "table": "extensionVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"extensionVersion_submittedById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_submittedById_fkey",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"extensionVersion_submittedById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"extensionVersion\"\nADD CONSTRAINT \"extensionVersion_submittedById_fkey\"\nFOREIGN KEY (\"submittedById\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"extensionVersion_submittedById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "extensionVersion_submittedById_fkey",
+          "public",
+          "\"public\".\"extensionVersion\""
+        ]
+      }
+    ]
+  }
+]

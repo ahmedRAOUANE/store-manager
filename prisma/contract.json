@@ -598,6 +598,13 @@
                   "kind": "scalar"
                 }
               },
+              "artifactUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "extensionId": {
                 "nullable": false,
                 "type": {
@@ -633,10 +640,31 @@
                   "kind": "scalar"
                 }
               },
+              "reviewedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "reviewedById": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "submittedById": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
                   "kind": "scalar"
                 }
               },
@@ -678,6 +706,36 @@
                   "model": "ExtensionInstall",
                   "namespace": "public"
                 }
+              },
+              "reviewedBy": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "reviewedById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "submittedBy": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "submittedById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -687,6 +745,9 @@
                 },
                 "artifactPath": {
                   "column": "artifactPath"
+                },
+                "artifactUrl": {
+                  "column": "artifactUrl"
                 },
                 "extensionId": {
                   "column": "extensionId"
@@ -703,8 +764,17 @@
                 "reviewNotes": {
                   "column": "reviewNotes"
                 },
+                "reviewedAt": {
+                  "column": "reviewedAt"
+                },
+                "reviewedById": {
+                  "column": "reviewedById"
+                },
                 "status": {
                   "column": "status"
+                },
+                "submittedById": {
+                  "column": "submittedById"
                 },
                 "version": {
                   "column": "version"
@@ -2415,6 +2485,21 @@
                   "namespace": "public"
                 }
               },
+              "reviewedVersions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "reviewedById"
+                  ]
+                },
+                "to": {
+                  "model": "ExtensionVersion",
+                  "namespace": "public"
+                }
+              },
               "sales": {
                 "cardinality": "1:N",
                 "on": {
@@ -2427,6 +2512,21 @@
                 },
                 "to": {
                   "model": "Sale",
+                  "namespace": "public"
+                }
+              },
+              "submittedVersions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "submittedById"
+                  ]
+                },
+                "to": {
+                  "model": "ExtensionVersion",
                   "namespace": "public"
                 }
               }
@@ -2866,6 +2966,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "artifactUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "extensionId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -2895,6 +3000,16 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "reviewedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "reviewedById": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -2903,6 +3018,11 @@
                   },
                   "nativeType": "text",
                   "nullable": false
+                },
+                "submittedById": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
                 },
                 "version": {
                   "codecId": "pg/text@1",
@@ -2927,6 +3047,40 @@
                     "namespaceId": "public",
                     "tableName": "extension"
                   }
+                },
+                {
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "submittedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "extensionVersion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                },
+                {
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "reviewedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "extensionVersion"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
                 }
               ],
               "indexes": [
@@ -2936,6 +3090,30 @@
                   ],
                   "name": "extensionVersion_extensionId_idx_f089c64f",
                   "prefix": "extensionVersion_extensionId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "reviewedById"
+                  ],
+                  "name": "extensionVersion_reviewedById_idx_e2835478",
+                  "prefix": "extensionVersion_reviewedById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status"
+                  ],
+                  "name": "extensionVersion_status_idx_e98638ab",
+                  "prefix": "extensionVersion_status_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "submittedById"
+                  ],
+                  "name": "extensionVersion_submittedById_idx_89341c73",
+                  "prefix": "extensionVersion_submittedById_idx",
                   "unique": false
                 }
               ],
@@ -4447,7 +4625,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6eebf89a2f6c64f53e5744e58b8c0ce02377716ce22f52afc87b67bd8032adbc"
+    "storageHash": "5f777a6d98c8366bd9a99b60a2c7b53b4934ff6e8d4c660bf4924e72b5beb2e8"
   },
   "execution": {
     "executionHash": "10ca09b14b39512af19868d128cb3fbc3a778e4476143bbd773b1b930959a409",

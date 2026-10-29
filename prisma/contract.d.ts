@@ -33,7 +33,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'6eebf89a2f6c64f53e5744e58b8c0ce02377716ce22f52afc87b67bd8032adbc'>;
+  StorageHashBase<'5f777a6d98c8366bd9a99b60a2c7b53b4934ff6e8d4c660bf4924e72b5beb2e8'>;
 export type ExecutionHash =
   ExecutionHashBase<'10ca09b14b39512af19868d128cb3fbc3a778e4476143bbd773b1b930959a409'>;
 export type ProfileHash =
@@ -282,9 +282,13 @@ export type FieldOutputTypes = {
       readonly manifest: CodecTypes['pg/json@1']['output'];
       readonly artifactPath: CodecTypes['pg/text@1']['output'];
       readonly artifactChecksum: CodecTypes['pg/text@1']['output'];
+      readonly artifactUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly reviewNotes: CodecTypes['pg/text@1']['output'] | null;
       readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly submittedById: CodecTypes['pg/uuid@1']['output'] | null;
+      readonly reviewedById: CodecTypes['pg/uuid@1']['output'] | null;
+      readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
     };
     readonly Notification: {
       readonly id: CodecTypes['pg/uuid@1']['output'];
@@ -467,9 +471,13 @@ export type FieldInputTypes = {
       readonly manifest: CodecTypes['pg/json@1']['input'];
       readonly artifactPath: CodecTypes['pg/text@1']['input'];
       readonly artifactChecksum: CodecTypes['pg/text@1']['input'];
+      readonly artifactUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly reviewNotes: CodecTypes['pg/text@1']['input'] | null;
       readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly submittedById: CodecTypes['pg/uuid@1']['input'] | null;
+      readonly reviewedById: CodecTypes['pg/uuid@1']['input'] | null;
+      readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
     };
     readonly Notification: {
       readonly id: CodecTypes['pg/uuid@1']['input'];
@@ -648,12 +656,16 @@ export type StorageColumnTypes = {
     readonly extensionVersion: {
       readonly artifactChecksum: CodecTypes['pg/text@1']['output'];
       readonly artifactPath: CodecTypes['pg/text@1']['output'];
+      readonly artifactUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly extensionId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly manifest: CodecTypes['pg/json@1']['output'];
       readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly reviewedById: CodecTypes['pg/uuid@1']['output'] | null;
       readonly reviewNotes: CodecTypes['pg/text@1']['output'] | null;
       readonly status: CodecTypes['pg/text@1']['output'];
+      readonly submittedById: CodecTypes['pg/uuid@1']['output'] | null;
       readonly version: CodecTypes['pg/text@1']['output'];
     };
     readonly notification: {
@@ -833,12 +845,16 @@ export type StorageColumnInputTypes = {
     readonly extensionVersion: {
       readonly artifactChecksum: CodecTypes['pg/text@1']['input'];
       readonly artifactPath: CodecTypes['pg/text@1']['input'];
+      readonly artifactUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly extensionId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly manifest: CodecTypes['pg/json@1']['input'];
       readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly reviewedById: CodecTypes['pg/uuid@1']['input'] | null;
       readonly reviewNotes: CodecTypes['pg/text@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
+      readonly submittedById: CodecTypes['pg/uuid@1']['input'] | null;
       readonly version: CodecTypes['pg/text@1']['input'];
     };
     readonly notification: {
@@ -1322,6 +1338,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
+                readonly artifactUrl: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
                 readonly status: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -1342,6 +1363,21 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                 };
+                readonly submittedById: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: true;
+                };
+                readonly reviewedById: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: true;
+                };
+                readonly reviewedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: true;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [{ readonly columns: readonly ['extensionId', 'version'] }];
@@ -1350,6 +1386,24 @@ type ContractBase = Omit<
                   readonly name: 'extensionVersion_extensionId_idx_f089c64f';
                   readonly prefix: 'extensionVersion_extensionId_idx';
                   readonly columns: readonly ['extensionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionVersion_status_idx_e98638ab';
+                  readonly prefix: 'extensionVersion_status_idx';
+                  readonly columns: readonly ['status'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionVersion_submittedById_idx_89341c73';
+                  readonly prefix: 'extensionVersion_submittedById_idx';
+                  readonly columns: readonly ['submittedById'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'extensionVersion_reviewedById_idx_e2835478';
+                  readonly prefix: 'extensionVersion_reviewedById_idx';
+                  readonly columns: readonly ['reviewedById'];
                   readonly unique: false;
                 },
               ];
@@ -1363,6 +1417,30 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'extension';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionVersion';
+                    readonly columns: readonly ['submittedById'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'user';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'extensionVersion';
+                    readonly columns: readonly ['reviewedById'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'user';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -2911,6 +2989,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly artifactUrl: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly status: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2921,6 +3003,21 @@ type ContractBase = Omit<
               };
               readonly publishedAt: {
                 readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly submittedById: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly reviewedById: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly reviewedAt: {
+                readonly nullable: true;
                 readonly type: {
                   readonly kind: 'scalar';
                   readonly codecId: 'pg/timestamptz-temporal@1';
@@ -2950,6 +3047,22 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['versionId'];
                 };
               };
+              readonly reviewedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['reviewedById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly submittedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['submittedById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
             };
             readonly storage: {
               readonly table: 'extensionVersion';
@@ -2961,9 +3074,13 @@ type ContractBase = Omit<
                 readonly manifest: { readonly column: 'manifest' };
                 readonly artifactPath: { readonly column: 'artifactPath' };
                 readonly artifactChecksum: { readonly column: 'artifactChecksum' };
+                readonly artifactUrl: { readonly column: 'artifactUrl' };
                 readonly status: { readonly column: 'status' };
                 readonly reviewNotes: { readonly column: 'reviewNotes' };
                 readonly publishedAt: { readonly column: 'publishedAt' };
+                readonly submittedById: { readonly column: 'submittedById' };
+                readonly reviewedById: { readonly column: 'reviewedById' };
+                readonly reviewedAt: { readonly column: 'reviewedAt' };
               };
             };
           };
@@ -4019,12 +4136,34 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['createdById'];
                 };
               };
+              readonly reviewedVersions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionVersion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['reviewedById'];
+                };
+              };
               readonly sales: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Sale' };
                 readonly cardinality: '1:N';
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['createdById'];
+                };
+              };
+              readonly submittedVersions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ExtensionVersion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['submittedById'];
                 };
               };
             };

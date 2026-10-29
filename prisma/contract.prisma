@@ -59,6 +59,8 @@ model User {
   purchases Purchase[]
   sales      Sale[]
   notifications Notification[]
+  submittedVersions ExtensionVersion[] @relation("VersionSubmittedBy")
+  reviewedVersions  ExtensionVersion[] @relation("VersionReviewedBy")
 
   @@index([email])
 }
@@ -405,18 +407,29 @@ model ExtensionVersion {
   artifactPath      String
   artifactChecksum  String
 
-  /// "approved" | "rejected" | "draft"
-  /// Plain text with app-level validation (via zod valueSet) so new
-  /// statuses can be introduced without a DB migration.
+  /// NEW — set for store-submitted versions (Cloudflare R2 URL).
+  /// Null for A4 local-dev installs where `artifactPath` is the handle.
+  artifactUrl       String?
+
   status            String   @default("approved")
   reviewNotes       String?
-
   publishedAt       DateTime @default(now())
+
+  /// NEW — submission and review audit trail.
+  /// SetNull: preserves the ExtensionVersion row if the submitting or
+  /// reviewing user is deleted; loses the audit pointer, not the artifact.
+  submittedById     Uuid?
+  submittedBy       User?  @relation("VersionSubmittedBy", fields: [submittedById], references: [id], onDelete: SetNull)
+
+  reviewedById      Uuid?
+  reviewedBy        User?  @relation("VersionReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt        DateTime?
 
   installs          ExtensionInstall[]
 
   @@unique([extensionId, version])
   @@index([extensionId])
+  @@index([status])              // NEW — C5 review queue filter
 }
 
 /// One row per (extension, scope, target).

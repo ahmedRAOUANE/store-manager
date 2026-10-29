@@ -18,6 +18,7 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1158.0",
     "@kinde-oss/kinde-auth-nextjs": "^2.13.1",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
@@ -25,6 +26,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
     "lucide-react": "^1.39.0",
+    "media-pipeline": "^1.7.0",
     "next": "16.3.4",
     "next-intl": "4.14.6",
     "pg": "^8.23.0",
@@ -32,6 +34,7 @@
     "react-dom": "19.2.8",
     "tailwind-merge": "^3.6.0",
     "temporal-polyfill": "^1.0.4",
+    "yauzl": "^3.4.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {
@@ -41,6 +44,8 @@
     "@types/node": "^20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/yauzl": "^2.10.3",
+    "@types/yazl": "^3.3.1",
     "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
@@ -49,7 +54,8 @@
     "tsx": "^4.23.15",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "yazl": "^3.3.1"
   },
   "packageManager": "pnpm@11.23.0"
 }
