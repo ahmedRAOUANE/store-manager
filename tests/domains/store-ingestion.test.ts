@@ -98,9 +98,16 @@ async function buildValidZip(
     version: string,
     overrides: Record<string, unknown> = {},
 ): Promise<Buffer> {
+    // C2 requires source/ to be present — every submission must ship
+    // the source tree so the store can re-analyze it.
     return buildZip({
         "manifest.json": JSON.stringify(validManifest(id, version, overrides)),
         "index.js": "export default { hooks: {}, notifications: {} };",
+        "source/package.json": JSON.stringify({ name: id, version }),
+        "source/tsconfig.json": "{}",
+        "source/src/index.ts":
+            "export default { hooks: {}, notifications: {} };\n",
+        "source/src/capabilities.ts": "export default {};\n",
     });
 }
 

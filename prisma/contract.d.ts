@@ -33,7 +33,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'5f777a6d98c8366bd9a99b60a2c7b53b4934ff6e8d4c660bf4924e72b5beb2e8'>;
+  StorageHashBase<'5d2aa3d74fd1b177ba9d85fbfbd46ed1a1d246bdb7c0ff94c7ef7ddf75b30eba'>;
 export type ExecutionHash =
   ExecutionHashBase<'10ca09b14b39512af19868d128cb3fbc3a778e4476143bbd773b1b930959a409'>;
 export type ProfileHash =
@@ -286,6 +286,7 @@ export type FieldOutputTypes = {
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly reviewNotes: CodecTypes['pg/text@1']['output'] | null;
       readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly staticAnalysisReport: CodecTypes['pg/json@1']['output'] | null;
       readonly submittedById: CodecTypes['pg/uuid@1']['output'] | null;
       readonly reviewedById: CodecTypes['pg/uuid@1']['output'] | null;
       readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
@@ -475,6 +476,7 @@ export type FieldInputTypes = {
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly reviewNotes: CodecTypes['pg/text@1']['input'] | null;
       readonly publishedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly staticAnalysisReport: CodecTypes['pg/json@1']['input'] | null;
       readonly submittedById: CodecTypes['pg/uuid@1']['input'] | null;
       readonly reviewedById: CodecTypes['pg/uuid@1']['input'] | null;
       readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
@@ -664,6 +666,7 @@ export type StorageColumnTypes = {
       readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
       readonly reviewedById: CodecTypes['pg/uuid@1']['output'] | null;
       readonly reviewNotes: CodecTypes['pg/text@1']['output'] | null;
+      readonly staticAnalysisReport: CodecTypes['pg/json@1']['output'] | null;
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly submittedById: CodecTypes['pg/uuid@1']['output'] | null;
       readonly version: CodecTypes['pg/text@1']['output'];
@@ -853,6 +856,7 @@ export type StorageColumnInputTypes = {
       readonly reviewedAt: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
       readonly reviewedById: CodecTypes['pg/uuid@1']['input'] | null;
       readonly reviewNotes: CodecTypes['pg/text@1']['input'] | null;
+      readonly staticAnalysisReport: CodecTypes['pg/json@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly submittedById: CodecTypes['pg/uuid@1']['input'] | null;
       readonly version: CodecTypes['pg/text@1']['input'];
@@ -1362,6 +1366,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-temporal@1';
                   readonly nullable: false;
                   readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly staticAnalysisReport: {
+                  readonly nativeType: 'json';
+                  readonly codecId: 'pg/json@1';
+                  readonly nullable: true;
                 };
                 readonly submittedById: {
                   readonly nativeType: 'uuid';
@@ -3008,6 +3017,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-temporal@1';
                 };
               };
+              readonly staticAnalysisReport: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/json@1' };
+              };
               readonly submittedById: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
@@ -3078,6 +3091,7 @@ type ContractBase = Omit<
                 readonly status: { readonly column: 'status' };
                 readonly reviewNotes: { readonly column: 'reviewNotes' };
                 readonly publishedAt: { readonly column: 'publishedAt' };
+                readonly staticAnalysisReport: { readonly column: 'staticAnalysisReport' };
                 readonly submittedById: { readonly column: 'submittedById' };
                 readonly reviewedById: { readonly column: 'reviewedById' };
                 readonly reviewedAt: { readonly column: 'reviewedAt' };

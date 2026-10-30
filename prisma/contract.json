@@ -654,6 +654,13 @@
                   "kind": "scalar"
                 }
               },
+              "staticAnalysisReport": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
@@ -769,6 +776,9 @@
                 },
                 "reviewedById": {
                   "column": "reviewedById"
+                },
+                "staticAnalysisReport": {
+                  "column": "staticAnalysisReport"
                 },
                 "status": {
                   "column": "status"
@@ -3010,6 +3020,11 @@
                   "nativeType": "uuid",
                   "nullable": true
                 },
+                "staticAnalysisReport": {
+                  "codecId": "pg/json@1",
+                  "nativeType": "json",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -4625,7 +4640,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "5f777a6d98c8366bd9a99b60a2c7b53b4934ff6e8d4c660bf4924e72b5beb2e8"
+    "storageHash": "5d2aa3d74fd1b177ba9d85fbfbd46ed1a1d246bdb7c0ff94c7ef7ddf75b30eba"
   },
   "execution": {
     "executionHash": "10ca09b14b39512af19868d128cb3fbc3a778e4476143bbd773b1b930959a409",

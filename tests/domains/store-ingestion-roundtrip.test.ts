@@ -318,4 +318,41 @@ describe("submitExtension — round-trip (pack → action → service → DB)", 
         const ext = await models.Extension.where({ id: extId }).first();
         expect(ext).toBeNull();
     });
+
+    it("persists the static analysis report on the created version", async () => {
+        const extId = `rt-${crypto.randomUUID().slice(0, 8)}`;
+        createdExtensionIds.push(extId);
+
+        const zipBuffer = await buildAndPackFixture(extId);
+        const result = await submitExtension(makeFormData(zipBuffer));
+
+        expect(result.ok).toBe(true);
+        if (!result.ok) return;
+
+        const version = await models.ExtensionVersion
+            .where({ id: result.versionId })
+            .first();
+        expect(version).not.toBeNull();
+        expect(version!.staticAnalysisReport).not.toBeNull();
+
+        const report = version!.staticAnalysisReport as {
+            usesDbRead: boolean;
+            usesDbWrite: boolean;
+            usesNotificationsPublish: unknown[];
+            tablesRead: unknown[];
+            tablesWritten: unknown[];
+            warnings: unknown[];
+            analyzedAt: string;
+        };
+
+        // The scaffold has no capability calls — the report should
+        // reflect an empty usage surface with no warnings.
+        expect(report.usesDbRead).toBe(false);
+        expect(report.usesDbWrite).toBe(false);
+        expect(report.usesNotificationsPublish).toEqual([]);
+        expect(report.tablesRead).toEqual([]);
+        expect(report.tablesWritten).toEqual([]);
+        expect(Array.isArray(report.warnings)).toBe(true);
+        expect(report.analyzedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    });
 });

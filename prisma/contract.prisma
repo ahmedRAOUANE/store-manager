@@ -415,7 +415,14 @@ model ExtensionVersion {
   reviewNotes       String?
   publishedAt       DateTime @default(now())
 
-  /// NEW — submission and review audit trail.
+  /// output of the store's static analysis pass. Populated
+  /// by `submitExtensionService` when the submission passes
+  /// verification. Null for A4 local-dev installs (no store
+  /// submission happened). Consumed by C5's review UI to surface
+  /// over-declaration warnings to human reviewers.
+  staticAnalysisReport Json?
+
+  /// submission and review audit trail.
   /// SetNull: preserves the ExtensionVersion row if the submitting or
   /// reviewing user is deleted; loses the audit pointer, not the artifact.
   submittedById     Uuid?
@@ -429,7 +436,7 @@ model ExtensionVersion {
 
   @@unique([extensionId, version])
   @@index([extensionId])
-  @@index([status])              // NEW — C5 review queue filter
+  @@index([status])              
 }
 
 /// One row per (extension, scope, target).

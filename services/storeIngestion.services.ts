@@ -13,6 +13,7 @@ import { db, models } from "@/prisma/db";
 import { ManifestSchema, type Manifest } from "@store-manager/extensions";
 import { R2ArtifactStore, R2StorageError } from "@/lib/storage/r2Storage";
 import { inspectZip } from "@/utils/zip-extract";
+import { analyzeSubmissionSource, StaticAnalysisReport } from "./storeAnalysis.services";
 
 /**
  * Hard cap on submitted artifact size. Matches Vercel's Hobby plan
@@ -81,6 +82,7 @@ export async function submitExtensionService(
     }
 
     let manifest: Manifest;
+    let staticAnalysisReport: StaticAnalysisReport | null = null;
     try {
         // ── 3. Manifest extraction + validation ────────────────────
         let manifestBytes: Buffer;
@@ -111,10 +113,39 @@ export async function submitExtensionService(
             );
         }
         manifest = parsedManifest.data;
+
+        // ── 4. Static analysis (C2) ────────────────────────────────
+        // Re-runs the library's analyzer against the SUBMITTED SOURCE,
+        // cross-checks against the manifest, and blocks the submission
+        // if the analyzer finds undeclared capability usage or
+        // non-literal table/event names. Warnings (declared-but-unused)
+        // are preserved in the report for C5's review UI.
+        const analysis = await analyzeSubmissionSource(zip, manifest);
+        if (!analysis.ok) {
+            return new ValidationError(
+                `static analysis failed:\n${analysis.errors
+                    .map((e) => `  - ${e}`)
+                    .join("\n")}`,
+            );
+        }
+        staticAnalysisReport = analysis.report;
     } finally {
         // The zip handle must be released regardless of outcome.
         zip.close();
     }
+
+    // Defensive: if the try block ran to completion, staticAnalysisReport
+    // is non-null. Any failure path inside the try returns early. This
+    // check is unreachable in practice, but the narrowing is explicit
+    // rather than a cast.
+    if (staticAnalysisReport === null) {
+        throw new DatabaseError(
+            "internal: submitExtensionService reached DB write " +
+            "without a static analysis report",
+            { reason: "unreachable" },
+        );
+    }
+    const finalReport: StaticAnalysisReport = staticAnalysisReport;
 
     // ── 4. Checksum ────────────────────────────────────────────────
     const checksum =
@@ -189,15 +220,21 @@ export async function submitExtensionService(
 
             // Serialize the manifest for JSON storage — normalizes
             // any Zod-specific shape and guarantees a plain value.
-            // const manifestForDb = JSON.parse(
-            //     JSON.stringify(manifest),
-            // ) as Record<string, unknown>;
+            const manifestForDb = JSON.parse(
+                JSON.stringify(manifest),
+            );
+
+            // Serialize the static analysis report for JSON storage.
+            // Normalizes any Zod-specific shape via JSON round-trip,
+            // guaranteeing the value is a plain JSON object.
+            const reportForDb = JSON.parse(
+                JSON.stringify(finalReport),
+            );
 
             return await tx.orm.public.ExtensionVersion.create({
                 extensionId: manifest.id,
                 version: manifest.version,
-                // manifest: JSON.stringify(manifestForDb),
-                manifest: manifest,
+                manifest: manifestForDb,
                 // Placeholder until C6 wires the loader for R2.
                 // Per media-pipeline guide §4.1, `url` is opaque —
                 // persist as a string, never parse.
@@ -206,6 +243,7 @@ export async function submitExtensionService(
                 artifactChecksum: checksum,
                 status: "pending",
                 submittedById: input.submittedById,
+                staticAnalysisReport: reportForDb,
             });
         });
 
